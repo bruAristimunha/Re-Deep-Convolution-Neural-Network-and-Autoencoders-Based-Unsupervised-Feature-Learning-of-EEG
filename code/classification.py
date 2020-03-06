@@ -1,11 +1,10 @@
-import pandas as pd
-import numpy as np
-
-from sklearn.model_selection import cross_validate
-from sklearn.metrics import accuracy_score, precision_score, f1_score, roc_auc_score, make_scorer
-from imblearn.metrics import specificity_score, sensitivity_score
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
+from imblearn.metrics import specificity_score, sensitivity_score
+from sklearn.metrics import accuracy_score, precision_score, f1_score, roc_auc_score, make_scorer
+from sklearn.model_selection import cross_validate
 
 
 def methods_classification(n_neighbors=3,
@@ -39,7 +38,6 @@ def methods_classification(n_neighbors=3,
     # AdaBoostClassifier
     from sklearn.ensemble import AdaBoostClassifier
     # GaussianNB
-    from sklearn.naive_bayes import GaussianNB
 
     knn = KNeighborsClassifier(n_neighbors=n_neighbors)  # 1
     SVM1 = svm.SVC(kernel=kernel_a)  # 2
@@ -53,7 +51,7 @@ def methods_classification(n_neighbors=3,
     GaussianNB = GaussianNB()  # 8
 
     ensemble = VotingClassifier(estimators=[('k-NN', knn), ('SVM1', SVM1), ('SVM2', SVM2),
-                                            ('DT', DT), ('RF', RF), ('MLP', MLP), 
+                                            ('DT', DT), ('RF', RF), ('MLP', MLP),
                                             ('ADB', ADB),
                                             ('GNB', GaussianNB)], voting='hard')
 
@@ -84,11 +82,9 @@ def makeBF(merge):
         accumulator = accumulator.append(tmp_row)
 
     csv = (pd.concat([merge_1['m'], accumulator], axis=1))
-    csv = csv[['m', 'k-NN','SVM1', 'SVM2', 'DT','RF',
-               'MLP', 'ADB','GNB','Ensemble']]
+    csv = csv[['m', 'k-NN', 'SVM1', 'SVM2', 'DT', 'RF',
+               'MLP', 'ADB', 'GNB', 'Ensemble']]
     return csv
-
-
 
 
 def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
@@ -118,13 +114,12 @@ def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
         base_auc = pd.DataFrame([], columns=[classifier_name])
 
         for m in range_values:
-
-            nameTrain = base_fold+"/train_"+str(m)+"_"+type_loss+".parquet"
+            nameTrain = base_fold + "/train_" + str(m) + "_" + type_loss + ".parquet"
             X_train = pd.read_parquet(
                 nameTrain, engine='pyarrow').drop(["class"], 1)
             Y_train = pd.read_parquet(nameTrain, engine='pyarrow')['class']
 
-            nameTest = base_fold+"/test_"+str(m)+"_"+type_loss+".parquet"
+            nameTest = base_fold + "/test_" + str(m) + "_" + type_loss + ".parquet"
             X_test = pd.read_parquet(
                 nameTest, engine='pyarrow').drop(["class"], 1)
             Y_test = pd.read_parquet(nameTest, engine='pyarrow')['class']
@@ -171,17 +166,17 @@ def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
     if (~fold.exists()):
         fold.mkdir(parents=True, exist_ok=True)
 
-    makeBF(merge_acc).to_csv(path_or_buf=base_save+"accuracy.csv",
+    makeBF(merge_acc).to_csv(path_or_buf=base_save + "accuracy.csv",
                              sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_pre).to_csv(path_or_buf=base_save+"precision.csv",
+    makeBF(merge_pre).to_csv(path_or_buf=base_save + "precision.csv",
                              sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_spe).to_csv(path_or_buf=base_save+"specificity.csv",
+    makeBF(merge_spe).to_csv(path_or_buf=base_save + "specificity.csv",
                              sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_sen).to_csv(path_or_buf=base_save+"sensibility.csv",
+    makeBF(merge_sen).to_csv(path_or_buf=base_save + "sensibility.csv",
                              sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_f1).to_csv(path_or_buf=base_save+"f1_score.csv",
+    makeBF(merge_f1).to_csv(path_or_buf=base_save + "f1_score.csv",
                             sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_auc).to_csv(path_or_buf=base_save+"roc_auc_score.csv",
+    makeBF(merge_auc).to_csv(path_or_buf=base_save + "roc_auc_score.csv",
                              sep='&', encoding='utf-8', index=False, header=False)
 
     return merge_acc, merge_pre, merge_spe, merge_sen, merge_f1, merge_auc
