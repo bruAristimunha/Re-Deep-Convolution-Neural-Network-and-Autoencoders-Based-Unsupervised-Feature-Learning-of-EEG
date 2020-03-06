@@ -5,7 +5,16 @@ import pandas as pd
 from imblearn.metrics import specificity_score, sensitivity_score
 from sklearn.metrics import accuracy_score, precision_score, f1_score, roc_auc_score, make_scorer
 from sklearn.model_selection import cross_validate
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import svm
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.naive_bayes import GaussianNB
 
+
+# GaussianNB
 
 def methods_classification(n_neighbors=3,
                            kernel_a='linear', kernel_b='rbf', gamma='auto',
@@ -25,21 +34,9 @@ def methods_classification(n_neighbors=3,
     max_features
     max_iter
     """
-    # K-NN
-    from sklearn.neighbors import KNeighborsClassifier
-    # SVM (linear and radial)
-    from sklearn import svm
-    # Decision tree
-    from sklearn.tree import DecisionTreeClassifier
-    # random forests
-    from sklearn.ensemble import RandomForestClassifier, VotingClassifier
-    # MLPClassifier
-    from sklearn.neural_network import MLPClassifier
-    # AdaBoostClassifier
-    from sklearn.ensemble import AdaBoostClassifier
-    # GaussianNB
-
+    #TODO: Nao use import no meio do codigo.
     knn = KNeighborsClassifier(n_neighbors=n_neighbors)  # 1
+    # TODO: Nao use nome maiusculo para variaveis
     SVM1 = svm.SVC(kernel=kernel_a)  # 2
     SVM2 = svm.SVC(kernel=kernel_b, gamma=gamma)  # 3
     DT = DecisionTreeClassifier(max_depth=max_depth)  # 4
@@ -47,16 +44,16 @@ def methods_classification(n_neighbors=3,
         n_estimators=n_estimators, random_state=random_state, max_features=max_features)  # 5
     MLP = MLPClassifier()  # 6
     ADB = AdaBoostClassifier(random_state=random_state)  # 7
-    from sklearn.naive_bayes import GaussianNB
-    GaussianNB = GaussianNB()  # 8
+    # TODO: nao use o mesmo nome que a classe
+    gaussian_nb = GaussianNB()  # 8
 
     ensemble = VotingClassifier(estimators=[('k-NN', knn), ('SVM1', SVM1), ('SVM2', SVM2),
                                             ('DT', DT), ('RF', RF), ('MLP', MLP),
                                             ('ADB', ADB),
-                                            ('GNB', GaussianNB)], voting='hard')
+                                            ('GNB', gaussian_nb)], voting='hard')
 
     classifiers = [('k-NN', knn), ('SVM1', SVM1), ('SVM2', SVM2), ('DT', DT), ('RF', RF),
-                   ('MLP', MLP), ('ADB', ADB), ('GNB', GaussianNB),
+                   ('MLP', MLP), ('ADB', ADB), ('GNB', gaussian_nb),
                    ("Ensemble", ensemble)]
 
     return classifiers
@@ -69,6 +66,7 @@ def makeBF(merge):
      "\ n" by "\\\\ \ n" with regular expression. Replace in all files.
     '''
     merge_1 = merge.reset_index()
+    # TODO: Seja consistente no uso de aspas simples e duplas
     merge_1['AVG'] = np.average(merge_1.drop(["m", "Ensemble"], 1), axis=1)
     merge_1 = merge_1.round(3)
     accumulator = pd.DataFrame()
@@ -81,7 +79,7 @@ def makeBF(merge):
         tmp_row.iloc[0][idx_max] = "\ textbf{" + tmp_row.iloc[0][idx_max] + "}"
         accumulator = accumulator.append(tmp_row)
 
-    csv = (pd.concat([merge_1['m'], accumulator], axis=1))
+    csv = pd.concat([merge_1['m'], accumulator], axis=1)
     csv = csv[['m', 'k-NN', 'SVM1', 'SVM2', 'DT', 'RF',
                'MLP', 'ADB', 'GNB', 'Ensemble']]
     return csv
@@ -96,6 +94,7 @@ def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
     fold = Path(base_save)
 
     range_values = [2, 4, 8, 16, 32, 64, 128, 256]
+    # TODO: Seja consistente no uso de aspas simples e duplas
     index = pd.DataFrame(range_values, columns=["m"])
     index.index = index['m']
     merge_acc = pd.DataFrame(index.drop("m", 1))
@@ -115,6 +114,7 @@ def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
 
         for m in range_values:
             nameTrain = base_fold + "/train_" + str(m) + "_" + type_loss + ".parquet"
+            # TODO: Seja consistente no uso de aspas simples e duplas
             X_train = pd.read_parquet(
                 nameTrain, engine='pyarrow').drop(["class"], 1)
             Y_train = pd.read_parquet(nameTrain, engine='pyarrow')['class']
@@ -127,6 +127,9 @@ def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
             X = X_train.append(X_test)
             Y = Y_train.append(Y_test)
 
+            # TODO: Pq nao usou uma lista de strings com no nome dos scores?
+            #  Sendo que o nomes estao na primeira coluna dessa tabela
+            #  https://scikit-learn.org/stable/modules/model_evaluation.html#scoring-parameter
             scoring = {'accuracy': make_scorer(accuracy_score),
                        'precision': make_scorer(precision_score),
                        'specificity': make_scorer(specificity_score),

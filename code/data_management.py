@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from wget import download
 
+# TODO: evite de usar import *, seja especifico sobre quais funcoes ira buscar para ficar facil entender de onde vieram as funcoes dos codigos
 from autoenconder import *
 
 
@@ -42,14 +43,21 @@ def zip_with_unique(base, list_suffix):
 
     return list(base + suffix for suffix in list_suffix)
 
-
+# TODO: Nao misture diferentes docstring em um unico projeto.
 def download_bonn(path_data='data/boon/') -> [str]:
     """
     Adapted from mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
     Code changes were:
         * Adding more folders;
         * Control for folder creation;
-    :rtype: [str]
+
+    Parameters
+    ----------
+    path_data
+
+    Returns
+    -------
+
     """
     fold = Path(path_data)
     child_fold = ['setA', 'setB', 'setC', 'setD', 'setE']
@@ -87,7 +95,6 @@ def download_bonn(path_data='data/boon/') -> [str]:
 
     return path_child_fold
 
-
 def download_item(url_base, name_base, page=True):
     download(url_base, name_base)
     if (page):
@@ -123,6 +130,9 @@ def download_chbmit(url_base, path_save):
     Returns
     -------
     """
+    # TODO: Se estiver usando python 3.6+, considere usar f-strings
+    #  Senao, procure se habituar com o .format
+    #  https://realpython.com/python-f-strings/
     print("Downloading the folder information: " + path_save)
     fold_save = Path(path_save)
 
@@ -138,6 +148,9 @@ def download_chbmit(url_base, path_save):
         patient_item = zip_with_unique(path_save, folders)
         description_base = zip_with_unique(url_base, description)
 
+        # TODO: Se estiver usando python 3.6+, considere usar f-strings
+        #  Senao, procure se habituar com o .format
+        #  https://realpython.com/python-f-strings/
         print("Downloading the folder files: " + path_save)
         for item, name in zip(description_base, description):
             download_item(item, path_save + name, page=False)
@@ -226,8 +239,8 @@ def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
     X_train, X_test, Y_train, Y_test = train_test_split(
         X, y, test_size=test_size, random_state=random_state)
 
+    # TODO: evite diferentes padroes para nomes de variaveis.
     # MinMax Scaler
-
     minMax = MinMaxScaler()
     minMax = minMax.fit(X_train)
 
@@ -242,7 +255,7 @@ def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
 
     return X_train, X_test, Y_train, Y_test
 
-
+#  TODO: Nao use nomes em maiusculo para variaveis, e sim para constantes.
 def build_featureDataSet(X_train, X_test,
                          Y_train, Y_test,
                          PATH_DATASET, EPOCHS,
@@ -266,7 +279,9 @@ def build_featureDataSet(X_train, X_test,
     -------
 
     """
-
+    # TODO: Se estiver usando python 3.6+, considere usar f-strings
+    #  Senao, procure se habituar com o .format
+    #  https://realpython.com/python-f-strings/
     print("Convert and save with value enconding dimension: " + str(value_encoding_dim))
     X_train_encode, X_test_encode, autoEncoder_ = feature_learning(epochs=EPOCHS, batch_size=BATCH,
                                                                    name_dataset=PATH_DATASET,

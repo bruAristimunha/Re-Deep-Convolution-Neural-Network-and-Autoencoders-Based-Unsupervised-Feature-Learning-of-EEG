@@ -5,13 +5,13 @@ from tensorflow.keras import losses
 from tensorflow.keras.layers import Input, Dense, Flatten, Conv1D, MaxPooling1D, Reshape, UpSampling1D
 from tensorflow.keras.models import Model
 
-
+# TODO: Pq vc esta usando essa funcao de loss? Pq vc define como l2?
 def loss2(y_actual, y_pred):
     custom_loss = kb.abs((y_actual - y_pred) / kb.mean(y_actual))
     return custom_loss
 
-
-class autoenconder(BaseEstimator):
+# TODO: Tente padronizar o codigo no formato PEP8. Classes devem ter CamelCase.
+class Autoenconder(BaseEstimator):
     """ Template
     TO-DO: detailed explanation
 
@@ -26,15 +26,16 @@ class autoenconder(BaseEstimator):
     def __init__(self, epochs=10, batch_size=32,
                  name_dataset=None, value_encoding_dim=2,
                  type_loss='l1'):
-        """ Template
+        """Template
         TO-DO: detailed explanation
-        
+
         Parameters
         ----------
-
-
-        
-
+        epochs
+        batch_size
+        name_dataset
+        value_encoding_dim
+        type_loss
         """
         # auto-enconder parameters
         self.value_encoding_dim = value_encoding_dim
@@ -52,20 +53,21 @@ class autoenconder(BaseEstimator):
         self.method_autoenconder = []
         self.method_enconder = []
 
-        self.build_auto_enconder()
-
     def build_auto_enconder(self):
         """ Template
         TO-DO: detailed explanation
-        
+
         Parameters
         ----------
-
         value_encoding_dim : TO-DO
         type_loss: TO-DO
-        
+
 
         """
+        # TODO: Usually these loss do not use this nomenclature.
+        #  L1 and L2 norms are used to refer to regularizers.
+        #  Please, consider calling it mean absolute error (mae) e mean squared error (mse)
+        #  sendo que o mse eh o mais comum para autoencoders.
         if (self.type_loss == 'l1'):
             fun_loss = losses.mean_absolute_error
         else:
@@ -117,6 +119,9 @@ class autoenconder(BaseEstimator):
 
         encoder = Model(original_signal, enconded, name='encoder')
 
+        # TODO: Se estiver usando python 3.6+, considere usar f-strings
+        #  Senao, procure se habituar com o .format
+        #  https://realpython.com/python-f-strings/
         autoencoder = Model(original_signal, decoded,
                             name='autoenconder_' + str(self.value_encoding_dim))
 
@@ -128,15 +133,13 @@ class autoenconder(BaseEstimator):
     def fit(self, X_train, X_validation):
         """ Template
         TO-DO: detailed explanation
-        
+
         Parameters
         ----------
-
-
-        
+        X_train
+        X_validation
 
         """
-
         # Training auto-enconder
         self.history = self.method_autoenconder.fit(X_train, X_train,
                                                     epochs=self.epochs,
@@ -149,12 +152,11 @@ class autoenconder(BaseEstimator):
     def transform(self, X):
         """ Template
         TO-DO: detailed explanation
-        
+
+
         Parameters
         ----------
-
-
-        
+        X
 
         """
         return self.method_enconder.predict(X)
@@ -168,13 +170,24 @@ def feature_learning(epochs, batch_size, name_dataset,
 
     Parameters
     ----------
+    epochs
+    batch_size
+    name_dataset
+    type_loss
+    value_encoding_dim
+    X_train
+    X_test
 
-
-
+    Returns
+    -------
 
     """
-
-    autoEncoder_ = autoenconder(epochs=epochs,
+    # TODO: procure ser consistente com o tipo de case usando.
+    #  Eu sei que o sklearn bagunca um pouco definindo variaveis como X_train e tals.
+    #  Mas no restante das suas variaveis seja consistente e de preferencia para o snake_case (PEP8).
+    # TODO: Use os underscores de maneira adequada (https://dbader.org/blog/meaning-of-underscores-in-python)
+    #  No caso de autoEncoder_ nao havia nenhum naming conflict.
+    autoEncoder_ = Autoenconder(epochs=epochs,
                                 batch_size=batch_size,
                                 name_dataset=name_dataset,
                                 type_loss=type_loss,
