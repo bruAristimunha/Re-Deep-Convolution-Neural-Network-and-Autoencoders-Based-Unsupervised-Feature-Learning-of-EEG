@@ -1,4 +1,3 @@
-from tensorflow.keras.layers import Input, Dense, Flatten, Conv1D, MaxPooling1D, Reshape, UpSampling1D
 import tensorflow.keras.backend as kb
 from sklearn.base import BaseEstimator
 from tensorflow.keras import losses
@@ -6,12 +5,23 @@ from tensorflow.keras.layers import Input, Dense, Flatten, Conv1D, MaxPooling1D,
 from tensorflow.keras.models import Model
 
 # TODO: Pq vc esta usando essa funcao de loss? Pq vc define como l2?
-def loss2(y_actual, y_pred):
+# Resposta: Eu estava definindo como segunda perda, relacionada no texto.
+# Entendo que não é regularização, vou trocar o nome para evitar confusão.
+
+
+def MAPE(y_actual, y_pred):
+    """Estou inseguro se essa é a mesma perda, se é a reportada foi essa mesmo.
+    tudo me leva a crer que ele usou `mean_absolute_error` como primeira perda
+    e a segunda perda do artigo foi a `mean_absolute_percentage_error`. Mas 
+    gostaria de uma validação. Se for esse cenário, então essa função vai sumir.
+    """
     custom_loss = kb.abs((y_actual - y_pred) / kb.mean(y_actual))
     return custom_loss
 
+
 # TODO: Tente padronizar o codigo no formato PEP8. Classes devem ter CamelCase.
-class Autoenconder(BaseEstimator):
+# Resposta: Ok!
+class AutoEnconder(BaseEstimator):
     """ Template
     TO-DO: detailed explanation
 
@@ -25,7 +35,7 @@ class Autoenconder(BaseEstimator):
 
     def __init__(self, epochs=10, batch_size=32,
                  name_dataset=None, value_encoding_dim=2,
-                 type_loss='l1'):
+                 type_loss='mae'):
         """Template
         TO-DO: detailed explanation
 
@@ -38,20 +48,20 @@ class Autoenconder(BaseEstimator):
         type_loss
         """
         # auto-enconder parameters
-        self.value_encoding_dim = value_encoding_dim
-        self.batch_size = batch_size
-        self.epochs = epochs
-        self.type_loss = type_loss
+        self._value_encoding_dim = value_encoding_dim
+        self._batch_size = batch_size
+        self._epochs = epochs
+        self._type_loss = type_loss
 
         # information about when is use
-        self.name_dataset = name_dataset
+        self._name_dataset = name_dataset
 
         # information about history train
-        self.history = []
+        self._history = []
 
         # saving method
-        self.method_autoenconder = []
-        self.method_enconder = []
+        self._method_autoenconder = []
+        self._method_enconder = []
 
     def build_auto_enconder(self):
         """ Template
@@ -60,6 +70,8 @@ class Autoenconder(BaseEstimator):
         Parameters
         ----------
         value_encoding_dim : TO-DO
+
+
         type_loss: TO-DO
 
 
@@ -68,13 +80,13 @@ class Autoenconder(BaseEstimator):
         #  L1 and L2 norms are used to refer to regularizers.
         #  Please, consider calling it mean absolute error (mae) e mean squared error (mse)
         #  sendo que o mse eh o mais comum para autoencoders.
-        if (self.type_loss == 'l1'):
+
+        # Done!
+
+        if (self.type_loss == 'mae'):
             fun_loss = losses.mean_absolute_error
         else:
-            if (self.type_loss == 'l2'):
-                fun_loss = loss2
-            else:
-                raise ValueError("Loss function not yet implemented.")
+            raise ValueError("Loss function not yet implemented.")
 
         original_signal = Input(shape=(4096, 1))
 
@@ -119,13 +131,16 @@ class Autoenconder(BaseEstimator):
 
         encoder = Model(original_signal, enconded, name='encoder')
 
-        # TODO: Se estiver usando python 3.6+, considere usar f-strings
+        # TO-DO: Se estiver usando python 3.6+, considere usar f-strings
         #  Senao, procure se habituar com o .format
         #  https://realpython.com/python-f-strings/
-        autoencoder = Model(original_signal, decoded,
-                            name='autoenconder_' + str(self.value_encoding_dim))
+        # Resposta: Conheço e estou mudando tudo que tem soma;
 
-        autoencoder.compile(optimizer='adam', loss=fun_loss, metrics=['accuracy'])
+        autoencoder = Model(original_signal, decoded,
+                            name='autoenconder_{}'.format(self.value_encoding_dim))
+
+        autoencoder.compile(optimizer='adam', loss=fun_loss,
+                            metrics=['accuracy'])
 
         self.method_autoenconder = autoencoder
         self.method_enconder = encoder
@@ -145,8 +160,7 @@ class Autoenconder(BaseEstimator):
                                                     epochs=self.epochs,
                                                     batch_size=self.batch_size,
                                                     shuffle=True,
-                                                    validation_data=(
-                                                        X_validation, X_validation),
+                                                    validation_data=(X_validation, X_validation),
                                                     verbose=0)
 
     def transform(self, X):
@@ -187,6 +201,7 @@ def feature_learning(epochs, batch_size, name_dataset,
     #  Mas no restante das suas variaveis seja consistente e de preferencia para o snake_case (PEP8).
     # TODO: Use os underscores de maneira adequada (https://dbader.org/blog/meaning-of-underscores-in-python)
     #  No caso de autoEncoder_ nao havia nenhum naming conflict.
+    
     autoEncoder_ = Autoenconder(epochs=epochs,
                                 batch_size=batch_size,
                                 name_dataset=name_dataset,
