@@ -84,7 +84,7 @@ class AutoEnconder(BaseEstimator):
         Number of epochs that the architecture will be trained.
 
     batch_size : int
-        Number of eXamples to be used in each epoch.
+        Number of examples to be used in each epoch.
 
     value_encoding_dim : int
         Size of the latent space that architecture will

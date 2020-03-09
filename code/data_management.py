@@ -9,7 +9,14 @@ from pathlib import Path
 from zipfile import ZipFile
 
 from bs4 import BeautifulSoup
-from numpy import zeros, ones, concatenate, array, reshape, isin
+from numpy import (
+    zeros, 
+    ones, 
+    concatenate, 
+    array, 
+    reshape, 
+    isin,
+)
 from pandas import DataFrame
 from pandas import read_csv
 from sklearn.model_selection import train_test_split
