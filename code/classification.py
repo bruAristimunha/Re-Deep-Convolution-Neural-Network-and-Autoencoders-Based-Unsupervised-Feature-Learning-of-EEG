@@ -17,7 +17,7 @@ from sklearn.naive_bayes import GaussianNB
 # GaussianNB
 
 def methods_classification(n_neighbors=3,
-                           kernel_a='linear', kernel_b='rbf', gamma='auto',
+                           kernel_a="linear", kernel_b="rbf", gamma="auto",
                            max_depth=5,
                            n_estimators=10, random_state=42, max_features=1):
     """
@@ -47,31 +47,31 @@ def methods_classification(n_neighbors=3,
     # TODO: nao use o mesmo nome que a classe
     gaussian_nb = GaussianNB()  # 8
 
-    ensemble = VotingClassifier(estimators=[('k-NN', knn), ('SVM1', SVM1), ('SVM2', SVM2),
-                                            ('DT', DT), ('RF', RF), ('MLP', MLP),
-                                            ('ADB', ADB),
-                                            ('GNB', gaussian_nb)], voting='hard')
+    ensemble = VotingClassifier(estimators=[("k-NN", knn), ("SVM1", SVM1), ("SVM2", SVM2),
+                                            ("DT", DT), ("RF", RF), ("MLP", MLP),
+                                            ("ADB", ADB),
+                                            ("GNB", gaussian_nb)], voting="hard")
 
-    classifiers = [('k-NN', knn), ('SVM1', SVM1), ('SVM2', SVM2), ('DT', DT), ('RF', RF),
-                   ('MLP', MLP), ('ADB', ADB), ('GNB', gaussian_nb),
+    classifiers = [("k-NN", knn), ("SVM1", SVM1), ("SVM2", SVM2), ("DT", DT), ("RF", RF),
+                   ("MLP", MLP), ("ADB", ADB), ("GNB", gaussian_nb),
                    ("Ensemble", ensemble)]
 
     return classifiers
 
 
 def makeBF(merge):
-    '''
+    """
     Function to mark in the latex which were the best results per line.
      After execution it is still necessary to replace "\ t" with "\ t", without regular expression
      "\ n" by "\\\\ \ n" with regular expression. Replace in all files.
-    '''
+    """
     merge_1 = merge.reset_index()
     # TODO: Seja consistente no uso de aspas simples e duplas
-    merge_1['AVG'] = np.average(merge_1.drop(["m", "Ensemble"], 1), axis=1)
+    merge_1["AVG"] = np.average(merge_1.drop(["m", "Ensemble"], 1), axis=1)
     merge_1 = merge_1.round(3)
     accumulator = pd.DataFrame()
-    for m in merge_1['m']:
-        tmp_row = merge_1[merge_1['m'] == m]
+    for m in merge_1["m"]:
+        tmp_row = merge_1[merge_1["m"] == m]
         tmp_row = tmp_row.drop("m", 1)
         idx_max = tmp_row.values.argmax()
 
@@ -79,14 +79,14 @@ def makeBF(merge):
         tmp_row.iloc[0][idx_max] = "\ textbf{" + tmp_row.iloc[0][idx_max] + "}"
         accumulator = accumulator.append(tmp_row)
 
-    csv = pd.concat([merge_1['m'], accumulator], axis=1)
-    csv = csv[['m', 'k-NN', 'SVM1', 'SVM2', 'DT', 'RF',
-               'MLP', 'ADB', 'GNB', 'Ensemble']]
+    csv = pd.concat([merge_1["m"], accumulator], axis=1)
+    csv = csv[["m", "k-NN", "SVM1", "SVM2", "DT", "RF",
+               "MLP", "ADB", "GNB", "Ensemble"]]
     return csv
 
 
-def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
-                 type_loss='l1', base_save='../data/boon/save/'):
+def save_metrics(classifiers, base_fold="../data/boon/featureDataSet",
+                 type_loss="l1", base_save="../data/boon/save/"):
     """
     REALLY unoptimized function to save the metrics.
 
@@ -96,7 +96,7 @@ def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
     range_values = [2, 4, 8, 16, 32, 64, 128, 256]
     # TODO: Seja consistente no uso de aspas simples e duplas
     index = pd.DataFrame(range_values, columns=["m"])
-    index.index = index['m']
+    index.index = index["m"]
     merge_acc = pd.DataFrame(index.drop("m", 1))
     merge_pre = pd.DataFrame(index.drop("m", 1))
     merge_spe = pd.DataFrame(index.drop("m", 1))
@@ -116,13 +116,13 @@ def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
             nameTrain = base_fold + "/train_" + str(m) + "_" + type_loss + ".parquet"
             # TODO: Seja consistente no uso de aspas simples e duplas
             X_train = pd.read_parquet(
-                nameTrain, engine='pyarrow').drop(["class"], 1)
-            Y_train = pd.read_parquet(nameTrain, engine='pyarrow')['class']
+                nameTrain, engine="pyarrow").drop(["class"], 1)
+            Y_train = pd.read_parquet(nameTrain, engine="pyarrow")["class"]
 
             nameTest = base_fold + "/test_" + str(m) + "_" + type_loss + ".parquet"
             X_test = pd.read_parquet(
-                nameTest, engine='pyarrow').drop(["class"], 1)
-            Y_test = pd.read_parquet(nameTest, engine='pyarrow')['class']
+                nameTest, engine="pyarrow").drop(["class"], 1)
+            Y_test = pd.read_parquet(nameTest, engine="pyarrow")["class"]
 
             X = X_train.append(X_test)
             Y = Y_train.append(Y_test)
@@ -130,34 +130,34 @@ def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
             # TODO: Pq nao usou uma lista de strings com no nome dos scores?
             #  Sendo que o nomes estao na primeira coluna dessa tabela
             #  https://scikit-learn.org/stable/modules/model_evaluation.html#scoring-parameter
-            scoring = {'accuracy': make_scorer(accuracy_score),
-                       'precision': make_scorer(precision_score),
-                       'specificity': make_scorer(specificity_score),
-                       'sensibility': make_scorer(sensitivity_score),
-                       'f1_score': make_scorer(f1_score),
-                       'roc_auc_score': make_scorer(roc_auc_score)}
+            scoring = {"accuracy": make_scorer(accuracy_score),
+                       "precision": make_scorer(precision_score),
+                       "specificity": make_scorer(specificity_score),
+                       "sensibility": make_scorer(sensitivity_score),
+                       "f1_score": make_scorer(f1_score),
+                       "roc_auc_score": make_scorer(roc_auc_score)}
 
             scores = cross_validate(classifier, X, Y, cv=5, scoring=scoring)
 
             base_acc = base_acc.append(pd.DataFrame(
-                [np.average(scores['test_accuracy'])], columns=[classifier_name]))
+                [np.average(scores["test_accuracy"])], columns=[classifier_name]))
             base_pre = base_pre.append(pd.DataFrame(
-                [np.average(scores['test_precision'])], columns=[classifier_name]))
+                [np.average(scores["test_precision"])], columns=[classifier_name]))
             base_spe = base_spe.append(pd.DataFrame(
-                [np.average(scores['test_specificity'])], columns=[classifier_name]))
+                [np.average(scores["test_specificity"])], columns=[classifier_name]))
             base_sen = base_sen.append(pd.DataFrame(
-                [np.average(scores['test_sensibility'])], columns=[classifier_name]))
+                [np.average(scores["test_sensibility"])], columns=[classifier_name]))
             base_f1 = base_f1.append(pd.DataFrame(
-                [np.average(scores['test_f1_score'])], columns=[classifier_name]))
+                [np.average(scores["test_f1_score"])], columns=[classifier_name]))
             base_auc = base_auc.append(pd.DataFrame(
-                [np.average(scores['test_roc_auc_score'])], columns=[classifier_name]))
+                [np.average(scores["test_roc_auc_score"])], columns=[classifier_name]))
 
-        base_acc.index = index['m']
-        base_pre.index = index['m']
-        base_spe.index = index['m']
-        base_sen.index = index['m']
-        base_f1.index = index['m']
-        base_auc.index = index['m']
+        base_acc.index = index["m"]
+        base_pre.index = index["m"]
+        base_spe.index = index["m"]
+        base_sen.index = index["m"]
+        base_f1.index = index["m"]
+        base_auc.index = index["m"]
 
         merge_acc = pd.concat([merge_acc, base_acc], axis=1)
         merge_pre = pd.concat([merge_pre, base_pre], axis=1)
@@ -170,16 +170,16 @@ def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
         fold.mkdir(parents=True, exist_ok=True)
 
     makeBF(merge_acc).to_csv(path_or_buf=base_save + "accuracy.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
+                             sep="&", encoding="utf-8", index=False, header=False)
     makeBF(merge_pre).to_csv(path_or_buf=base_save + "precision.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
+                             sep="&", encoding="utf-8", index=False, header=False)
     makeBF(merge_spe).to_csv(path_or_buf=base_save + "specificity.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
+                             sep="&", encoding="utf-8", index=False, header=False)
     makeBF(merge_sen).to_csv(path_or_buf=base_save + "sensibility.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
+                             sep="&", encoding="utf-8", index=False, header=False)
     makeBF(merge_f1).to_csv(path_or_buf=base_save + "f1_score.csv",
-                            sep='&', encoding='utf-8', index=False, header=False)
+                            sep="&", encoding="utf-8", index=False, header=False)
     makeBF(merge_auc).to_csv(path_or_buf=base_save + "roc_auc_score.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
+                             sep="&", encoding="utf-8", index=False, header=False)
 
     return merge_acc, merge_pre, merge_spe, merge_sen, merge_f1, merge_auc
