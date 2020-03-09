@@ -10,9 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from wget import download
 
-# TODO: evite de usar import *, seja especifico sobre quais funcoes ira buscar para ficar facil entender de onde vieram as funcoes dos codigos
-from autoenconder import *
-
+from autoenconder import AutoEnconder
 
 def zip_with_unique(base, list_suffix):
     """ Auxiliary function to generate a paired 
@@ -43,8 +41,7 @@ def zip_with_unique(base, list_suffix):
 
     return list(base + suffix for suffix in list_suffix)
 
-# TODO: Nao misture diferentes docstring em um unico projeto.
-def download_bonn(path_data='data/boon/') -> [str]:
+def download_bonn(path_data="data/boon/") -> [str]:
     """
     Adapted from mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
     Code changes were:
@@ -53,16 +50,20 @@ def download_bonn(path_data='data/boon/') -> [str]:
 
     Parameters
     ----------
-    path_data
+    path_data : str,
+        Path to indicate where to download the data set.
 
     Returns
-    -------
-
+    -------    
+    path_child_fold : str,
+        List of strings with the path where 
+        the dataset files were downloaded.
+   
     """
     fold = Path(path_data)
-    child_fold = ['setA', 'setB', 'setC', 'setD', 'setE']
-    base_url = 'http://epileptologie-bonn.de/cms/upload/workgroup/lehnertz/'
-    urls_suffix = ['Z.zip', 'O.zip', 'N.zip', 'F.zip', 'S.zip']
+    child_fold = ["setA", "setB", "setC", "setD", "setE"]
+    base_url = "http://epileptologie-bonn.de/cms/upload/workgroup/lehnertz/"
+    urls_suffix = ["Z.zip", "O.zip", "N.zip", "F.zip", "S.zip"]
 
     path_child_fold = zip_with_unique(path_data, child_fold)
 
@@ -99,23 +100,23 @@ def download_item(url_base, name_base, page=True):
     download(url_base, name_base)
     if (page):
         base = open(name_base, "r").read()
-        soup = BeautifulSoup(base, 'html.parser')
-        return filter_list([link.get('href') for link in soup.find_all('a')])
+        soup = BeautifulSoup(base, "html.parser")
+        return filter_list([link.get("href") for link in soup.find_all("a")])
 
 
 def filter_list(folders_description):
-    listchb = ['chb' + str(i) + '/' for i in range(11, 25)]
-    listchb.append('../')
+    listchb = ["chb" + str(i) + "/" for i in range(11, 25)]
+    listchb.append("../")
 
     return [item for item in folders_description if ~isin(item, listchb)]
 
 
 def get_folders(folders_description):
-    return [item for item in folders_description if item.find('/') != -1]
+    return [item for item in folders_description if item.find("/") != -1]
 
 
 def get_files(folders_description):
-    return [item for item in folders_description if item.find('/') == -1]
+    return [item for item in folders_description if item.find("/") == -1]
 
 
 def download_chbmit(url_base, path_save):
@@ -129,17 +130,23 @@ def download_chbmit(url_base, path_save):
     
     Returns
     -------
+    
+    
     """
-    # TODO: Se estiver usando python 3.6+, considere usar f-strings
-    #  Senao, procure se habituar com o .format
-    #  https://realpython.com/python-f-strings/
-    print("Downloading the folder information: " + path_save)
+
+    print("Downloading the folder information: {}".format(path_save))
     fold_save = Path(path_save)
 
-    if (~fold_save.exists()):
+    if (not(fold_save.exists())):
+        
         fold_save.mkdir(parents=True, exist_ok=True)
 
-        folders_description = download_item(url_base, path_save + 'base.html', page=True)
+        # TODO: Se estiver usando python 3.6+, considere usar f-strings
+        #  Senao, procure se habituar com o .format
+        #  https://realpython.com/python-f-strings/
+        # Deixar aqui até saber como fazer no format
+        
+        folders_description = download_item(url_base, path_save + "base.html", page=True)
 
         folders = get_folders(folders_description)
         description = get_files(folders_description)
@@ -148,10 +155,8 @@ def download_chbmit(url_base, path_save):
         patient_item = zip_with_unique(path_save, folders)
         description_base = zip_with_unique(url_base, description)
 
-        # TODO: Se estiver usando python 3.6+, considere usar f-strings
-        #  Senao, procure se habituar com o .format
-        #  https://realpython.com/python-f-strings/
-        print("Downloading the folder files: " + path_save)
+
+        print("Downloading the folder files: {}".format(path_save))
         for item, name in zip(description_base, description):
             download_item(item, path_save + name, page=False)
 
@@ -163,14 +168,15 @@ def download_chbmit(url_base, path_save):
     return patient_item
 
 
-def load_dataset_boon(path_child_fold) -> array:
+def load_dataset_boon(path_child_fold) -> [array]:
     """Function for reading the boon database, and return X and y.
     Also adapted from:
     https://mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
     Parameters
     ----------
 
-    path_child_fold : TO-DO
+    path_child_fold : [str]
+        List of strings with path to the dataset.
 
     Returns
     -------
@@ -187,14 +193,14 @@ def load_dataset_boon(path_child_fold) -> array:
 
     for path in path_child_fold:
 
-        f_names = [s for s in Path(path).iterdir() if str(s).lower().endswith('.txt')]
+        f_names = [s for s in Path(path).iterdir() if str(s).lower().endswith(".txt")]
 
         for f_name in f_names:
-            _data = read_csv(f_name, sep='\n', header=None)
+            _data = read_csv(f_name, sep="\n", header=None)
 
             data_segments.append(_data.values.T[None, ...])
 
-        if ('setE' in path) or ('setC' in path) or ('setD' in path):
+        if ("setE" in path) or ("setC" in path) or ("setD" in path):
 
             labels.append(ones((len(f_names),)))
         else:
@@ -221,136 +227,183 @@ def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
         Target values.
     
     test_size : float
-        value between 0 and 1 to indicate the 
+        Value between 0 and 1 to indicate the 
         percentage that will be used in the test.
     
     random_state : int
-        seed to be able to replicate split
+        Seed to be able to replicate split
         
     Returns
     -------
-    
-    TO-DO: Explanation that will be 
-    the separation between training and testing.
-
-
+    X_train, X_test, y_train, y_test : list
+        Separate data set for training and testing, 
+        standardized and correctly formatted for tensor.
     """
-
-    X_train, X_test, Y_train, Y_test = train_test_split(
+    # Separation of the data set in training and testing.
+    X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=test_size, random_state=random_state)
 
-    # TODO: evite diferentes padroes para nomes de variaveis.
-    # MinMax Scaler
-    minMax = MinMaxScaler()
-    minMax = minMax.fit(X_train)
-
-    X_train = minMax.transform(X_train)
-    X_test = minMax.transform(X_test)
-
+    # Min max scaler method.
+    min_max = MinMaxScaler().fit(X_train)
+    
+    # Applying the re-scaling the training set and test set.
+    X_train = min_max.transform(X_train)
+    X_test  = min_max.transform(X_test)
+    
+    # Removal of the last point present in the vector
     X_train = X_train[:, :4096]
     X_test = X_test[:, :4096]
-
+    
+    # Applying to reshape to match the input as tensor.
     X_train = reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
     X_test = reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
 
-    return X_train, X_test, Y_train, Y_test
+    return X_train, X_test, y_train, y_test
 
-#  TODO: Nao use nomes em maiusculo para variaveis, e sim para constantes.
-def build_featureDataSet(X_train, X_test,
-                         Y_train, Y_test,
-                         PATH_DATASET, EPOCHS,
-                         BATCH, type_loss,
-                         value_encoding_dim):
+def save_feature(df_train, 
+                 df_test, 
+                 value_encoding_dim,
+                 path_dataset, 
+                 type_loss) -> [str]:
     """
 
     Parameters
     ----------
-    X_train
-    X_test
-    Y_train
-    Y_test
-    PATH_DATASET
-    EPOCHS
-    BATCH
-    type_loss
-    value_encoding_dim
-
+    df_train : DataFrame
+    
+    df_test : DataFrame
+                 
+    value_encoding_dim : int,
+        Size of the latent space that architecture will 
+        learn in the process of decoding and encoding.
+      
+    path_dataset : str, 
+        Path name where is the dataset in computer.
+                 
+    type_loss : str 
+        Which loss function will be minimized in the learning proces, 
+        with the options: "mae" or "maae".
+        
     Returns
     -------
-
-    """
-    # TODO: Se estiver usando python 3.6+, considere usar f-strings
-    #  Senao, procure se habituar com o .format
-    #  https://realpython.com/python-f-strings/
-    print("Convert and save with value enconding dimension: {}".format(value_encoding_dim)
-          
-          
-    X_train_encode, X_test_encode, autoEncoder_ = feature_learning(epochs=EPOCHS, batch_size=BATCH,
-                                                                   name_dataset=PATH_DATASET,
-                                                                   X_train=X_train, X_test=X_test,
-                                                                   type_loss=type_loss,
-                                                                   value_encoding_dim=value_encoding_dim)
-    df_train = DataFrame(X_train_encode)
-    df_train.columns = df_train.columns.astype(str)
-    df_train['class'] = Y_train
-
-    df_test = DataFrame(X_test_encode)
-    df_test.columns = df_test.columns.astype(str)
-    df_test['class'] = Y_test
-
-    path_train, path_test = save_featureDataSet(df_train=df_train,
-                                                df_test=df_test,
-                                                value_encoding_dim=value_encoding_dim,
-                                                PATH_DATASET=PATH_DATASET, type_loss=type_loss)
-
-    return autoEncoder_, path_train, path_test
-
-
-def save_feature(df_train, df_test, value_encoding_dim,
-                        PATH_DATASET, type_loss) -> [str]:
-    """
-
-    Parameters
-    ----------
-    df_train
-    df_test
-    value_encoding_dim
-    PATH_DATASET
-    type_loss
-
-    Returns
-    -------
-
+        save_train_name : str
+        Path name where the training dataset was saved on the computer.
+        
+        save_test_name : str
+        Path name where the testing dataset was saved on the computer.
     """
           
     # Join pathname between a string that contains the base  
     # pathname dataset and a folder called feature_learning, 
     # which will be created to save the latent spaces 
     # generated by AutoEnconder.          
-    path_save = join(PATH_DATASET, 'feature_learning')
+    path_save = join(path_dataset, "feature_learning")
           
     # Conversion of the pathname string to the class PurePath,
-    # To use the class to create a folder 
-    # on the system if it doesn't exist.
+    # To use the class to create a folder on the system if it 
+    # doesn"t exist.
     fold_save = Path(path_save)
 
-    #       
-          
-    prefix_name_train = 'train_{}_{}.parquet'.format(value_encoding_dim, 
+    # Formatted string to save loss type information and size dimensions         
+    name_train = "train_{}_{}.parquet".format(value_encoding_dim, 
                                                      type_loss)
-
-    prefix_name_test  = 'test_{}_{}.parquet'.format(value_encoding_dim, 
+    name_test  = "test_{}_{}.parquet".format(value_encoding_dim, 
                                                     type_loss)
 
-    save_train_name   = join(path_save, prefix_name_train)
-    save_test_name    = join(path_save, prefix_name_test)
+    # Join to take the path that we will save the train and test    
+    save_train_name   = join(path_save, name_train)
+    save_test_name    = join(path_save, name_test)
 
-    if (~fold_save.exists()):
-          
+    #If the folder does not exist, then create
+    if (not(fold_save.exists())):   
         fold_save.mkdir(parents=True, exist_ok=True)
 
-    df_train.to_parquet(save_train_name, engine='pyarrow')
-
-    df_test.to_parquet(save_test_name, engine='pyarrow')
+    #Saving as parquet to preserve the type.
+    df_train.to_parquet(save_train_name, engine="pyarrow")
+    df_test.to_parquet(save_test_name, engine="pyarrow")
 
     return save_train_name, save_test_name
+
+
+def build_feature(X_train, X_test,  y_train, y_test,
+                  path_dataset, epochs,
+                  batch_size, type_loss,
+                  value_encoding_dim):
+    """ 
+    Control function to use the AutoEnconder 
+    class as a dimension reducer.
+    
+    This function also saves the values obtained 
+    after the dimension reduction process. By performing a process 
+    of reading and accessing files, this function ended up being 
+    in the data management file. 
+    
+    Parameters
+    ----------
+    X_train : array-like  (n_samples, n_features)
+        The input data to use in train process.
+        
+    X_test : array-like  (n_samples, n_features)
+        The input data to use in train process.
+    
+    Y_train : array-like  (n_samples, )
+        The label data related to the X_train.
+        
+    Y_test : array-like  (n_samples, )
+        The label data related to the X_test.  
+        
+    The rest of the parameters and explanation of the 
+    variables are homonymous with those of the original class.
+    
+    Returns
+    -------
+    auto_encoder : AutoEnconder class object
+        Object of the class already trained.
+    
+    path_train : str
+        Path where the train set was saved.
+        
+    path_test  : str
+        Path where the test set was saved.
+
+    """
+    
+    print("Convert and save with value enconding dimension: {}".format(value_encoding_dim))
+    
+    # Initializing the Auto-Encoder model
+    auto_encoder = AutoEnconder(epochs=epochs, batch_size=batch_size,
+                                value_encoding_dim=value_encoding_dim,
+                                type_loss=type_loss,
+                                name_dataset=path_dataset)
+    # For validation, as described in the text, we use the test dataset.
+    auto_encoder.fit(X_train, X_test)
+    
+    # Data transformation
+    X_train_encoded = auto_encoder.transform(X_train)
+    X_test_encoded  = auto_encoder.transform(X_test)
+                 
+    # Conversion of numpy.array to a DataFrame
+    df_train = DataFrame(X_train_encoded)
+    # On the DataFrame each column has a numeric value, 
+    # which is converted to a string      
+    df_train.columns = df_train.columns.astype(str)
+    # Join with class label
+    df_train["class"] = y_train
+
+    # Conversion of numpy.array to a DataFrame
+    df_test = DataFrame(X_test_encoded)      
+    # On the DataFrame each column has a numeric value, 
+    # which is converted to a string      
+    df_test.columns = df_test.columns.astype(str)
+    # Join with class label
+    df_test["class"] = y_test
+
+    
+    path_train, path_test = save_feature(df_train=df_train,
+                                         df_test=df_test,
+                                         value_encoding_dim=value_encoding_dim,
+                                         path_dataset=path_dataset, 
+                                         type_loss=type_loss)
+
+    return auto_encoder, path_train, path_test
+
