@@ -1,216 +1,279 @@
-import tensorflow.keras.backend as kb
+
 from sklearn.base import BaseEstimator
 from tensorflow.keras import losses
 from tensorflow.keras.layers import Input, Dense, Flatten, Conv1D, MaxPooling1D, Reshape, UpSampling1D
 from tensorflow.keras.models import Model
 
+#Custom Loss Function
+from tensorflow.keras import backend as K
+from tensorflow.python.ops import math_ops
+from tensorflow.python.framework import ops
+
+
 # TODO: Pq vc esta usando essa funcao de loss? Pq vc define como l2?
 # Resposta: Eu estava definindo como segunda perda, relacionada no texto.
 # Entendo que não é regularização, vou trocar o nome para evitar confusão.
+# Estou inseguro se essa é a mesma perda, se é a reportada foi essa mesmo.
+# tudo me leva a crer que ele usou `mean_absolute_error` (MAE) como primeira perda
+# e a segunda perda do artigo foi a `mean_absolute_percentage_error` (MAPE). Mas 
+# gostaria de uma validação. Se for esse cenário, então essa função vai sumir.
 
 
-def MAPE(y_actual, y_pred):
-    """Estou inseguro se essa é a mesma perda, se é a reportada foi essa mesmo.
-    tudo me leva a crer que ele usou `mean_absolute_error` como primeira perda
-    e a segunda perda do artigo foi a `mean_absolute_percentage_error`. Mas 
-    gostaria de uma validação. Se for esse cenário, então essa função vai sumir.
-    """
-    custom_loss = kb.abs((y_actual - y_pred) / kb.mean(y_actual))
-    return custom_loss
+def mean_absolute_average_error(y_true, y_pred):  
+    """ 
+    Reproduction of equation 11 presented in the original article.
+    Paper Url: https://ieeexplore.ieee.org/document/8355473#deqn11
+    
+    Although the text suggests that the second loss function 
+    presented is `mean_absolute_percentage_error`, 
+    there is a divergence in the equation.
 
+    Thus, we chose to reproduce the formula presented, instead 
+    of the text.
+    
+    To this end, we adapted the code available in 
+    Tensorflow to calculate the "mean_absolute_percentage_error"
+    (MAPE), and we call it mean_absolute_average_error  (maae).
 
-# TODO: Tente padronizar o codigo no formato PEP8. Classes devem ter CamelCase.
-# Resposta: Ok!
-class AutoEnconder(BaseEstimator):
-    """ Template
-    TO-DO: detailed explanation
-
+    TensorFlow Url: 
+    https://github.com/tensorflow/tensorflow/blob/v2.1.0/tensorflow/python/keras/losses.py#L786-L797
+    
+    
     Parameters
     ----------
+    y_true :  array-like
+        Ground truth values. shape = `[batch_size, d0, .. dN]`
+
+    y_pred :  array-like
+        The predicted values. shape = `[batch_size, d0, .. dN]`
+    
+    Returns
+    -------
+        loss float `Tensor`
+    """    
+    
+    y_pred = ops.convert_to_tensor(y_pred)
+    y_true = math_ops.cast(y_true, y_pred.dtype)
+    diff = math_ops.abs(
+      (y_true - y_pred) / K.maximum(K.mean(y_true), K.epsilon()))
+    return 100. * K.mean(diff, axis=-1)
 
 
+class AutoEnconder(BaseEstimator):
+    """ AutoEnconder Class.
+    Reproduction of the AutoEncoder architecture reported 
+    in the article by T. Wen and Z. Zhang (2018).
 
+    The class reproduces the design pattern present in the scikit-learn 
+    library, in addition to inheriting the BaseEstimor class allowing 
+    compatibility with GridSearch validation methods
 
+ 
+    Parameters
+    ----------
+    epochs : int
+        Number of epochs that the architecture will be trained.
+        
+    batch_size : int 
+        Number of examples to be used in each epoch.
+        
+    value_encoding_dim : int
+        Size of the latent space that architecture will 
+        learn in the process of decoding and encoding.
+
+    type_loss : str
+        Which loss function will be minimized in the learning proces, 
+        with the options: "mae" or "maae"
+    
+    name_dataset : str
+        Name of the dataset in which the AutoEncoder 
+        will learn the latent space. For convenience we use 
+        Pathname as a name.
     """
 
-    def __init__(self, epochs=10, batch_size=32,
-                 name_dataset=None, value_encoding_dim=2,
-                 type_loss='mae'):
-        """Template
-        TO-DO: detailed explanation
-
-        Parameters
-        ----------
-        epochs
-        batch_size
-        name_dataset
-        value_encoding_dim
-        type_loss
-        """
+    def __init__(self, 
+                 epochs = 10, 
+                 batch_size = 32,
+                 value_encoding_dim = 2,
+                 type_loss = "mae",
+                 name_dataset = None):
+        
         # auto-enconder parameters
-        self._value_encoding_dim = value_encoding_dim
-        self._batch_size = batch_size
-        self._epochs = epochs
-        self._type_loss = type_loss
+        self.value_encoding_dim = value_encoding_dim
+        self.batch_size = batch_size
+        self.epochs = epochs
+        self.type_loss = type_loss
 
         # information about when is use
-        self._name_dataset = name_dataset
+        self.name_dataset = name_dataset
 
         # information about history train
-        self._history = []
+        self.learn_history = []
 
         # saving method
-        self._method_autoenconder = []
-        self._method_enconder = []
+        self.method_autoenconder = []
+        self.method_enconder = []
 
     def build_auto_enconder(self):
-        """ Template
-        TO-DO: detailed explanation
+        """ Function for building and compiling the AutoEnconder class.
+        
+        Since the loss function and the number of dimensions are parameters, 
+        each AutoEncoder will have different inputs at compilation 
+        and in the middle of the architecture.
 
-        Parameters
-        ----------
-        value_encoding_dim : TO-DO
-
-
-        type_loss: TO-DO
-
+        Model: "autoenconder_m_{}_loss_{}"
+        _________________________________________________________________
+        Layer (type)                 Output Shape              Param #   
+        =================================================================
+        input_1 (InputLayer)         [(None, 4096, 1)]         0         
+        _________________________________________________________________
+        conv1d (Conv1D)              (None, 4096, 16)          64        
+        _________________________________________________________________
+        max_pooling1d (MaxPooling1D) (None, 2048, 16)          0         
+        _________________________________________________________________
+        conv1d_1 (Conv1D)            (None, 2048, 32)          1568      
+        _________________________________________________________________
+        max_pooling1d_1 (MaxPooling1 (None, 1024, 32)          0         
+        _________________________________________________________________
+        conv1d_2 (Conv1D)            (None, 1024, 64)          6208      
+        _________________________________________________________________
+        max_pooling1d_2 (MaxPooling1 (None, 512, 64)           0         
+        _________________________________________________________________
+        flatten (Flatten)            (None, 32768)             0         
+        _________________________________________________________________
+        dense (Dense)                (None, 2)                 65538     
+        _________________________________________________________________
+        dense_1 (Dense)              (None, 32768)             65536     
+        _________________________________________________________________
+        reshape (Reshape)            (None, 512, 64)           0         
+        _________________________________________________________________
+        conv1d_3 (Conv1D)            (None, 512, 64)           12352     
+        _________________________________________________________________
+        up_sampling1d (UpSampling1D) (None, 1024, 64)          0         
+        _________________________________________________________________
+        conv1d_4 (Conv1D)            (None, 1024, 32)          6176      
+        _________________________________________________________________
+        up_sampling1d_1 (UpSampling1 (None, 2048, 32)          0         
+        _________________________________________________________________
+        conv1d_5 (Conv1D)            (None, 2048, 16)          1552      
+        _________________________________________________________________
+        up_sampling1d_2 (UpSampling1 (None, 4096, 16)          0         
+        _________________________________________________________________
+        conv1d_6 (Conv1D)            (None, 4096, 1)           49        
+        =================================================================
+        Total params: 159,043
+        Trainable params: 159,043
+        Non-trainable params: 0
+        _________________________________________________________________
 
         """
-        # TODO: Usually these loss do not use this nomenclature.
-        #  L1 and L2 norms are used to refer to regularizers.
-        #  Please, consider calling it mean absolute error (mae) e mean squared error (mse)
-        #  sendo que o mse eh o mais comum para autoencoders.
 
-        # Done!
-
-        if (self.type_loss == 'mae'):
+        if (self.type_loss == "mae"):
             fun_loss = losses.mean_absolute_error
         else:
-            raise ValueError("Loss function not yet implemented.")
+            if(self.type_loss == "maae"):
+                fun_loss = mean_absolute_average_error
+            else:
+                raise ValueError("Loss function not yet implemented.")
 
+            
+            
         original_signal = Input(shape=(4096, 1))
 
         enconded = Conv1D(kernel_size=3, filters=16,
-                          padding='same', activation='relu')(original_signal)
+                          padding="same", activation="relu")(original_signal)
 
         enconded = MaxPooling1D(pool_size=2)(enconded)
 
         enconded = Conv1D(kernel_size=3, filters=32,
-                          padding='same', activation='relu')(enconded)
+                          padding="same", activation="relu")(enconded)
 
         enconded = MaxPooling1D(pool_size=2)(enconded)
 
         enconded = Conv1D(kernel_size=3, filters=64,
-                          padding='same', activation='relu')(enconded)
+                          padding="same", activation="relu")(enconded)
 
         enconded = MaxPooling1D(pool_size=2)(enconded)
 
         enconded = Flatten()(enconded)
 
-        enconded = Dense(self.value_encoding_dim, activation='relu')(enconded)
+        enconded = Dense(self.value_encoding_dim, activation="relu")(enconded)
 
-        decoded = Dense(512 * 64, activation='relu', use_bias=False)(enconded)
+        decoded = Dense(512 * 64, activation="relu", use_bias=False)(enconded)
 
         decoded = Reshape((512, 64))(decoded)
 
         decoded = Conv1D(kernel_size=3, filters=64,
-                         padding='same', activation='relu')(decoded)
+                         padding="same", activation="relu")(decoded)
         decoded = UpSampling1D()(decoded)
 
         decoded = Conv1D(kernel_size=3, filters=32,
-                         padding='same', activation='relu')(decoded)
+                         padding="same", activation="relu")(decoded)
 
         decoded = UpSampling1D()(decoded)
 
         decoded = Conv1D(kernel_size=3, filters=16,
-                         padding='same', activation='relu')(decoded)
+                         padding="same", activation="relu")(decoded)
         decoded = UpSampling1D()(decoded)
 
         decoded = Conv1D(kernel_size=3, filters=1,
-                         padding='same', activation='sigmoid')(decoded)
+                         padding="same", activation="sigmoid")(decoded)
 
-        encoder = Model(original_signal, enconded, name='encoder')
+        encoder = Model(original_signal, enconded, name="encoder")
 
-        # TO-DO: Se estiver usando python 3.6+, considere usar f-strings
-        #  Senao, procure se habituar com o .format
-        #  https://realpython.com/python-f-strings/
-        # Resposta: Conheço e estou mudando tudo que tem soma;
 
         autoencoder = Model(original_signal, decoded,
-                            name='autoenconder_{}'.format(self.value_encoding_dim))
+                            name="autoenconder_m_{}_loss_{}".format(
+                                self.value_encoding_dim,
+                                self.type_loss))
 
-        autoencoder.compile(optimizer='adam', loss=fun_loss,
-                            metrics=['accuracy'])
+        autoencoder.compile(optimizer="adam", loss=fun_loss,
+                            metrics=["accuracy"])
 
         self.method_autoenconder = autoencoder
         self.method_enconder = encoder
 
     def fit(self, X_train, X_validation):
-        """ Template
-        TO-DO: detailed explanation
+        """ 
+        Fit the model to learn how to represent a latent 
+        space by encoding and decoding the original signal.
 
         Parameters
         ----------
-        X_train
-        X_validation
+        X_train : array-like  (n_samples, n_features)
+            The input data to use in train process.
 
+        X_validation : array-like of shape (n_samples, n_features) 
+            The input data to use in validation process
+
+        Returns
+        -------
+        self : returns a trained AutoEnconder class model.
         """
+        
+        self.build_auto_enconder()
         # Training auto-enconder
-        self.history = self.method_autoenconder.fit(X_train, X_train,
-                                                    epochs=self.epochs,
-                                                    batch_size=self.batch_size,
-                                                    shuffle=True,
-                                                    validation_data=(X_validation, X_validation),
-                                                    verbose=0)
-
+        self.learn_history = self.method_autoenconder.fit(X_train, X_train,
+                                                          epochs=self.epochs,
+                                                          batch_size=self.batch_size,
+                                                          shuffle=True,
+                                                          validation_data=(X_validation, X_validation),
+                                                          verbose=0)
+        return self
+    
     def transform(self, X):
-        """ Template
-        TO-DO: detailed explanation
-
+        """ 
+        Function for transforming the vector with original dimensions 
+        to latent dimensions.
 
         Parameters
         ----------
-        X
-
+        X : array-like  (n_samples, n_features)
+            The input data to use in transform process.
+            
+        Returns
+        -------
+        _ : array-like  (n_samples, value_encoding_dim)
+            The data transformed to latent dimensions format.
         """
         return self.method_enconder.predict(X)
-
-
-def feature_learning(epochs, batch_size, name_dataset,
-                     type_loss, value_encoding_dim,
-                     X_train, X_test):
-    """ Template
-    TO-DO: detailed explanation
-
-    Parameters
-    ----------
-    epochs
-    batch_size
-    name_dataset
-    type_loss
-    value_encoding_dim
-    X_train
-    X_test
-
-    Returns
-    -------
-
-    """
-    # TODO: procure ser consistente com o tipo de case usando.
-    #  Eu sei que o sklearn bagunca um pouco definindo variaveis como X_train e tals.
-    #  Mas no restante das suas variaveis seja consistente e de preferencia para o snake_case (PEP8).
-    # TODO: Use os underscores de maneira adequada (https://dbader.org/blog/meaning-of-underscores-in-python)
-    #  No caso de autoEncoder_ nao havia nenhum naming conflict.
-    
-    autoEncoder_ = Autoenconder(epochs=epochs,
-                                batch_size=batch_size,
-                                name_dataset=name_dataset,
-                                type_loss=type_loss,
-                                value_encoding_dim=value_encoding_dim)
-
-    autoEncoder_.fit(X_train, X_test)
-
-    X_train_encode = autoEncoder_.transform(X_train)
-    X_test_encode = autoEncoder_.transform(X_test)
-
-    return X_train_encode, X_test_encode, autoEncoder_
