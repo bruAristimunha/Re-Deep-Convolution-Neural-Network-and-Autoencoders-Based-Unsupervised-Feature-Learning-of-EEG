@@ -9,7 +9,7 @@ from tensorflow.keras.layers import (
     Dense,
     Flatten,
     Conv1D,
-    MaXPooling1D,
+    MaxPooling1D,
     Reshape,
     UpSampling1D,
 )
@@ -64,8 +64,8 @@ def mean_absolute_average_error(y_true, y_pred):
 
     y_pred = ops.convert_to_tensor(y_pred)
     y_true = math_ops.cast(y_true, y_pred.dtype)
-    diff = math_ops.abs((y_true - y_pred) / K.maXimum(K.mean(y_true), K.epsilon()))
-    return 100. * K.mean(diff, aXis=-1)
+    diff = math_ops.abs((y_true - y_pred) / K.maximum(K.mean(y_true), K.epsilon()))
+    return 100. * K.mean(diff, axis=-1)
 
 
 class AutoEnconder(BaseEstimator):
@@ -207,17 +207,17 @@ class AutoEnconder(BaseEstimator):
         enconded = Conv1D(kernel_size=3, filters=16,
                           padding="same", activation="relu")(original_signal)
 
-        enconded = MaXPooling1D(pool_size=2)(enconded)
+        enconded = MaxPooling1D(pool_size=2)(enconded)
 
         enconded = Conv1D(kernel_size=3, filters=32,
                           padding="same", activation="relu")(enconded)
 
-        enconded = MaXPooling1D(pool_size=2)(enconded)
+        enconded = MaxPooling1D(pool_size=2)(enconded)
 
         enconded = Conv1D(kernel_size=3, filters=64,
                           padding="same", activation="relu")(enconded)
 
-        enconded = MaXPooling1D(pool_size=2)(enconded)
+        enconded = MaxPooling1D(pool_size=2)(enconded)
 
         enconded = Flatten()(enconded)
 
