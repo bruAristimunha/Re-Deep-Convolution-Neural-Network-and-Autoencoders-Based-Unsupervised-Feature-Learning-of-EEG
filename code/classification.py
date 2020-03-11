@@ -5,7 +5,7 @@
 from pathlib import Path
 from os.path import join
 
-from pandas import read_parquet
+from pandas import read_parquet, DataFrame, concat
 from imblearn.metrics import specificity_score
 
 from sklearn.model_selection import cross_validate
@@ -20,7 +20,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import (
     RandomForestClassifier,
     VotingClassifier,
-    )
+)
 
 
 def methods_classification(n_neighbors=3,
@@ -80,9 +80,30 @@ def methods_classification(n_neighbors=3,
 
     return classifiers
 
+
 def read_feature_data(base_fold, dim, type_loss):
     """
-    TODO: 
+
+
+
+    Parameters
+    ----------
+    base_fold : str
+        Pathname to indicate where to download the dataset.  
+
+    dim : int
+        Size of the latent space that architecture will
+        learn in the process of decoding and encoding.
+
+    type_loss : str
+        Which loss function will be minimized in the learning proces,
+        with the options: "mae" or "maae"
+
+    Returns
+    -------
+    X : array
+
+    y : array
 
     """
     name_train = join(base_fold, "train_{}_{}.parquet".format(dim, type_loss))
@@ -100,35 +121,59 @@ def read_feature_data(base_fold, dim, type_loss):
     return X, y
 
 
-def save_metrics(classifiers,
-                 base_fold,
-                 type_loss,
-                 base_save,
-                 range_values):
+def save_classification(scores, base_fold):
     """
-    REALLY unoptimized function to save the metrics.
+
 
     """
-    fold = Path(base_save)
+    path_save = join(base_fold, "save")
+
+    if not fold.exists():
+        fold.mkdir(parents=True, exist_ok=True)
+
+
+        
+def run_classification(base_fold,
+                       type_loss,
+                       range_values):
+    """
+
+
+    """
+
+    path_read = join(base_fold, "feature_learning")
 
     scores = []
-
+    
+    
+    classifiers = methods_classification(n_neighbors=3, 
+                                     kernel_a='linear', 
+                                     kernel_b='rbf', 
+                                     max_depth=5,
+                                     n_estimators=10, 
+                                     random_state=42, 
+                                     max_features=1)
     for _, classifier in classifiers:
 
         for dim in range_values:
 
+            X, y = read_feature_data(path_read, dim, type_loss)
 
-            X, y = read_feature_data(base_fold, dim, type_loss)
-
-            scoring = ['accuracy', 'precision', 'recall',
-                       'f1_score', 'roc_auc_score', make_scorer(specificity_score)]
+            scoring = ['accuracy']  # , 'precision', 'recall','f1', 'roc_auc']
 
             score = cross_validate(classifier, X, y, cv=5, scoring=scoring)
+            # Aggregate name in cross_validate
+            #import pdb; pdb.set_trace()
+            score.update({'name_classifier': type(classifier).__name__,
+                          'n_dimensions': dim,
+                          'type_loss': type_loss})
 
-            scores.append(score)
+            scores.append(DataFrame(score))
 
-    if not fold.exists():
+    scores = concat(scores).reset_index()
 
-        fold.mkdir(parents=True, exist_ok=True)
+    scores.columns = ['n_CV'] + scores.columns[1:].tolist()
+
+    scores['n_CV'] = scores['n_CV'] + 1
 
     return scores
