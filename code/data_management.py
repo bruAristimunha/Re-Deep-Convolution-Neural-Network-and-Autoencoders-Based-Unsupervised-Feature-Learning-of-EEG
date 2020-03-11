@@ -4,9 +4,12 @@ TODO: Description about the file.
 
 """
 
-from os.path import join
+from os import listdir
+from os.path import join, isfile
 from pathlib import Path
 from zipfile import ZipFile
+from re import findall
+
 
 from bs4 import BeautifulSoup
 from numpy import (
@@ -17,6 +20,7 @@ from numpy import (
     reshape, 
     isin,
 )
+
 from pandas import DataFrame
 from pandas import read_csv
 from sklearn.model_selection import train_test_split
@@ -211,8 +215,16 @@ def download_chbmit(url_base, path_save):
         for item, name in zip(patient_url, patient_item):
             download_chbmit(item, name)
     else:
-        print("Folder already exists\n Use load_dataset_chbmit")
+        print("Folder already exists\nUse load_dataset_chbmit")
 
+        onlyfolder = [folder 
+                      for folder in listdir(path_save) 
+                      if not(isfile(join(url_base, folder)))]
+
+        patient_item = [folder 
+                   for folder in onlyfolder 
+                   if findall("chb([0-9])*", folder) != []]
+        
     return patient_item
 
 
