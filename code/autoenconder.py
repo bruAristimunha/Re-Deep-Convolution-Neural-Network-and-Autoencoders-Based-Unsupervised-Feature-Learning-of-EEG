@@ -3,6 +3,7 @@ Description
 """
 
 from sklearn.base import BaseEstimator
+from tensorflow.keras import backend as K
 from tensorflow.keras import losses
 from tensorflow.keras.layers import (
     Input,
@@ -13,16 +14,13 @@ from tensorflow.keras.layers import (
     Reshape,
     UpSampling1D,
 )
-from tensorflow.keras.models import Model
 
-# Custom Loss Function
-from tensorflow.keras import backend as K
 from tensorflow.python.ops import math_ops
-from tensorflow.python.framework import ops
 
 
 def mean_absolute_average_error(y_true, y_pred):
     """ Reproduction of equation 11 presented in the original article.
+
     Paper Url: https://ieeeXplore.ieee.org/document/8355473#deqn11
 
     Although the teXt suggests that the second loss function
@@ -62,6 +60,7 @@ def mean_absolute_average_error(y_true, y_pred):
 
 class AutoEnconder(BaseEstimator):
     """ AutoEnconder Class.
+
     Reproduction of the AutoEncoder architecture reported
     in the article by T. Wen and Z. Zhang (2018).
 
@@ -105,6 +104,7 @@ class AutoEnconder(BaseEstimator):
         Function for transforming the vector with original dimensions
         to latent dimensions.
     """
+
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-many-arguments
     # pylint: disable=no-member
@@ -196,61 +196,38 @@ class AutoEnconder(BaseEstimator):
 
         original_signal = Input(shape=(4096, 1))
 
-        enconded = Conv1D(kernel_size=3, filters=16,
-                          padding="same", activation="relu")(original_signal)
+        x = Conv1D(16, kernel_size=3, padding="same", activation="relu")(original_signal)
+        x = MaxPooling1D(pool_size=2)(x)
+        x = Conv1D(32, kernel_size=3, padding="same", activation="relu")(x)
+        x = MaxPooling1D(pool_size=2)(x)
+        x = Conv1D(64, kernel_size=3, padding="same", activation="relu")(x)
+        x = MaxPooling1D(pool_size=2)(x)
+        x = Flatten()(x)
+        enconded = Dense(self.value_encoding_dim, activation="relu")(x)
 
-        enconded = MaxPooling1D(pool_size=2)(enconded)
+        x = Dense(512 * 64, activation="relu", use_bias=False)(enconded)
+        x = Reshape((512, 64))(x)
+        x = Conv1D(64, kernel_size=3, padding="same", activation="relu")(x)
+        x = UpSampling1D()(x)
+        x = Conv1D(32, kernel_size=3, padding="same", activation="relu")(x)
+        x = UpSampling1D()(x)
+        x = Conv1D(16, kernel_size=3, padding="same", activation="relu")(x)
+        x = UpSampling1D()(x)
+        decoded = Conv1D(1, kernel_size=3, padding="same", activation="sigmoid")(x)
 
-        enconded = Conv1D(kernel_size=3, filters=32,
-                          padding="same", activation="relu")(enconded)
+        self.method_enconder = Model(original_signal, enconded, name="encoder")
 
-        enconded = MaxPooling1D(pool_size=2)(enconded)
+        self.method_autoenconder = Model(original_signal, decoded,
+                                         name="autoenconder_m_{}_loss_{}".format(
+                                             self.value_encoding_dim,
+                                             self.type_loss))
 
-        enconded = Conv1D(kernel_size=3, filters=64,
-                          padding="same", activation="relu")(enconded)
-
-        enconded = MaxPooling1D(pool_size=2)(enconded)
-
-        enconded = Flatten()(enconded)
-
-        enconded = Dense(self.value_encoding_dim, activation="relu")(enconded)
-
-        decoded = Dense(512 * 64, activation="relu", use_bias=False)(enconded)
-
-        decoded = Reshape((512, 64))(decoded)
-
-        decoded = Conv1D(kernel_size=3, filters=64,
-                         padding="same", activation="relu")(decoded)
-        decoded = UpSampling1D()(decoded)
-
-        decoded = Conv1D(kernel_size=3, filters=32,
-                         padding="same", activation="relu")(decoded)
-
-        decoded = UpSampling1D()(decoded)
-
-        decoded = Conv1D(kernel_size=3, filters=16,
-                         padding="same", activation="relu")(decoded)
-        decoded = UpSampling1D()(decoded)
-
-        decoded = Conv1D(kernel_size=3, filters=1,
-                         padding="same", activation="sigmoid")(decoded)
-
-        encoder = Model(original_signal, enconded, name="encoder")
-
-        autoencoder = Model(original_signal, decoded,
-                            name="autoenconder_m_{}_loss_{}".format(
-                                self.value_encoding_dim,
-                                self.type_loss))
-
-        autoencoder.compile(optimizer="adam", loss=fun_loss,
-                            metrics=["accuracy"])
-
-        self.method_autoenconder = autoencoder
-        self.method_enconder = encoder
+        self.method_autoenconder.compile(optimizer="adam",
+                                         loss=fun_loss,
+                                         metrics=["accuracy"])
 
     def fit(self, X_train, X_validation):
-        """
-        Fit the model to learn how to represent a latent
+        """ Fit the model to learn how to represent a latent
         space by encoding and decoding the original signal.
 
         Parameters
@@ -279,7 +256,7 @@ class AutoEnconder(BaseEstimator):
         return self
 
     def transform(self, X):
-        """
+        """ 
         Function for transforming the vector with original dimensions
         to latent dimensions.
 
