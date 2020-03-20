@@ -21,15 +21,6 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.framework import ops
 
 
-# Pq vc esta usando essa funcao de loss? Pq vc define como l2?
-# Resposta: Eu estava definindo como segunda perda, relacionada no teXto.
-# Entendo que não é regularização, vou trocar o nome para evitar confusão.
-# Estou inseguro se essa é a mesma perda, se é a reportada foi essa mesmo.
-# tudo me leva a crer que ele usou `mean_absolute_error` (MAE) como primeira perda
-# e a segunda perda do artigo foi a `mean_absolute_percentage_error` (MAPE). Mas
-# gostaria de uma validação. Se for esse cenário, então essa função vai sumir.
-
-
 def mean_absolute_average_error(y_true, y_pred):
     """ Reproduction of equation 11 presented in the original article.
     Paper Url: https://ieeeXplore.ieee.org/document/8355473#deqn11
@@ -64,7 +55,8 @@ def mean_absolute_average_error(y_true, y_pred):
 
     y_pred = ops.convert_to_tensor(y_pred)
     y_true = math_ops.cast(y_true, y_pred.dtype)
-    diff = math_ops.abs((y_true - y_pred) / K.maximum(K.mean(y_true), K.epsilon()))
+    diff = math_ops.abs((y_true - y_pred) / K.maximum(K.mean(y_true),
+                                                      K.epsilon()))
     return 100. * K.mean(diff, axis=-1)
 
 
@@ -115,6 +107,8 @@ class AutoEnconder(BaseEstimator):
     """
     # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-many-arguments
+    # pylint: disable=no-member
+
     def __init__(self,
                  epochs=10,
                  batch_size=32,
@@ -200,8 +194,6 @@ class AutoEnconder(BaseEstimator):
             else:
                 raise ValueError("Loss function not yet implemented.")
 
-
-
         original_signal = Input(shape=(4096, 1))
 
         enconded = Conv1D(kernel_size=3, filters=16,
@@ -245,7 +237,6 @@ class AutoEnconder(BaseEstimator):
 
         encoder = Model(original_signal, enconded, name="encoder")
 
-
         autoencoder = Model(original_signal, decoded,
                             name="autoenconder_m_{}_loss_{}".format(
                                 self.value_encoding_dim,
@@ -277,7 +268,8 @@ class AutoEnconder(BaseEstimator):
 
         self.build_auto_enconder()
         # Training auto-enconder
-        self.learn_history = self.method_autoenconder.fit(X_train, X_train,
+        self.learn_history = self.method_autoenconder.fit(X_train,
+                                                          X_train,
                                                           epochs=self.epochs,
                                                           batch_size=self.batch_size,
                                                           shuffle=True,
