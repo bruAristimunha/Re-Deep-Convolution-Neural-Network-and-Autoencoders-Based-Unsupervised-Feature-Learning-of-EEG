@@ -25,6 +25,8 @@ from numpy import (
     array,
     reshape,
     isin,
+    array_split, 
+    vstack,
 )
 
 from pandas import DataFrame
@@ -32,8 +34,12 @@ from pandas import read_csv
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from wget import download
-
 from autoenconder import AutoEnconder
+from sys import path
+
+path.append("../../chb-mit/")
+
+from patient import Patient
 
 
 def zip_with_unique(base, list_suffix):
@@ -122,7 +128,7 @@ def download_bonn(path_data="data/boon/") -> [str]:
     return path_child_fold
 
 
-def download_item(url_base, name_base, page=True):
+def download_item(url_base, name_base, page=True, range_ = (30, 50)):
     """
     Function to download the files in an isolated way.
     Used when the file listing is different from a folder.
@@ -136,7 +142,7 @@ def download_item(url_base, name_base, page=True):
         Pathname to indicate where to download the dataset.
 
     page : bool
-        Parameter to be used to download the page's html.
+        Parameter to be used to download the page"s html.
 
     Returns
     -------
@@ -148,16 +154,16 @@ def download_item(url_base, name_base, page=True):
     if page:
         base = open(name_base, "r").read()
         soup = BeautifulSoup(base, "html.parser")
-        return filter_list([link.get("href") for link in soup.find_all("a")])
+        return filter_list([link.get("href") for link in soup.find_all("a")], range_ = range_)
 
     return None
 
 
-def filter_list(folders_description):
+def filter_list(folders_description, range_ = (11, 25)):
     """
         TODO: Description
     """
-    listchb = ["chb" + str(i) + "/" for i in range(11, 25)]
+    listchb = ["chb" + str(i) + "/" for i in range(range_[0], range_[1])]
     listchb.append("../")
 
     return [item for item in folders_description if ~isin(item, listchb)]
@@ -183,7 +189,7 @@ def download_chbmit(url_base, path_save):
     This function also creates the folder, and if already exists the folder,
     returns the list of files.
 
-    Analog to the function 'download_bonn', with a URL parameter of difference.
+    Analog to the function "download_bonn", with a URL parameter of difference.
 
     Parameters
     ----------
@@ -509,7 +515,7 @@ def parallel_variance(count_a, avg_a, var_a, count_b, avg_b, var_b):
 
 
 
-def get_variance(path_dataset):
+def get_variance_accumulated(path_dataset, range_ = (1,11)):
     """
     Calculation of accumulated variance in channels and files. 
     Parameter receives the path where the folder with files is located.
@@ -519,13 +525,20 @@ def get_variance(path_dataset):
     through all the files and accumulating the variance.
     We filter warnings.
     """
-    filterwarnings('ignore')
+    filterwarnings("ignore")
     
     accumulate_count = 0
     accumulate_avg = 0
     accumulate_var = 0
-
-    for id_patient in tqdm_notebook(range(1, 11), desc="Patient"):
+    
+    selected_channels = ["time", "FP1-F7", "F7-T7", "T7-P7", 
+                         "P7-O1", "FP1-F3", "F3-C3", "C3-P3", 
+                         "P3-O1", "FP2-F4", "F4-C4", "C4-P4", 
+                         "P4-O2", "FP2-F8", "F8-T8", "T8-P8-0", 
+                         "P8-O2", "FZ-CZ", "CZ-PZ", "P7-T7", 
+                         "T7-FT9", "FT9-FT10", "FT10-T8", "T8-P8-1"]
+    
+    for id_patient in tqdm_notebook(range(range_[0], range_[1]), desc="Patient"):
         
         path_files = join(path_dataset, "chb{0:0=2d}/*.edf".format(id_patient))
 
@@ -535,16 +548,13 @@ def get_variance(path_dataset):
                                         leave=False)):
             
             variance_file = read_raw_edf(
-                input_fname=file, verbose=0).to_data_frame(picks=['eeg'],
-                                                          time_format='ms')
-
-            # Removal of channels related to Electrocardiogram - ECG
-            # and Vagal Nerve Stimulation - VNS
-            if "ECG" in variance_file.columns:
-                variance_file = variance_file.drop("ECG", 1)
-
-            if "VNS" in variance_file.columns:
-                variance_file = variance_file.drop("VNS", 1)
+                input_fname=file, verbose=0).to_data_frame(picks=["eeg"],
+                                                          time_format="ms")
+            
+            # Removing channels that are not present in all files.
+            variance_file = variance_file[variance_file.columns.intersection(selected_channels)]
+            # Sorting the channels
+            variance_file.sort_index(axis=1, inplace=True)
 
             if ((enum == 0) & (id_patient == 0)):
                 accumulate_count = len(variance_file)
@@ -557,3 +567,164 @@ def get_variance(path_dataset):
                     len(variance_file), variance_file.mean(), variance_file.var())
 
     return accumulate_count, accumulate_avg, accumulate_var
+
+
+def get_variance_by_file(path_dataset, range_ = (1,11)):
+    """
+    TO-DO
+    """
+    
+    filterwarnings("ignore")
+    
+    rank_variance = []
+
+    
+    selected_channels = ["time", "FP1-F7", "F7-T7", "T7-P7", 
+                         "P7-O1", "FP1-F3", "F3-C3", "C3-P3", 
+                         "P3-O1", "FP2-F4", "F4-C4", "C4-P4", 
+                         "P4-O2", "FP2-F8", "F8-T8", "T8-P8-0", 
+                         "P8-O2", "FZ-CZ", "CZ-PZ", "P7-T7", 
+                         "T7-FT9", "FT9-FT10", "FT10-T8", "T8-P8-1"]
+    
+    for id_patient in tqdm_notebook(range(range_[0], range_[1]), desc="Patient"):
+        
+        path_files = join(path_dataset, "chb{0:0=2d}/*.edf".format(id_patient))
+
+        files_in_folder = glob(path_files)
+        for enum, file in enumerate(tqdm_notebook(files_in_folder, 
+                                        desc="Files",
+                                        leave=False)):
+            
+            variance_file = read_raw_edf(
+                input_fname=file, verbose=0).to_data_frame(picks=["eeg"],
+                                                          time_format="ms")
+            
+            # Removing channels that are not present in all files.
+            variance_file = variance_file[variance_file.columns.intersection(selected_channels)]
+            # Sorting the channels
+            variance_file.sort_index(axis=1, inplace=True)
+            
+            variance_by_file = variance_file.var()
+
+            rank_by_file = variance_by_file.sort_values()
+            
+            rank_variance.append(rank_by_file)
+            
+    return rank_variance
+
+def get_variance_by_pearson(path_dataset, range_ = (1,11)):
+    """
+    TO-DO:
+    """
+
+    filterwarnings("ignore")
+
+    var_pearson = []
+
+
+    selected_channels = ["time", "FP1-F7", "F7-T7", "T7-P7", 
+                         "P7-O1", "FP1-F3", "F3-C3", "C3-P3", 
+                         "P3-O1", "FP2-F4", "F4-C4", "C4-P4", 
+                         "P4-O2", "FP2-F8", "F8-T8", "T8-P8-0", 
+                         "P8-O2", "FZ-CZ", "CZ-PZ", "P7-T7", 
+                         "T7-FT9", "FT9-FT10", "FT10-T8", "T8-P8-1"]
+
+    for id_patient in tqdm_notebook(range(range_[0], range_[1]), desc="Patient"):
+
+        accumulate_count = 0
+        accumulate_avg = 0
+        accumulate_var = 0
+
+        path_files = join(path_dataset, "chb{0:0=2d}/*.edf".format(id_patient))
+
+        files_in_folder = glob(path_files)
+        for enum, file in enumerate(tqdm_notebook(files_in_folder, 
+                                        desc="Files",
+                                        leave=False)):
+
+            variance_file = read_raw_edf(
+                input_fname=file, verbose=0).to_data_frame(picks=["eeg"],
+                                                          time_format="ms")
+
+            # Removing channels that are not present in all files.
+            variance_file = variance_file[variance_file.columns.intersection(selected_channels)]
+            # Sorting the channels
+            variance_file.sort_index(axis=1, inplace=True)
+
+            if enum == 0:
+                accumulate_count = len(variance_file)
+                accumulate_avg = variance_file.mean()
+                accumulate_var = variance_file.var()
+
+            else:
+                accumulate_count, accumulate_avg, accumulate_var = parallel_variance(
+                    accumulate_count, accumulate_avg, accumulate_var,
+                    len(variance_file), variance_file.mean(), variance_file.var())
+
+        var_pearson.append(accumulate_var)
+
+    return var_pearson
+
+def filter_(n_array): 
+    return filter(lambda x: x != [], n_array)
+
+def split_4096(array):
+    if len(array) >= 4096 and array != []:
+        if len(array) % 4096 != 0:
+
+            max_length = int((len(array)//4096)*4096)
+            fix_size = array[:max_length]
+
+        else:
+
+            fix_size = array
+
+        return vstack(array_split(fix_size, len(array)//4096))
+    return []
+
+
+def load_dataset_chbmit(path_save) -> [array]:
+    """
+    ----------
+
+    path_child_fold : [str]
+        List of strings with path to the dataset.
+
+    Returns
+    -------
+    X : array-like, shape (n_samples, n_features)
+        Data vectors, where n_samples is the number of samples
+        and n_features is the number of features.
+    y : array-like, shape (n_samples,)
+        Target values.
+
+    """
+
+    X_non = []
+    X_seiz = []
+    X = DataFrame()    
+    
+    for id_ in range(1, 11):
+        print("Loading Patients nº {}".format(id_))
+        pat = Patient(id_, path_save)
+
+        non_epoch_array = list(map(split_4096, pat.get_non_seizures()))
+
+        X_non.append(concatenate(non_epoch_array))
+
+        s_clips = pat.get_seizure_clips()
+        if s_clips != []:
+
+            seiz_epoch = list(filter_(list(map(split_4096, s_clips))))
+
+            X_seiz.append(concatenate(seiz_epoch))
+
+    X_non = DataFrame(concatenate(X_non)).sample(n=200, random_state=42)
+
+    X_seiz = DataFrame(concatenate(X_seiz)).sample(n=200, random_state=42)
+
+    X = X_non.append(X_seiz)
+
+    y = [0]*200+[1]*200
+    
+    return X.to_numpy(), y 
