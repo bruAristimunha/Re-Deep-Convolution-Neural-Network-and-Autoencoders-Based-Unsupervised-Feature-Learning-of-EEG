@@ -147,8 +147,8 @@ def run_classification(base_fold,
     
     
     classifiers = methods_classification(n_neighbors=3, 
-                                     kernel_a='linear', 
-                                     kernel_b='rbf', 
+                                     kernel_a="linear", 
+                                     kernel_b="rbf", 
                                      max_depth=5,
                                      n_estimators=10, 
                                      random_state=42, 
@@ -159,21 +159,21 @@ def run_classification(base_fold,
 
             X, y = read_feature_data(path_read, dim, type_loss)
 
-            scoring = ['accuracy']  # , 'precision', 'recall','f1', 'roc_auc']
+            scoring = ["accuracy"]  # , "precision", "recall","f1", "roc_auc"]
 
             score = cross_validate(classifier, X, y, cv=5, scoring=scoring)
             # Aggregate name in cross_validate
             #import pdb; pdb.set_trace()
-            score.update({'name_classifier': type(classifier).__name__,
-                          'n_dimensions': dim,
-                          'type_loss': type_loss})
+            score.update({"name_classifier": type(classifier).__name__,
+                          "n_dimensions": dim,
+                          "type_loss": type_loss})
 
             scores.append(DataFrame(score))
 
     scores = concat(scores).reset_index()
 
-    scores.columns = ['n_CV'] + scores.columns[1:].tolist()
+    scores.columns = ["n_CV"] + scores.columns[1:].tolist()
 
-    scores['n_CV'] = scores['n_CV'] + 1
+    scores["n_CV"] = scores["n_CV"] + 1
 
     return scores
