@@ -34,7 +34,7 @@ from pandas import read_csv
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from wget import download
-from autoenconder import AutoEnconder
+from auto_enconder import AutoEnconder
 from sys import path
 
 path.append("../../chb-mit/")
@@ -447,7 +447,6 @@ def build_feature(X_train,
     """
     Control function to use the AutoEnconder
     class as a dimension reducer.
-.save('path_to_my_model.h5')
 
     This function also saves the values obtained
     after the dimension reduction process. By performing a process

@@ -1,7 +1,7 @@
 
 from pandas import Series
 from pandas import DataFrame
-from matplotlib.pylab import subplots
+from matplotlib.pylab import subplots, ylabel, xlabel
 from classification import read_feature_data
 from os.path import join
 
@@ -12,22 +12,22 @@ def plot_variance_accumulate(var):
 
     ax = var.sort_values().drop('time').plot.bar(ax=ax)
 
-    plt.ylabel("Accumulated variance per channel")
-    plt.xlabel("EEG Channel")
+    ylabel("Accumulated variance per channel")
+    xlabel("EEG Channel")
     
     return fig
 
 
 def plot_variance_by_file(variance_by_file):
 
-    fig, ax = subplots(figsize=(1yellow2, 5))
+    fig, ax = subplots(figsize=(12, 5))
     
     var = [file.drop('time').sort_values().index[-1] for file in variance_by_file]
     
     ax = Series(var).value_counts().sort_values().plot.bar(ax=ax)
 
-    plt.ylabel("Accumulated rank per channel per file")
-    plt.xlabel("EEG Channel")
+    ylabel("Accumulated rank per channel per file")
+    xlabel("EEG Channel")
     
     return fig
 
@@ -39,8 +39,8 @@ def plot_variance_by_pearson(variance_per_person):
     
     ax = Series(var).value_counts().sort_values().plot.bar(ax=ax)
 
-    plt.ylabel("Accumulated rank per channel per pearson")
-    plt.xlabel("EEG Channel")
+    ylabel("Accumulated rank per channel per pearson")
+    xlabel("EEG Channel")
     
     return fig
 

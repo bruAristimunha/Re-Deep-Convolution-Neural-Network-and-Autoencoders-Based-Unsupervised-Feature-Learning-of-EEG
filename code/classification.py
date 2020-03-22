@@ -6,7 +6,6 @@ from pathlib import Path
 from os.path import join
 
 from pandas import read_parquet, DataFrame, concat
-from imblearn.metrics import specificity_score
 
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import make_scorer
