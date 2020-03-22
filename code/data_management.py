@@ -327,6 +327,7 @@ def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
     X_test = min_max.transform(X_test)
 
     # Removal of the last point present in the vector
+    # Or doing nothing :)
     X_train = X_train[:, :4096]
     X_test = X_test[:, :4096]
 
@@ -401,7 +402,39 @@ def save_feature(df_train,
 
     return save_train_name, save_test_name
 
+def save_feature_model(auto_encoder, 
+                       path_dataset,
+                       type_loss,
+                       value_encoding_dim):
+    
+    # Join pathname between a string that contains the base
+    # pathname dataset and a folder called save_model,
+    # which will be created to save the whole-model
+    # Enconder and AutoEnconder.
+    path_save = join(path_dataset, "save_model")
 
+    # Conversion of the pathname string to the class PurePath,
+    # To use the class to create a folder on the system if it
+    # doesn"t exist.
+    fold_save = Path(path_save)
+
+    # If the folder does not exist, then create
+    if not fold_save.exists():
+        fold_save.mkdir(parents=True, exist_ok=True)
+        
+    # Saving the enconder model        
+    enconder_name = "enconder_{}_{}.h5".format(type_loss, value_encoding_dim)
+    enconder_name = join(path_save, enconder_name)
+
+    auto_encoder.method_enconder.save(enconder_name)
+    
+    # Saving the auto enconder model        
+    auto_enconder_name = "auto_enconder_{}_{}.h5".format(type_loss, value_encoding_dim)
+    auto_enconder_name = join(path_save, auto_enconder_name)
+
+    auto_encoder.method_enconder.save(auto_enconder_name)
+    
+        
 def build_feature(X_train,
                   X_test,
                   y_train,
@@ -414,6 +447,7 @@ def build_feature(X_train,
     """
     Control function to use the AutoEnconder
     class as a dimension reducer.
+.save('path_to_my_model.h5')
 
     This function also saves the values obtained
     after the dimension reduction process. By performing a process
@@ -486,7 +520,9 @@ def build_feature(X_train,
                                          value_encoding_dim=value_encoding_dim,
                                          path_dataset=path_dataset,
                                          type_loss=type_loss)
-
+    
+    save_feature_model(auto_encoder, path_dataset, type_loss, value_encoding_dim)
+    
     return auto_encoder, path_train, path_test
 
 def parallel_variance(count_a, avg_a, var_a, count_b, avg_b, var_b):
