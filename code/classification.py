@@ -10,6 +10,7 @@ from imblearn.metrics import specificity_score
 
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import make_scorer
+
 # Classification methods
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
@@ -153,7 +154,7 @@ def run_classification(base_fold,
                                      n_estimators=10, 
                                      random_state=42, 
                                      max_features=1)
-    for _, classifier in classifiers:
+    for name_classifier, classifier in classifiers:
 
         for dim in range_values:
 
@@ -163,17 +164,17 @@ def run_classification(base_fold,
 
             score = cross_validate(classifier, X, y, cv=5, scoring=scoring)
             # Aggregate name in cross_validate
-            #import pdb; pdb.set_trace()
-            score.update({"name_classifier": type(classifier).__name__,
-                          "n_dimensions": dim,
+
+            score.update({"name_classifier": name_classifier,
+                          "Dimension": dim,
                           "type_loss": type_loss})
 
             scores.append(DataFrame(score))
 
     scores = concat(scores).reset_index()
 
-    scores.columns = ["n_CV"] + scores.columns[1:].tolist()
+    scores.columns = ["5-fold"] + scores.columns[1:].tolist()
 
-    scores["n_CV"] = scores["n_CV"] + 1
+    scores["5-fold"] = scores["5-fold"] + 1
 
     return scores
