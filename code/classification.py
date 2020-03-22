@@ -1,187 +1,179 @@
-import pandas as pd
-import numpy as np
+"""
+  TO-DO:  Description
+"""
+
+from pathlib import Path
+from os.path import join
+
+from pandas import read_parquet, DataFrame, concat
 
 from sklearn.model_selection import cross_validate
-from sklearn.metrics import accuracy_score, precision_score, f1_score, roc_auc_score, make_scorer
-from imblearn.metrics import specificity_score, sensitivity_score
-from pathlib import Path
+from sklearn.metrics import make_scorer
 
+# Classification methods
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn import svm
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    VotingClassifier,
+)
 
 
 def methods_classification(n_neighbors=3,
-                           kernel_a='linear', kernel_b='rbf', gamma='auto',
-                           max_depth=5,
+                           kernel_a="linear", kernel_b="rbf", max_depth=5,
                            n_estimators=10, random_state=42, max_features=1):
     """
-
     Parameters
     ----------
-    n_neighbors
-    kernel_a
-    kernel_b
-    gamma
-    max_depth
-    n_estimators
-    random_state
-    max_features
-    max_iter
+    n_neighbors : int
+
+    kernel_a : str
+
+    kernel_b : str
+
+    max_depth : int
+
+    n_estimators : int
+
+    random_state : int
+
+    max_features : int
+
+    Returns
+    -------
+    classifiers : list
     """
-    # K-NN
-    from sklearn.neighbors import KNeighborsClassifier
-    # SVM (linear and radial)
-    from sklearn import svm
-    # Decision tree
-    from sklearn.tree import DecisionTreeClassifier
-    # random forests
-    from sklearn.ensemble import RandomForestClassifier, VotingClassifier
-    # MLPClassifier
-    from sklearn.neural_network import MLPClassifier
-    # AdaBoostClassifier
-    from sklearn.ensemble import AdaBoostClassifier
-    # GaussianNB
-    from sklearn.naive_bayes import GaussianNB
 
-    knn = KNeighborsClassifier(n_neighbors=n_neighbors)  # 1
-    SVM1 = svm.SVC(kernel=kernel_a)  # 2
-    SVM2 = svm.SVC(kernel=kernel_b, gamma=gamma)  # 3
-    DT = DecisionTreeClassifier(max_depth=max_depth)  # 4
-    RF = RandomForestClassifier(
-        n_estimators=n_estimators, random_state=random_state, max_features=max_features)  # 5
-    MLP = MLPClassifier()  # 6
-    ADB = AdaBoostClassifier(random_state=random_state)  # 7
-    from sklearn.naive_bayes import GaussianNB
-    GaussianNB = GaussianNB()  # 8
+    k_neighbors = KNeighborsClassifier(n_neighbors=n_neighbors)  # 1
+    svm_linear = svm.SVC(kernel=kernel_a)  # 2
+    svm_radial = svm.SVC(kernel=kernel_b)  # 3
+    decision_tree = DecisionTreeClassifier(max_depth=max_depth)  # 4
+    random_forest = RandomForestClassifier(n_estimators=n_estimators,
+                                           random_state=random_state,
+                                           max_features=max_features)  # 5
+    multi_layer = MLPClassifier()  # 6
+    ada_boost = AdaBoostClassifier(random_state=random_state)  # 7
+    gaussian_nb = GaussianNB()
 
-    ensemble = VotingClassifier(estimators=[('k-NN', knn), ('SVM1', SVM1), ('SVM2', SVM2),
-                                            ('DT', DT), ('RF', RF), ('MLP', MLP), 
-                                            ('ADB', ADB),
-                                            ('GNB', GaussianNB)], voting='hard')
+    ensemble = VotingClassifier(estimators=[("k-NN", k_neighbors),
+                                            ("SVM1", svm_linear),
+                                            ("SVM2", svm_radial),
+                                            ("DT", decision_tree),
+                                            ("RF", random_forest),
+                                            ("MLP", multi_layer),
+                                            ("ADB", ada_boost),
+                                            ("GNB", gaussian_nb)], voting="hard")
 
-    classifiers = [('k-NN', knn), ('SVM1', SVM1), ('SVM2', SVM2), ('DT', DT), ('RF', RF),
-                   ('MLP', MLP), ('ADB', ADB), ('GNB', GaussianNB),
-                   ("Ensemble", ensemble)]
+    classifiers = [("k_neighbors", k_neighbors),
+                   ("svm_linear", svm_linear),
+                   ("svm_radial", svm_radial),
+                   ("decision_tree", decision_tree),
+                   ("random_forest", random_forest),
+                   ("multi_layer", multi_layer),
+                   ("ada_boost", ada_boost),
+                   ("gaussian_nb", gaussian_nb),
+                   ("ensemble", ensemble)]
 
     return classifiers
 
 
-def makeBF(merge):
-    '''
-    Function to mark in the latex which were the best results per line.
-     After execution it is still necessary to replace "\ t" with "\ t", without regular expression
-     "\ n" by "\\\\ \ n" with regular expression. Replace in all files.
-    '''
-    merge_1 = merge.reset_index()
-    merge_1['AVG'] = np.average(merge_1.drop(["m", "Ensemble"], 1), axis=1)
-    merge_1 = merge_1.round(3)
-    accumulator = pd.DataFrame()
-    for m in merge_1['m']:
-        tmp_row = merge_1[merge_1['m'] == m]
-        tmp_row = tmp_row.drop("m", 1)
-        idx_max = tmp_row.values.argmax()
-
-        tmp_row = tmp_row.astype(str)
-        tmp_row.iloc[0][idx_max] = "\ textbf{" + tmp_row.iloc[0][idx_max] + "}"
-        accumulator = accumulator.append(tmp_row)
-
-    csv = (pd.concat([merge_1['m'], accumulator], axis=1))
-    csv = csv[['m', 'k-NN','SVM1', 'SVM2', 'DT','RF',
-               'MLP', 'ADB','GNB','Ensemble']]
-    return csv
-
-
-
-
-def save_metrics(classifiers, base_fold='../data/boon/featureDataSet',
-                 type_loss='l1', base_save='../data/boon/save/'):
+def read_feature_data(base_fold, dim, type_loss):
     """
-    REALLY unoptimized function to save the metrics.
+
+
+
+    Parameters
+    ----------
+    base_fold : str
+        Pathname to indicate where to download the dataset.  
+
+    dim : int
+        Size of the latent space that architecture will
+        learn in the process of decoding and encoding.
+
+    type_loss : str
+        Which loss function will be minimized in the learning proces,
+        with the options: "mae" or "maae"
+
+    Returns
+    -------
+    X : array
+
+    y : array
 
     """
-    fold = Path(base_save)
+    name_train = join(base_fold, "train_{}_{}.parquet".format(dim, type_loss))
+    X_train = read_parquet(name_train, engine="pyarrow").drop(["class"], 1)
+    y_train = read_parquet(name_train, engine="pyarrow")["class"]
 
-    range_values = [2, 4, 8, 16, 32, 64, 128, 256]
-    index = pd.DataFrame(range_values, columns=["m"])
-    index.index = index['m']
-    merge_acc = pd.DataFrame(index.drop("m", 1))
-    merge_pre = pd.DataFrame(index.drop("m", 1))
-    merge_spe = pd.DataFrame(index.drop("m", 1))
-    merge_sen = pd.DataFrame(index.drop("m", 1))
-    merge_f1 = pd.DataFrame(index.drop("m", 1))
-    merge_auc = pd.DataFrame(index.drop("m", 1))
+    name_test = join(base_fold, "test_{}_{}.parquet".format(dim, type_loss))
 
-    for classifier_name, classifier in classifiers:
-        base_acc = pd.DataFrame([], columns=[classifier_name])
-        base_pre = pd.DataFrame([], columns=[classifier_name])
-        base_spe = pd.DataFrame([], columns=[classifier_name])
-        base_sen = pd.DataFrame([], columns=[classifier_name])
-        base_f1 = pd.DataFrame([], columns=[classifier_name])
-        base_auc = pd.DataFrame([], columns=[classifier_name])
+    X_test = read_parquet(name_test, engine="pyarrow").drop(["class"], 1)
+    y_test = read_parquet(name_test, engine="pyarrow")["class"]
 
-        for m in range_values:
+    X = X_train.append(X_test)
+    y = y_train.append(y_test)
 
-            nameTrain = base_fold+"/train_"+str(m)+"_"+type_loss+".parquet"
-            X_train = pd.read_parquet(
-                nameTrain, engine='pyarrow').drop(["class"], 1)
-            Y_train = pd.read_parquet(nameTrain, engine='pyarrow')['class']
+    return X, y
 
-            nameTest = base_fold+"/test_"+str(m)+"_"+type_loss+".parquet"
-            X_test = pd.read_parquet(
-                nameTest, engine='pyarrow').drop(["class"], 1)
-            Y_test = pd.read_parquet(nameTest, engine='pyarrow')['class']
 
-            X = X_train.append(X_test)
-            Y = Y_train.append(Y_test)
+def save_classification(scores, base_fold):
+    """
 
-            scoring = {'accuracy': make_scorer(accuracy_score),
-                       'precision': make_scorer(precision_score),
-                       'specificity': make_scorer(specificity_score),
-                       'sensibility': make_scorer(sensitivity_score),
-                       'f1_score': make_scorer(f1_score),
-                       'roc_auc_score': make_scorer(roc_auc_score)}
 
-            scores = cross_validate(classifier, X, Y, cv=5, scoring=scoring)
+    """
+    path_save = join(base_fold, "save")
 
-            base_acc = base_acc.append(pd.DataFrame(
-                [np.average(scores['test_accuracy'])], columns=[classifier_name]))
-            base_pre = base_pre.append(pd.DataFrame(
-                [np.average(scores['test_precision'])], columns=[classifier_name]))
-            base_spe = base_spe.append(pd.DataFrame(
-                [np.average(scores['test_specificity'])], columns=[classifier_name]))
-            base_sen = base_sen.append(pd.DataFrame(
-                [np.average(scores['test_sensibility'])], columns=[classifier_name]))
-            base_f1 = base_f1.append(pd.DataFrame(
-                [np.average(scores['test_f1_score'])], columns=[classifier_name]))
-            base_auc = base_auc.append(pd.DataFrame(
-                [np.average(scores['test_roc_auc_score'])], columns=[classifier_name]))
-
-        base_acc.index = index['m']
-        base_pre.index = index['m']
-        base_spe.index = index['m']
-        base_sen.index = index['m']
-        base_f1.index = index['m']
-        base_auc.index = index['m']
-
-        merge_acc = pd.concat([merge_acc, base_acc], axis=1)
-        merge_pre = pd.concat([merge_pre, base_pre], axis=1)
-        merge_spe = pd.concat([merge_spe, base_spe], axis=1)
-        merge_sen = pd.concat([merge_sen, base_sen], axis=1)
-        merge_f1 = pd.concat([merge_f1, base_f1], axis=1)
-        merge_auc = pd.concat([merge_auc, base_auc], axis=1)
-
-    if (~fold.exists()):
+    if not fold.exists():
         fold.mkdir(parents=True, exist_ok=True)
 
-    makeBF(merge_acc).to_csv(path_or_buf=base_save+"accuracy.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_pre).to_csv(path_or_buf=base_save+"precision.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_spe).to_csv(path_or_buf=base_save+"specificity.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_sen).to_csv(path_or_buf=base_save+"sensibility.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_f1).to_csv(path_or_buf=base_save+"f1_score.csv",
-                            sep='&', encoding='utf-8', index=False, header=False)
-    makeBF(merge_auc).to_csv(path_or_buf=base_save+"roc_auc_score.csv",
-                             sep='&', encoding='utf-8', index=False, header=False)
 
-    return merge_acc, merge_pre, merge_spe, merge_sen, merge_f1, merge_auc
+        
+def run_classification(base_fold,
+                       type_loss,
+                       range_values):
+    """
+
+
+    """
+
+    path_read = join(base_fold, "feature_learning")
+
+    scores = []
+    
+    
+    classifiers = methods_classification(n_neighbors=3, 
+                                     kernel_a="linear", 
+                                     kernel_b="rbf", 
+                                     max_depth=5,
+                                     n_estimators=10, 
+                                     random_state=42, 
+                                     max_features=1)
+    for name_classifier, classifier in classifiers:
+
+        for dim in range_values:
+
+            X, y = read_feature_data(path_read, dim, type_loss)
+
+            scoring = ["accuracy"]  # , "precision", "recall","f1", "roc_auc"]
+
+            score = cross_validate(classifier, X, y, cv=5, scoring=scoring)
+            # Aggregate name in cross_validate
+
+            score.update({"name_classifier": name_classifier,
+                          "Dimension": dim,
+                          "type_loss": type_loss})
+
+            scores.append(DataFrame(score))
+
+    scores = concat(scores).reset_index()
+
+    scores.columns = ["5-fold"] + scores.columns[1:].tolist()
+
+    scores["5-fold"] = scores["5-fold"] + 1
+
+    return scores
