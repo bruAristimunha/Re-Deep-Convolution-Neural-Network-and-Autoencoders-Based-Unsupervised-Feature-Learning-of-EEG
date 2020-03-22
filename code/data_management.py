@@ -231,6 +231,7 @@ def download_chbmit(url_base, path_save):
         for item, name in zip(patient_url, patient_item):
             download_chbmit(item, name)
     else:
+
         print("Folder already exists\nUse load_dataset_chbmit")
 
         onlyfolder = [folder
@@ -244,6 +245,7 @@ def download_chbmit(url_base, path_save):
 
 
 def load_dataset_boon(path_child_fold) -> [array]:
+
     """Function for reading the boon database, and return X and y.
     Also adapted from:
     https://mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
