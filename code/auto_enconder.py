@@ -17,7 +17,7 @@ from tensorflow.keras.layers import (
 )
 
 from tensorflow.python.ops import math_ops
-
+from tensorflow.python.framework import ops
 
 def mean_absolute_average_error(y_true, y_pred):
     """ Reproduction of equation 11 presented in the original article.
