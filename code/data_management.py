@@ -12,7 +12,6 @@ from pathlib import Path
 from zipfile import ZipFile
 from mne.io import read_raw_edf
 from pandas import read_csv
-from sys import path
 
 ## Import used to download the data.
 from wget import download
@@ -20,7 +19,6 @@ from bs4 import BeautifulSoup
 from re import findall
 
 # Import of the class used to read the CHBMIT dataset.
-path.append("../../chb-mit/")
 from patient import Patient
 
 # Import used for array manipulation.
