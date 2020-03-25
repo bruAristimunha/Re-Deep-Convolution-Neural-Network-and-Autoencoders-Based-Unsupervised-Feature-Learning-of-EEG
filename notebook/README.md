@@ -2,11 +2,7 @@
 
 TO-DO:
 
-    * make the baseline;
-    * adaptation : run_classification;
-    * create : reducing dimension;
-    * visualization : convert all to function;
-    * soft eng : best separation;
+    [ ] Visualization : convert all to function;
 
     [ ] Results of 10-fold cross validation based on NN-2;
     
