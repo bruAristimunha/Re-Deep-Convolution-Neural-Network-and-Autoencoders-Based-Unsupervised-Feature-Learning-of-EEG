@@ -21,7 +21,8 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     VotingClassifier,
 )
-
+from sklearn.utils._testing import ignore_warnings
+from sklearn.exceptions import ConvergenceWarning
 
 def methods_classification(n_neighbors=3,
                            kernel_a="linear", kernel_b="rbf", max_depth=5,
@@ -81,7 +82,7 @@ def methods_classification(n_neighbors=3,
     return classifiers
 
 
-def read_feature_data(base_fold, dim, type_loss):
+def read_feature_data(base_fold, dim):
     """
 
 
@@ -106,17 +107,9 @@ def read_feature_data(base_fold, dim, type_loss):
     y : array
 
     """
-    name_train = join(base_fold, "train_{}_{}.parquet".format(dim, type_loss))
-    X_train = read_parquet(name_train, engine="pyarrow").drop(["class"], 1)
-    y_train = read_parquet(name_train, engine="pyarrow")["class"]
-
-    name_test = join(base_fold, "test_{}_{}.parquet".format(dim, type_loss))
-
-    X_test = read_parquet(name_test, engine="pyarrow").drop(["class"], 1)
-    y_test = read_parquet(name_test, engine="pyarrow")["class"]
-
-    X = X_train.append(X_test)
-    y = y_train.append(y_test)
+    name_reduced = join(base_fold, "reduced_dataset_{}.parquet".format(dim))
+    X = read_parquet(name_reduced, engine="pyarrow").drop(["class"], 1)
+    y = read_parquet(name_reduced, engine="pyarrow")["class"]
 
     return X, y
 
@@ -132,32 +125,41 @@ def save_classification(scores, base_fold):
         fold.mkdir(parents=True, exist_ok=True)
 
 
-        
-def run_classification(base_fold,
-                       type_loss,
+#@ignore_warnings(category=ConvergenceWarning)        
+def run_classification(path_dataset,
+                       name_type,
                        range_values):
     """
 
 
     """
+    
+    path_base = join(path_dataset, "reduced")
 
-    path_read = join(base_fold, "feature_learning")
+    if name_type == "mae" or name_type == "maae":
+        path_read = join(path_base, "ae_{}".format(name_type))
+    else:
+        path_read = join(path_base, name_type)
 
     scores = []
     
+    files = [read_feature_data(path_read, dim) for dim in range_values]
     
     classifiers = methods_classification(n_neighbors=3, 
-                                     kernel_a="linear", 
-                                     kernel_b="rbf", 
-                                     max_depth=5,
-                                     n_estimators=10, 
-                                     random_state=42, 
-                                     max_features=1)
+                                         kernel_a="linear", 
+                                         kernel_b="rbf", 
+                                         max_depth=5,
+                                         n_estimators=10, 
+                                         random_state=42, 
+                                         max_features=1)
+    
     for name_classifier, classifier in classifiers:
+        print("Running {}".format(name_classifier))
+        
+        for ind, dim in enumerate(range_values):
 
-        for dim in range_values:
-
-            X, y = read_feature_data(path_read, dim, type_loss)
+            X = files[ind][0]
+            y = files[ind][1]
 
             scoring = ["accuracy"]  # , "precision", "recall","f1", "roc_auc"]
 
@@ -166,7 +168,7 @@ def run_classification(base_fold,
 
             score.update({"name_classifier": name_classifier,
                           "Dimension": dim,
-                          "type_loss": type_loss})
+                          "name_type": name_type})
 
             scores.append(DataFrame(score))
 
