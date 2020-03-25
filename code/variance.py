@@ -5,30 +5,29 @@ TODO: Description about the file.
 """
 
 from warnings import filterwarnings
-from tqdm import tqdm_notebook
 from glob import glob
+from os.path import join
+
+from tqdm import tqdm_notebook
 from mne.io import read_raw_edf
 
-from os.path import join
 
 
 def parallel_variance(count_a, avg_a, var_a, count_b, avg_b, var_b):
     """
-    Function for calculating the variance in a 
+    Function for calculating the variance in a
     distributed way, adapted from:
     https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-    The modifications in the return form, 
+    The modifications in the return form,
     to allow the accumulation in a simpler way.
-
-
     """
     delta = avg_b - avg_a
     m_a = var_a * (count_a - 1)
     m_b = var_b * (count_b - 1)
-    M2 = m_a + m_b + delta ** 2 * count_a * count_b / (count_a + count_b)
+    mean_squared = m_a + m_b + delta ** 2 * count_a * count_b / (count_a + count_b)
 
     # calculate variance
-    var = (M2 / (count_a + count_b - 1))
+    var = (mean_squared / (count_a + count_b - 1))
     # calculate count
     count = count_a + count_b
     # calculate mean
@@ -39,11 +38,11 @@ def parallel_variance(count_a, avg_a, var_a, count_b, avg_b, var_b):
 
 def get_variance_accumulated(path_dataset, range_=(1, 11)):
     """
-    Calculation of accumulated variance in channels and files. 
+    Calculation of accumulated variance in channels and files.
     Parameter receives the path where the folder with files is located.
     Calculates the variance only in the first ten people.
 
-    On the tested computer it took about 10 minutes going 
+    On the tested computer it took about 10 minutes going
     through all the files and accumulating the variance.
     We filter warnings.
     """
@@ -79,7 +78,7 @@ def get_variance_accumulated(path_dataset, range_=(1, 11)):
             # Sorting the channels
             variance_file.sort_index(axis=1, inplace=True)
 
-            if ((enum == 0) & (id_patient == 0)):
+            if (enum == 0) & (id_patient == 0):
                 accumulate_count = len(variance_file)
                 accumulate_avg = variance_file.mean()
                 accumulate_var = variance_file.var()
@@ -113,9 +112,7 @@ def get_variance_by_file(path_dataset, range_=(1, 11)):
         path_files = join(path_dataset, "chb{0:0=2d}/*.edf".format(id_patient))
 
         files_in_folder = glob(path_files)
-        for enum, file in enumerate(tqdm_notebook(files_in_folder,
-                                                  desc="Files",
-                                                  leave=False)):
+        for file in tqdm_notebook(files_in_folder, desc="Files", leave=False):
 
             variance_file = read_raw_edf(
                 input_fname=file, verbose=0).to_data_frame(picks=["eeg"],

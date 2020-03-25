@@ -9,17 +9,13 @@ TODO: Description about the file.
 from os import listdir
 from os.path import join, isfile
 from pathlib import Path
+from re import findall
 from zipfile import ZipFile
-from mne.io import read_raw_edf
-from pandas import read_csv
 
 ## Import used to download the data.
 from wget import download
 from bs4 import BeautifulSoup
-from re import findall
 
-# Import of the class used to read the CHBMIT dataset.
-from patient import Patient
 
 # Import used for array manipulation.
 from numpy import (
@@ -29,18 +25,23 @@ from numpy import (
     array,
     reshape,
     isin,
-    array_split, 
+    array_split,
     vstack,
 )
-from pandas import DataFrame
+from pandas import (
+    DataFrame,
+    read_csv,
+)
 
 # Imports for array manipulation to prepare for dimension reduction.
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
+# Import of the class used to read the CHBMIT dataset.
+from patient import Patient
 
 def zip_with_unique(base, list_suffix):
-    """ 
+    """
     Auxiliary function to generate a paired
     list considering a unique element.
 
@@ -126,7 +127,7 @@ def download_bonn(path_data="data/boon/") -> [str]:
     return path_child_fold
 
 
-def download_item(url_base, name_base, page=True, range_ = (30, 50)):
+def download_item(url_base, name_base, page=True, range_=(30, 50)):
     """
     Function to download the files in an isolated way.
     Used when the file listing is different from a folder.
@@ -152,12 +153,12 @@ def download_item(url_base, name_base, page=True, range_ = (30, 50)):
     if page:
         base = open(name_base, "r").read()
         soup = BeautifulSoup(base, "html.parser")
-        return filter_list([link.get("href") for link in soup.find_all("a")], range_ = range_)
+        return filter_list([link.get("href") for link in soup.find_all("a")], range_=range_)
 
     return None
 
 
-def filter_list(folders_description, range_ = (11, 25)):
+def filter_list(folders_description, range_=(11, 25)):
     """
         TODO: Description
     """
@@ -287,12 +288,15 @@ def load_dataset_boon(path_child_fold) -> [array]:
 
     return X, y
 
-def filter_empty(n_array): 
+def filter_empty(n_array):
+    """
+    TODO: Description.
+    """
     return filter(lambda x: x != [], n_array)
 
 def split_4096(n_array):
     """
-    Function to divide an array into n-arrays 
+    Function to divide an array into n-arrays
     with size 4096 points each.
 
     Parameters
@@ -467,13 +471,13 @@ def save_reduce(data_reduced,
 
     # Inside the folder to store the reduced space,
     # we save if it was a loss or baseline methode
-    if name_type == "mae" or name_type == "maae":
+    if name_type in ("mae", "maae"):
         path_save = join(path_base, "ae_{}".format(name_type))
     else:
         path_save = join(path_base, name_type)
 
     fold_save = Path(path_save)
-    
+
     # If the folder does not exist, then create
     if not fold_save.exists():
         fold_save.mkdir(parents=True, exist_ok=True)
@@ -490,11 +494,13 @@ def save_reduce(data_reduced,
     return save_reduced_name
 
 
-def save_feature_model(auto_encoder, 
+def save_feature_model(auto_encoder,
                        path_dataset,
                        type_loss,
                        value_encoding_dim):
-    
+    """
+        TO-DO: Desc...
+    """
     # Join pathname between a string that contains the base
     # pathname dataset and a folder called save_model,
     # which will be created to save the whole-model
@@ -509,20 +515,16 @@ def save_feature_model(auto_encoder,
     # If the folder does not exist, then create
     if not fold_save.exists():
         fold_save.mkdir(parents=True, exist_ok=True)
-        
-    # Saving the enconder model        
-    enconder_name = "enconder_{}_{}.h5".format(type_loss, 
+
+    # Saving the enconder model
+    enconder_name = "enconder_{}_{}.h5".format(type_loss,
                                                value_encoding_dim)
     enconder_name = join(path_save, enconder_name)
 
     auto_encoder.method_enconder.save(enconder_name)
-    
-    # Saving the auto enconder model        
+
+    # Saving the auto enconder model
     auto_enconder_name = "auto_enconder_{}_{}.h5".format(type_loss, value_encoding_dim)
     auto_enconder_name = join(path_save, auto_enconder_name)
 
     auto_encoder.method_enconder.save(auto_enconder_name)
-    
-        
-
-

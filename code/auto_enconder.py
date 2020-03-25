@@ -22,9 +22,9 @@ from tensorflow.python.framework import ops
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
-config = ConfigProto()
-config.gpu_options.allow_growth = True
-session = InteractiveSession(config=config)
+CONFIG = ConfigProto()
+CONFIG.gpu_options.allow_growth = True
+SESSION = InteractiveSession(config=CONFIG)
 
 def mean_absolute_average_error(y_true, y_pred):
     """ Reproduction of equation 11 presented in the original article.
@@ -207,7 +207,7 @@ class AutoEnconder(BaseEstimator):
 
         original_signal = Input(shape=(4096, 1))
 
-        x = Conv1D(16, kernel_size=3, padding="samedata_management.py - Jupyter Text Editor", activation="relu")(original_signal)
+        x = Conv1D(16, kernel_size=3, padding="same", activation="relu")(original_signal)
         x = MaxPooling1D(pool_size=2)(x)
         x = Conv1D(32, kernel_size=3, padding="same", activation="relu")(x)
         x = MaxPooling1D(pool_size=2)(x)
@@ -267,7 +267,7 @@ class AutoEnconder(BaseEstimator):
         return self
 
     def transform(self, X):
-        """ 
+        """
         Function for transforming the vector with original dimensions
         to latent dimensions.
 

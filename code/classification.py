@@ -8,7 +8,6 @@ from os.path import join
 from pandas import read_parquet, DataFrame, concat
 
 from sklearn.model_selection import cross_validate
-from sklearn.metrics import make_scorer
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import make_pipeline
 
@@ -92,7 +91,7 @@ def read_feature_data(base_fold, dim):
     Parameters
     ----------
     base_fold : str
-        Pathname to indicate where to download the dataset.  
+        Pathname to indicate where to download the dataset.
 
     dim : int
         Size of the latent space that architecture will
@@ -118,52 +117,53 @@ def read_feature_data(base_fold, dim):
 
 def save_classification(scores, base_fold):
     """
-
-
+    TODO
     """
     path_save = join(base_fold, "save")
 
+    fold = Path(path_save)
+
     if not fold.exists():
         fold.mkdir(parents=True, exist_ok=True)
+    print(scores)
 
 
-@ignore_warnings(category=ConvergenceWarning)        
+@ignore_warnings(category=ConvergenceWarning)
 def run_classification(path_dataset,
                        name_type,
                        range_values):
     """
-
-
+    TO-DO
     """
-    
+
     path_base = join(path_dataset, "reduced")
 
-    if name_type == "mae" or name_type == "maae":
+    if name_type in ('mae', 'maae'):
         path_read = join(path_base, "ae_{}".format(name_type))
     else:
         path_read = join(path_base, name_type)
 
     scores = []
-    
+
     files = [read_feature_data(path_read, dim) for dim in range_values]
-    
-    classifiers = methods_classification(n_neighbors=3, 
-                                         kernel_a="linear", 
-                                         kernel_b="rbf", 
+
+    classifiers = methods_classification(n_neighbors=3,
+                                         kernel_a="linear",
+                                         kernel_b="rbf",
                                          max_depth=5,
-                                         n_estimators=10, 
-                                         random_state=42, 
+                                         n_estimators=10,
+                                         random_state=42,
                                          max_features=1)
-    
+
     for ind, dim in enumerate(range_values):
-        
+
         print("Running with {} dimensions".format(dim))
-        
+
         X = files[ind][0]
         y = files[ind][1]
 
         for name_classifier, classifier in classifiers:
-            
+
 
             scoring = ["accuracy"]  # , "precision", "recall","f1", "roc_auc"]
 

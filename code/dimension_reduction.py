@@ -1,7 +1,10 @@
-from data_management import (
-    save_reduce,
-    save_feature_model,
-)
+"""
+Description
+"""
+
+# Import of scale reduction methods.
+from sklearn.decomposition import PCA
+from sklearn.random_projection import SparseRandomProjection
 
 from numpy import (
     concatenate,
@@ -10,18 +13,21 @@ from numpy import (
 from pandas import (
     DataFrame,
 )
-    
-# Import of scale reduction methods.
-from auto_enconder import AutoEnconder
-from sklearn.decomposition import PCA
-from sklearn.random_projection import SparseRandomProjection
 
-def reduce_dimension(X, y, 
-                     path_dataset, 
-                     name_type, 
+from auto_enconder import AutoEnconder
+
+from data_management import (
+    save_reduce,
+    save_feature_model,
+)
+
+
+def reduce_dimension(X, y,
+                     path_dataset,
+                     name_type,
                      n_components):
     """
-    
+    TODO
     """
     if name_type == "pca":
         method = PCA(n_components=n_components,
@@ -110,7 +116,7 @@ def build_feature(X_train,
     # Data transformation
     X_train_encoded = auto_encoder.transform(X_train)
     X_valid_encoded = auto_encoder.transform(X_valid)
-        
+
     # Conversion of numpy.array to a DataFrame
     data_reduced = DataFrame(concatenate([X_train_encoded, X_valid_encoded]))
     # On the DataFrame each column has a numeric value,
@@ -123,7 +129,8 @@ def build_feature(X_train,
                                value_encoding_dim=value_encoding_dim,
                                path_dataset=path_dataset,
                                name_type=type_loss)
-    
-    save_feature_model(auto_encoder, path_dataset, type_loss, value_encoding_dim)
-    
+
+    save_feature_model(auto_encoder, path_dataset,
+                       type_loss, value_encoding_dim)
+
     return auto_encoder, path_reduced
