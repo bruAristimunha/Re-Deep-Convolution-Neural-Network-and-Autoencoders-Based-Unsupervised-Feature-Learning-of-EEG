@@ -9,6 +9,8 @@ from pandas import read_parquet, DataFrame, concat
 
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import make_scorer
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.pipeline import make_pipeline
 
 # Classification methods
 from sklearn.neighbors import KNeighborsClassifier
@@ -125,7 +127,7 @@ def save_classification(scores, base_fold):
         fold.mkdir(parents=True, exist_ok=True)
 
 
-#@ignore_warnings(category=ConvergenceWarning)        
+@ignore_warnings(category=ConvergenceWarning)        
 def run_classification(path_dataset,
                        name_type,
                        range_values):
@@ -153,17 +155,22 @@ def run_classification(path_dataset,
                                          random_state=42, 
                                          max_features=1)
     
-    for name_classifier, classifier in classifiers:
-        print("Running {}".format(name_classifier))
+    for ind, dim in enumerate(range_values):
         
-        for ind, dim in enumerate(range_values):
+        print("Running with {} dimensions".format(dim))
+        
+        X = files[ind][0]
+        y = files[ind][1]
 
-            X = files[ind][0]
-            y = files[ind][1]
+        for name_classifier, classifier in classifiers:
+            
 
             scoring = ["accuracy"]  # , "precision", "recall","f1", "roc_auc"]
 
-            score = cross_validate(classifier, X, y, cv=5, scoring=scoring)
+            #The following clf uses minmax scaling
+            clf = make_pipeline(MinMaxScaler(), classifier)
+
+            score = cross_validate(clf, X, y, cv=5, scoring=scoring)
             # Aggregate name in cross_validate
 
             score.update({"name_classifier": name_classifier,
