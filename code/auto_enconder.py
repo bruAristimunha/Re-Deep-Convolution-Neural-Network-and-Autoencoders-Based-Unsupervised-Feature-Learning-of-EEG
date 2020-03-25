@@ -19,6 +19,13 @@ from tensorflow.keras.layers import (
 from tensorflow.python.ops import math_ops
 from tensorflow.python.framework import ops
 
+from tensorflow.compat.v1 import ConfigProto
+from tensorflow.compat.v1 import InteractiveSession
+
+config = ConfigProto()
+config.gpu_options.allow_growth = True
+session = InteractiveSession(config=config)
+
 def mean_absolute_average_error(y_true, y_pred):
     """ Reproduction of equation 11 presented in the original article.
 
@@ -193,11 +200,14 @@ class AutoEnconder(BaseEstimator):
             if self.type_loss == "maae":
                 fun_loss = mean_absolute_average_error
             else:
-                raise ValueError("Loss function not yet implemented.")
+                if self.type_loss == "mape":
+                    fun_loss = losses.mean_absolute_percentage_error
+                else:
+                    raise ValueError("Loss function not yet implemented.")
 
         original_signal = Input(shape=(4096, 1))
 
-        x = Conv1D(16, kernel_size=3, padding="same", activation="relu")(original_signal)
+        x = Conv1D(16, kernel_size=3, padding="samedata_management.py - Jupyter Text Editor", activation="relu")(original_signal)
         x = MaxPooling1D(pool_size=2)(x)
         x = Conv1D(32, kernel_size=3, padding="same", activation="relu")(x)
         x = MaxPooling1D(pool_size=2)(x)
