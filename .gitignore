@@ -3,6 +3,10 @@
 
 .i
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
 ### Text ###
 *.doc
 *.docx
