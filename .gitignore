@@ -175,6 +175,10 @@ modules.xml
 # Sonarlint plugin
 .idea/sonarlint
 
+# Data
+/data/
+
+
 # End of https://www.gitignore.io/api/pycharm,pycharm+all
 
 # End of https://www.gitignore.io/api/text
