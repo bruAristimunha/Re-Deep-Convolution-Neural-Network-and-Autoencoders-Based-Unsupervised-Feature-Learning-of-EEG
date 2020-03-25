@@ -3,21 +3,27 @@ TODO: Description about the file.
 
 
 """
+# IO imports
 
+## Imports for manipulating, accessing, reading and writing files.
 from os import listdir
 from os.path import join, isfile
 from pathlib import Path
 from zipfile import ZipFile
+from mne.io import read_raw_edf
+from pandas import read_csv
+from sys import path
+
+## Import used to download the data.
+from wget import download
+from bs4 import BeautifulSoup
 from re import findall
 
-from glob import glob
-from mne.io import read_raw_edf
+# Import of the class used to read the CHBMIT dataset.
+path.append("../../chb-mit/")
+from patient import Patient
 
-from tqdm import tqdm_notebook
-
-from warnings import filterwarnings
-
-from bs4 import BeautifulSoup
+# Import used for array manipulation.
 from numpy import (
     zeros,
     ones,
@@ -28,22 +34,16 @@ from numpy import (
     array_split, 
     vstack,
 )
-
 from pandas import DataFrame
-from pandas import read_csv
+
+# Imports for array manipulation to prepare for dimension reduction.
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
-from wget import download
-from auto_enconder import AutoEnconder
-from sys import path
-
-path.append("../../chb-mit/")
-
-from patient import Patient
 
 
 def zip_with_unique(base, list_suffix):
-    """ Auxiliary function to generate a paired
+    """ 
+    Auxiliary function to generate a paired
     list considering a unique element.
 
     An adaptation of the convolution function (`zip`)
@@ -289,6 +289,88 @@ def load_dataset_boon(path_child_fold) -> [array]:
 
     return X, y
 
+def filter_empty(n_array): 
+    return filter(lambda x: x != [], n_array)
+
+def split_4096(n_array):
+    """
+    Function to divide an array into n-arrays 
+    with size 4096 points each.
+
+    Parameters
+    ----------
+    array : array-like
+
+    Returns
+    -------
+    [array] : [array-like]
+
+    """
+    if len(n_array) >= 4096 and n_array != []:
+        if len(n_array) % 4096 != 0:
+
+            max_length = int((len(n_array)//4096)*4096)
+            fix_size = n_array[:max_length]
+
+        else:
+            fix_size = n_array
+
+        return vstack(array_split(fix_size, len(n_array)//4096))
+    return []
+
+
+def load_dataset_chbmit(path_save: str,
+                        n_samples=200,
+                        random_state=42) -> [array]:
+    """
+    ----------
+
+    path_child_fold : [str]
+        List of strings with path to the dataset.
+
+    Returns
+    -------
+    X : array-like, shape (n_samples, n_features)
+        Data vectors, where n_samples is the number of samples
+        and n_features is the number of features.
+    y : array-like, shape (n_samples,)
+        Target values.
+
+    """
+
+    X_non = []
+    X_seiz = []
+    X = DataFrame()
+
+    for person_id in range(1, 11):
+        print("Loading Patients nº {}".format(person_id))
+        pat = Patient(person_id, path_save)
+
+        non_epoch_array = list(map(split_4096, pat.get_non_seizures()))
+
+        X_non.append(concatenate(non_epoch_array))
+
+        s_clips = pat.get_seizure_clips()
+
+        if s_clips != []:
+
+            seiz_epoch = list(filter_empty(list(map(split_4096, s_clips))))
+
+            X_seiz.append(concatenate(seiz_epoch))
+
+    X_non = DataFrame(concatenate(X_non)).sample(
+        n=n_samples, random_state=random_state)
+
+    X_seiz = DataFrame(concatenate(X_seiz)).sample(
+        n=n_samples, random_state=random_state)
+
+    X = X_non.append(X_seiz)
+
+    y = [0]*len(X_non)+[1]*len(X_seiz)
+
+    return X.to_numpy(), y
+
+
 
 def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
     """Function to perform the train and test split
@@ -340,18 +422,15 @@ def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
     return X_train, X_test, y_train, y_test
 
 
-def save_feature(df_train,
-                 df_test,
-                 value_encoding_dim,
-                 path_dataset,
-                 type_loss) -> [str]:
+def save_reduce(data_reduced,
+                value_encoding_dim,
+                path_dataset,
+                name_type) -> [str]:
     """
 
     Parameters
     ----------
-    df_train : DataFrame
-
-    df_test : DataFrame
+    data_reduced : DataFrame
 
     value_encoding_dim : int,
         Size of the latent space that architecture will
@@ -360,49 +439,58 @@ def save_feature(df_train,
     path_dataset : str,
         Path name where is the dataset in computer.
 
-    type_loss : str
-        Which loss function will be minimized in the learning proces,
-        with the options: "mae" or "maae".
-
+    name_type : str
+        If feature learning:
+            Which loss function will be minimized in the learning proces,
+            with the options: "mae" or "maae".
+        Else:
+            Baseline method, with the options: "pca" or "srp"
     Returns
     -------
-        save_train_name : str
-        Path name where the training dataset was saved on the computer.
+    save_reduced_name : str
+        Path name where the reducing dataset was saved on the computer.
 
-        save_test_name : str
-        Path name where the testing dataset was saved on the computer.
     """
 
     # Join pathname between a string that contains the base
-    # pathname dataset and a folder called feature_learning,
+    # pathname dataset and a folder called reduced,
     # which will be created to save the latent spaces
-    # generated by AutoEnconder.
-    path_save = join(path_dataset, "feature_learning")
+    # generated by AutoEnconder or Baseline.
+    path_base = join(path_dataset, "reduced")
 
     # Conversion of the pathname string to the class PurePath,
     # To use the class to create a folder on the system if it
-    # doesn"t exist.
+    # doesnot exist.
+    fold_base = Path(path_base)
+
+    # If the folder does not exist, then create
+    if not fold_base.exists():
+        fold_base.mkdir(parents=True, exist_ok=True)
+
+    # Inside the folder to store the reduced space,
+    # we save if it was a loss or baseline methode
+    if name_type == "mae" or name_type == "maae":
+        path_save = join(path_base, "ae_{}".format(name_type))
+    else:
+        path_save = join(path_base, name_type)
+
     fold_save = Path(path_save)
-
-    # Formatted string to save loss type information and size dimensions
-    name_train = "train_{}_{}.parquet".format(value_encoding_dim,
-                                              type_loss)
-    name_test = "test_{}_{}.parquet".format(value_encoding_dim,
-                                            type_loss)
-
-    # Join to take the path that we will save the train and test
-    save_train_name = join(path_save, name_train)
-    save_test_name = join(path_save, name_test)
-
+    
     # If the folder does not exist, then create
     if not fold_save.exists():
         fold_save.mkdir(parents=True, exist_ok=True)
 
-    # Saving as parquet to preserve the type.
-    df_train.to_parquet(save_train_name, engine="pyarrow")
-    df_test.to_parquet(save_test_name, engine="pyarrow")
+    # Formatted string to save size dimensions in name
+    name_reduced = "reduced_dataset_{}.parquet".format(value_encoding_dim)
 
-    return save_train_name, save_test_name
+    # Join to take the path that we will save the train and test
+    save_reduced_name = join(path_save, name_reduced)
+
+    # Saving as parquet to preserve the type.
+    data_reduced.to_parquet(save_reduced_name, engine="pyarrow")
+
+    return save_reduced_name
+
 
 def save_feature_model(auto_encoder, 
                        path_dataset,
@@ -425,7 +513,8 @@ def save_feature_model(auto_encoder,
         fold_save.mkdir(parents=True, exist_ok=True)
         
     # Saving the enconder model        
-    enconder_name = "enconder_{}_{}.h5".format(type_loss, value_encoding_dim)
+    enconder_name = "enconder_{}_{}.h5".format(type_loss, 
+                                               value_encoding_dim)
     enconder_name = join(path_save, enconder_name)
 
     auto_encoder.method_enconder.save(enconder_name)
@@ -437,331 +526,5 @@ def save_feature_model(auto_encoder,
     auto_encoder.method_enconder.save(auto_enconder_name)
     
         
-def build_feature(X_train,
-                  X_test,
-                  y_train,
-                  y_test,
-                  path_dataset,
-                  epochs,
-                  batch_size,
-                  type_loss,
-                  value_encoding_dim):
-    """
-    Control function to use the AutoEnconder
-    class as a dimension reducer.
 
-    This function also saves the values obtained
-    after the dimension reduction process. By performing a process
-    of reading and accessing files, this function ended up being
-    in the data management file.
 
-    Parameters
-    ----------
-    X_train : array-like  (n_samples, n_features)
-        The input data to use in train process.
-
-    X_test : array-like  (n_samples, n_features)
-        The input data to use in train process.
-
-    Y_train : array-like  (n_samples, )
-        The label data related to the X_train.
-
-    Y_test : array-like  (n_samples, )
-        The label data related to the X_test.
-
-    The rest of the parameters and explanation of the
-    variables are homonymous with those of the original class.
-
-    Returns
-    -------
-    auto_encoder : AutoEnconder class object
-        Object of the class already trained.
-
-    path_train : str
-        Path where the train set was saved.
-
-    path_test  : str
-        Path where the test set was saved.
-
-    """
-
-    print("Convert and save with value enconding dimension: {}".format(
-        value_encoding_dim))
-
-    # Initializing the Auto-Encoder model
-    auto_encoder = AutoEnconder(epochs=epochs, batch_size=batch_size,
-                                value_encoding_dim=value_encoding_dim,
-                                type_loss=type_loss,
-                                name_dataset=path_dataset)
-    # For validation, as described in the text, we use the test dataset.
-    auto_encoder.fit(X_train, X_test)
-
-    # Data transformation
-    X_train_encoded = auto_encoder.transform(X_train)
-    X_test_encoded = auto_encoder.transform(X_test)
-
-    # Conversion of numpy.array to a DataFrame
-    df_train = DataFrame(X_train_encoded)
-    # On the DataFrame each column has a numeric value,
-    # which is converted to a string
-    df_train.columns = df_train.columns.astype(str)
-    # Join with class label
-    df_train["class"] = y_train
-
-    # Conversion of numpy.array to a DataFrame
-    df_test = DataFrame(X_test_encoded)
-    # On the DataFrame each column has a numeric value,
-    # which is converted to a string
-    df_test.columns = df_test.columns.astype(str)
-    # Join with class label
-    df_test["class"] = y_test
-
-    path_train, path_test = save_feature(df_train=df_train,
-                                         df_test=df_test,
-                                         value_encoding_dim=value_encoding_dim,
-                                         path_dataset=path_dataset,
-                                         type_loss=type_loss)
-    
-    save_feature_model(auto_encoder, path_dataset, type_loss, value_encoding_dim)
-    
-    return auto_encoder, path_train, path_test
-
-def parallel_variance(count_a, avg_a, var_a, count_b, avg_b, var_b):
-    """
-    Function for calculating the variance in a 
-    distributed way, adapted from:
-    https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
-    The modifications in the return form, 
-    to allow the accumulation in a simpler way.
-    
-
-    """
-    delta = avg_b - avg_a
-    m_a = var_a * (count_a - 1)
-    m_b = var_b * (count_b - 1)
-    M2 = m_a + m_b + delta ** 2 * count_a * count_b / (count_a + count_b)
-
-    # calculate variance
-    var = (M2 / (count_a + count_b - 1))
-    # calculate count
-    count = count_a + count_b
-    # calculate mean
-    avg = (count_a*avg_a + count_b*avg_b) / (count)
-
-    return count, avg, var
-
-
-
-def get_variance_accumulated(path_dataset, range_ = (1,11)):
-    """
-    Calculation of accumulated variance in channels and files. 
-    Parameter receives the path where the folder with files is located.
-    Calculates the variance only in the first ten people.
-    
-    On the tested computer it took about 10 minutes going 
-    through all the files and accumulating the variance.
-    We filter warnings.
-    """
-    filterwarnings("ignore")
-    
-    accumulate_count = 0
-    accumulate_avg = 0
-    accumulate_var = 0
-    
-    selected_channels = ["time", "FP1-F7", "F7-T7", "T7-P7", 
-                         "P7-O1", "FP1-F3", "F3-C3", "C3-P3", 
-                         "P3-O1", "FP2-F4", "F4-C4", "C4-P4", 
-                         "P4-O2", "FP2-F8", "F8-T8", "T8-P8-0", 
-                         "P8-O2", "FZ-CZ", "CZ-PZ", "P7-T7", 
-                         "T7-FT9", "FT9-FT10", "FT10-T8", "T8-P8-1"]
-    
-    for id_patient in tqdm_notebook(range(range_[0], range_[1]), desc="Patient"):
-        
-        path_files = join(path_dataset, "chb{0:0=2d}/*.edf".format(id_patient))
-
-        files_in_folder = glob(path_files)
-        for enum, file in enumerate(tqdm_notebook(files_in_folder, 
-                                        desc="Files",
-                                        leave=False)):
-            
-            variance_file = read_raw_edf(
-                input_fname=file, verbose=0).to_data_frame(picks=["eeg"],
-                                                          time_format="ms")
-            
-            # Removing channels that are not present in all files.
-            variance_file = variance_file[variance_file.columns.intersection(selected_channels)]
-            # Sorting the channels
-            variance_file.sort_index(axis=1, inplace=True)
-
-            if ((enum == 0) & (id_patient == 0)):
-                accumulate_count = len(variance_file)
-                accumulate_avg = variance_file.mean()
-                accumulate_var = variance_file.var()
-
-            else:
-                accumulate_count, accumulate_avg, accumulate_var = parallel_variance(
-                    accumulate_count, accumulate_avg, accumulate_var,
-                    len(variance_file), variance_file.mean(), variance_file.var())
-
-    return accumulate_count, accumulate_avg, accumulate_var
-
-
-def get_variance_by_file(path_dataset, range_ = (1,11)):
-    """
-    TO-DO
-    """
-    
-    filterwarnings("ignore")
-    
-    rank_variance = []
-
-    
-    selected_channels = ["time", "FP1-F7", "F7-T7", "T7-P7", 
-                         "P7-O1", "FP1-F3", "F3-C3", "C3-P3", 
-                         "P3-O1", "FP2-F4", "F4-C4", "C4-P4", 
-                         "P4-O2", "FP2-F8", "F8-T8", "T8-P8-0", 
-                         "P8-O2", "FZ-CZ", "CZ-PZ", "P7-T7", 
-                         "T7-FT9", "FT9-FT10", "FT10-T8", "T8-P8-1"]
-    
-    for id_patient in tqdm_notebook(range(range_[0], range_[1]), desc="Patient"):
-        
-        path_files = join(path_dataset, "chb{0:0=2d}/*.edf".format(id_patient))
-
-        files_in_folder = glob(path_files)
-        for enum, file in enumerate(tqdm_notebook(files_in_folder, 
-                                        desc="Files",
-                                        leave=False)):
-            
-            variance_file = read_raw_edf(
-                input_fname=file, verbose=0).to_data_frame(picks=["eeg"],
-                                                          time_format="ms")
-            
-            # Removing channels that are not present in all files.
-            variance_file = variance_file[variance_file.columns.intersection(selected_channels)]
-            # Sorting the channels
-            variance_file.sort_index(axis=1, inplace=True)
-            
-            variance_by_file = variance_file.var()
-
-            rank_by_file = variance_by_file.sort_values()
-            
-            rank_variance.append(rank_by_file)
-            
-    return rank_variance
-
-def get_variance_by_pearson(path_dataset, range_ = (1,11)):
-    """
-    TO-DO:
-    """
-
-    filterwarnings("ignore")
-
-    var_pearson = []
-
-
-    selected_channels = ["time", "FP1-F7", "F7-T7", "T7-P7", 
-                         "P7-O1", "FP1-F3", "F3-C3", "C3-P3", 
-                         "P3-O1", "FP2-F4", "F4-C4", "C4-P4", 
-                         "P4-O2", "FP2-F8", "F8-T8", "T8-P8-0", 
-                         "P8-O2", "FZ-CZ", "CZ-PZ", "P7-T7", 
-                         "T7-FT9", "FT9-FT10", "FT10-T8", "T8-P8-1"]
-
-    for id_patient in tqdm_notebook(range(range_[0], range_[1]), desc="Patient"):
-
-        accumulate_count = 0
-        accumulate_avg = 0
-        accumulate_var = 0
-
-        path_files = join(path_dataset, "chb{0:0=2d}/*.edf".format(id_patient))
-
-        files_in_folder = glob(path_files)
-        for enum, file in enumerate(tqdm_notebook(files_in_folder, 
-                                        desc="Files",
-                                        leave=False)):
-
-            variance_file = read_raw_edf(
-                input_fname=file, verbose=0).to_data_frame(picks=["eeg"],
-                                                          time_format="ms")
-
-            # Removing channels that are not present in all files.
-            variance_file = variance_file[variance_file.columns.intersection(selected_channels)]
-            # Sorting the channels
-            variance_file.sort_index(axis=1, inplace=True)
-
-            if enum == 0:
-                accumulate_count = len(variance_file)
-                accumulate_avg = variance_file.mean()
-                accumulate_var = variance_file.var()
-
-            else:
-                accumulate_count, accumulate_avg, accumulate_var = parallel_variance(
-                    accumulate_count, accumulate_avg, accumulate_var,
-                    len(variance_file), variance_file.mean(), variance_file.var())
-
-        var_pearson.append(accumulate_var)
-
-    return var_pearson
-
-def filter_(n_array): 
-    return filter(lambda x: x != [], n_array)
-
-def split_4096(array):
-    if len(array) >= 4096 and array != []:
-        if len(array) % 4096 != 0:
-
-            max_length = int((len(array)//4096)*4096)
-            fix_size = array[:max_length]
-
-        else:
-
-            fix_size = array
-
-        return vstack(array_split(fix_size, len(array)//4096))
-    return []
-
-
-def load_dataset_chbmit(path_save) -> [array]:
-    """
-    ----------
-
-    path_child_fold : [str]
-        List of strings with path to the dataset.
-
-    Returns
-    -------
-    X : array-like, shape (n_samples, n_features)
-        Data vectors, where n_samples is the number of samples
-        and n_features is the number of features.
-    y : array-like, shape (n_samples,)
-        Target values.
-
-    """
-
-    X_non = []
-    X_seiz = []
-    X = DataFrame()    
-    
-    for id_ in range(1, 11):
-        print("Loading Patients nº {}".format(id_))
-        pat = Patient(id_, path_save)
-
-        non_epoch_array = list(map(split_4096, pat.get_non_seizures()))
-
-        X_non.append(concatenate(non_epoch_array))
-
-        s_clips = pat.get_seizure_clips()
-        if s_clips != []:
-
-            seiz_epoch = list(filter_(list(map(split_4096, s_clips))))
-
-            X_seiz.append(concatenate(seiz_epoch))
-
-    X_non = DataFrame(concatenate(X_non)).sample(n=200, random_state=42)
-
-    X_seiz = DataFrame(concatenate(X_seiz)).sample(n=200, random_state=42)
-
-    X = X_non.append(X_seiz)
-
-    y = [0]*200+[1]*200
-    
-    return X.to_numpy(), y 
