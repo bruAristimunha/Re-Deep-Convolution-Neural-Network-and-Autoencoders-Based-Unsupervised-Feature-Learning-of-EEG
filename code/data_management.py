@@ -31,6 +31,7 @@ from numpy import (
 from pandas import (
     DataFrame,
     read_csv,
+    read_parquet
 )
 
 # Imports for array manipulation to prepare for dimension reduction.
@@ -320,7 +321,18 @@ def split_4096(n_array):
         return vstack(array_split(fix_size, len(n_array)//4096))
     return []
 
+def check_exist_chbmit(path_save: str):
 
+    path_dataset = join(path_save, "as_dataset")
+
+    fold = Path(path_dataset)
+
+    if not fold.exists():
+        fold.mkdir(parents=True, exist_ok=True)
+        return False
+    else:
+        return True
+    
 def load_dataset_chbmit(path_save: str,
                         n_samples=200,
                         random_state=42) -> [array]:
@@ -340,37 +352,54 @@ def load_dataset_chbmit(path_save: str,
 
     """
 
-    X_non = []
-    X_seiz = []
-    X = DataFrame()
+    data_frame_non = []
+    data_frame_seiz = []
 
-    for person_id in range(1, 11):
-        print("Loading Patients nº {}".format(person_id))
-        pat = Patient(person_id, path_save)
+    path_dataset = join(path_save, "as_dataset")
+    name_dataset_non = join(path_dataset, "data_frame_non.parquet")
+    name_dataset_seiz = join(path_dataset, "data_frame_seiz.parquet")
 
-        non_epoch_array = list(map(split_4096, pat.get_non_seizures()))
+    if not check_exist_chbmit(path_save):
 
-        X_non.append(concatenate(non_epoch_array))
+        print("Loading the files to create dataset")
 
-        s_clips = pat.get_seizure_clips()
+        for person_id in range(1, 11):
+            print("Loading Patients nº {}".format(person_id))
+            pat = Patient(person_id, path_save)
 
-        if s_clips != []:
+            non_epoch_array = list(map(split_4096, pat.get_non_seizures()))
 
-            seiz_epoch = list(filter_empty(list(map(split_4096, s_clips))))
+            data_frame_non.append(concatenate(non_epoch_array))
 
-            X_seiz.append(concatenate(seiz_epoch))
+            s_clips = pat.get_seizure_clips()
 
-    X_non = DataFrame(concatenate(X_non)).sample(
-        n=n_samples, random_state=random_state)
+            if s_clips != []:
 
-    X_seiz = DataFrame(concatenate(X_seiz)).sample(
-        n=n_samples, random_state=random_state)
+                seiz_epoch = list(filter_empty(list(map(split_4096, s_clips))))
 
-    X = X_non.append(X_seiz)
+                data_frame_seiz.append(concatenate(seiz_epoch))
 
-    y = [0]*len(X_non)+[1]*len(X_seiz)
+        data_frame_non = DataFrame(concatenate(data_frame_non))
+        data_frame_non['class'] = [0]*len(data_frame_non)
+        data_frame_non.columns = data_frame_non.columns.astype(str)
+        data_frame_non.to_parquet(name_dataset_non, engine="pyarrow")
 
-    return X.to_numpy(), y
+        data_frame_seiz = DataFrame(concatenate(data_frame_seiz))
+        data_frame_seiz['class'] = [1]*len(data_frame_seiz)
+        data_frame_seiz.columns = data_frame_seiz.columns.astype(str)
+        data_frame_seiz.to_parquet(name_dataset_seiz, engine="pyarrow")
+
+    else:
+        print("Reading as dataframe")
+        data_frame_non = read_parquet(name_dataset_non, engine="pyarrow")
+        data_frame_seiz = read_parquet(name_dataset_seiz, engine="pyarrow")
+
+    sample_non = data_frame_non.sample(n=n_samples, random_state=random_state)
+    sample_seiz = data_frame_seiz.sample(n=n_samples, random_state=random_state)
+
+    data_frame = sample_non.append(sample_seiz)
+
+    return data_frame.drop('class', 1).to_numpy(), data_frame['class'].values
 
 
 
