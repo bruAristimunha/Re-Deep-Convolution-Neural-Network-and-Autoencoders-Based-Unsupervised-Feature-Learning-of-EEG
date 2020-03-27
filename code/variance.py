@@ -4,13 +4,12 @@ TODO: Description about the file.
 
 """
 
-from warnings import filterwarnings
 from glob import glob
 from os.path import join
+from warnings import filterwarnings
 
-from tqdm import tqdm_notebook
 from mne.io import read_raw_edf
-
+from tqdm import tqdm_notebook
 
 
 def parallel_variance(count_a, avg_a, var_a, count_b, avg_b, var_b):
@@ -31,7 +30,7 @@ def parallel_variance(count_a, avg_a, var_a, count_b, avg_b, var_b):
     # calculate count
     count = count_a + count_b
     # calculate mean
-    avg = (count_a*avg_a + count_b*avg_b) / (count)
+    avg = (count_a * avg_a + count_b * avg_b) / count
 
     return count, avg, var
 
@@ -113,7 +112,6 @@ def get_variance_by_file(path_dataset, range_=(1, 11)):
 
         files_in_folder = glob(path_files)
         for file in tqdm_notebook(files_in_folder, desc="Files", leave=False):
-
             variance_file = read_raw_edf(
                 input_fname=file, verbose=0).to_data_frame(picks=["eeg"],
                                                            time_format="ms")

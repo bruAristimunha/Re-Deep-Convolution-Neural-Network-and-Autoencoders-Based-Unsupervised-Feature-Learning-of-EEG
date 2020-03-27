@@ -32,18 +32,19 @@ def methods_classification(n_neighbors=3,
     Parameters
     ----------
     n_neighbors : int
-
+        Number of neighbors to use
     kernel_a : str
-
+        Specifies the kernel type to be used in the SVC a.
     kernel_b : str
-
+        Specifies the kernel type to be used in the SVC b.
     max_depth : int
-
+        The maximum depth of the tree.
     n_estimators : int
-
+        The number of trees in the forest.
     random_state : int
-
+        Controls the randomness
     max_features : int
+        The number of features to consider when looking for the best split.
 
     Returns
     -------
@@ -92,11 +93,9 @@ def read_feature_data(base_fold, dim):
     ----------
     base_fold : str
         Pathname to indicate where to download the dataset.
-
     dim : int
         Size of the latent space that architecture will
         learn in the process of decoding and encoding.
-
     type_loss : str
         Which loss function will be minimized in the learning proces,
         with the options: "mae" or "maae"
@@ -119,9 +118,7 @@ def save_classification(scores, base_fold):
     """
     TODO
     """
-    path_save = join(base_fold, "save")
-
-    fold = Path(path_save)
+    fold = Path(base_fold) / "save"
 
     if not fold.exists():
         fold.mkdir(parents=True, exist_ok=True)
@@ -163,7 +160,6 @@ def run_classification(path_dataset,
         y = files[ind][1]
 
         for name_classifier, classifier in classifiers:
-
 
             scoring = ["accuracy"]  # , "precision", "recall","f1", "roc_auc"]
 
