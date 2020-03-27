@@ -10,7 +10,7 @@ from numpy import mean, around
 
 from classification import read_feature_data
 
-# TODO: Deixe aspas simples ou dupla consistente com o que eh usado no restante do codigo.
+
 def plot_variance_accumulate(var):
     """
       TO-DO:  Description

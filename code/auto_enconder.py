@@ -22,7 +22,6 @@ from tensorflow.python.framework import ops
 from tensorflow.compat.v1 import ConfigProto
 from tensorflow.compat.v1 import InteractiveSession
 
-# TODO: Porque esta usando SESSION e CONFIG?
 CONFIG = ConfigProto()
 CONFIG.gpu_options.allow_growth = True
 SESSION = InteractiveSession(config=CONFIG)
@@ -197,12 +196,14 @@ class AutoEnconder(BaseEstimator):
 
         if self.type_loss == "mae":
             fun_loss = losses.mean_absolute_error
-        elif self.type_loss == "maae":
-            fun_loss = mean_absolute_average_error
-        elif self.type_loss == "mape":
-            fun_loss = losses.mean_absolute_percentage_error
         else:
-            raise ValueError("Loss function not yet implemented.")
+            if self.type_loss == "maae":
+                fun_loss = mean_absolute_average_error
+            else:
+                if self.type_loss == "mape":
+                    fun_loss = losses.mean_absolute_percentage_error
+                else:
+                    raise ValueError("Loss function not yet implemented.")
 
         original_signal = Input(shape=(4096, 1))
 

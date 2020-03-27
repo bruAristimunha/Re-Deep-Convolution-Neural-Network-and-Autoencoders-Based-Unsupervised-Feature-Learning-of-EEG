@@ -12,7 +12,11 @@ from pathlib import Path
 from re import findall
 from zipfile import ZipFile
 
+## Import used to download the data.
+from wget import download
 from bs4 import BeautifulSoup
+
+
 # Import used for array manipulation.
 from numpy import (
     zeros,
@@ -29,15 +33,13 @@ from pandas import (
     read_csv,
     read_parquet
 )
-# Import of the class used to read the CHBMIT dataset.
-# TODO: Esta faltando arquivo patient.py?
-from patient import Patient
+
 # Imports for array manipulation to prepare for dimension reduction.
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
-## Import used to download the data.
-from wget import download
 
+# Import of the class used to read the CHBMIT dataset.
+from patient import Patient
 
 def zip_with_unique(base, list_suffix):
     """
@@ -57,6 +59,7 @@ def zip_with_unique(base, list_suffix):
     ----------
     base: array-like, shape (1, )
         One (1) base prefix that will be paired with the suffixes.
+
     list_suffix : array-like, shape (n_suffix,)
         A suffix list that will be paired with one prefix.
 
@@ -134,11 +137,12 @@ def download_item(url_base, name_base, page=True, range_=(30, 50)):
     ----------
     url_base : str,
         Url to indicate where to download the dataset.
+
     name_base : str
         Pathname to indicate where to download the dataset.
+
     page : bool
         Parameter to be used to download the page"s html.
-    range_:
 
     Returns
     -------
@@ -191,6 +195,7 @@ def download_chbmit(url_base, path_save):
     ----------
     url_base : str
         url from physionet.
+
     path_save : str
         pathname where to save.
 
@@ -240,12 +245,13 @@ def download_chbmit(url_base, path_save):
 
 
 def load_dataset_boon(path_child_fold) -> [array]:
+
     """Function for reading the boon database, and return X and y.
     Also adapted from:
     https://mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
-
     Parameters
     ----------
+
     path_child_fold : [str]
         List of strings with path to the dataset.
 
@@ -283,13 +289,11 @@ def load_dataset_boon(path_child_fold) -> [array]:
 
     return X, y
 
-
 def filter_empty(n_array):
     """
     TODO: Description.
     """
     return filter(lambda x: x != [], n_array)
-
 
 def split_4096(n_array):
     """
@@ -298,7 +302,7 @@ def split_4096(n_array):
 
     Parameters
     ----------
-    n_array : array-like
+    array : array-like
 
     Returns
     -------
@@ -308,36 +312,33 @@ def split_4096(n_array):
     if len(n_array) >= 4096 and n_array != []:
         if len(n_array) % 4096 != 0:
 
-            max_length = int((len(n_array) // 4096) * 4096)
+            max_length = int((len(n_array)//4096)*4096)
             fix_size = n_array[:max_length]
 
         else:
             fix_size = n_array
 
-        return vstack(array_split(fix_size, len(n_array) // 4096))
+        return vstack(array_split(fix_size, len(n_array)//4096))
     return []
 
-
 def check_exist_chbmit(path_save: str):
-    fold = Path(path_save) / "as_dataset"
+
+    path_dataset = join(path_save, "as_dataset")
+
+    fold = Path(path_dataset)
 
     if not fold.exists():
         fold.mkdir(parents=True, exist_ok=True)
         return False
     else:
         return True
-
-
+    
 def load_dataset_chbmit(path_save: str,
                         n_samples=200,
                         random_state=42) -> [array]:
     """
-    # TODO: Arrumar docstring
-    Parameters
     ----------
-    random_state : int
-    n_samples: int
-    path_save: str
+
     path_child_fold : [str]
         List of strings with path to the dataset.
 
@@ -373,17 +374,18 @@ def load_dataset_chbmit(path_save: str,
             s_clips = pat.get_seizure_clips()
 
             if s_clips != []:
+
                 seiz_epoch = list(filter_empty(list(map(split_4096, s_clips))))
 
                 data_frame_seiz.append(concatenate(seiz_epoch))
 
         data_frame_non = DataFrame(concatenate(data_frame_non))
-        data_frame_non['class'] = [0] * len(data_frame_non)
+        data_frame_non['class'] = [0]*len(data_frame_non)
         data_frame_non.columns = data_frame_non.columns.astype(str)
         data_frame_non.to_parquet(name_dataset_non, engine="pyarrow")
 
         data_frame_seiz = DataFrame(concatenate(data_frame_seiz))
-        data_frame_seiz['class'] = [1] * len(data_frame_seiz)
+        data_frame_seiz['class'] = [1]*len(data_frame_seiz)
         data_frame_seiz.columns = data_frame_seiz.columns.astype(str)
         data_frame_seiz.to_parquet(name_dataset_seiz, engine="pyarrow")
 
@@ -400,20 +402,25 @@ def load_dataset_chbmit(path_save: str,
     return data_frame.drop('class', 1).to_numpy(), data_frame['class'].values
 
 
+
 def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
     """Function to perform the train and test split
     and normalize the data set with Min-Max.
 
     Parameters
     ----------
+
     X : array-like, shape (n_samples, n_features)
         Training vectors, where n_samples is the number of samples
         and n_features is the number of features.
+
     y : array-like, shape (n_samples,)
         Target values.
+
     test_size : float
         Value between 0 and 1 to indicate the
         percentage that will be used in the test.
+
     random_state : int
         Seed to be able to replicate split
 

@@ -79,11 +79,14 @@ def build_feature(X_train,
     ----------
     X_train : array-like  (n_samples, n_features)
         The input data to use in train process.
+
     X_valid : array-like  (n_samples, n_features)
         The input data to use in train process.
-    y_train : array-like  (n_samples, )
+
+    Y_train : array-like  (n_samples, )
         The label data related to the X_train.
-    y_valid : array-like  (n_samples, )
+
+    Y_valid : array-like  (n_samples, )
         The label data related to the X_test.
 
     The rest of the parameters and explanation of the
@@ -93,6 +96,7 @@ def build_feature(X_train,
     -------
     auto_encoder : AutoEnconder class object
         Object of the class already trained.
+
     path_reduce : str
         Path where the reduced set was saved.reduced
 
