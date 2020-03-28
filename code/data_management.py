@@ -6,17 +6,14 @@ TODO: Description about the file.
 # IO imports
 
 ## Imports for manipulating, accessing, reading and writing files.
+from sys import path
 from os import listdir
 from os.path import join, isfile
 from pathlib import Path
 from re import findall
 from zipfile import ZipFile
 
-## Import used to download the data.
-from wget import download
 from bs4 import BeautifulSoup
-
-
 # Import used for array manipulation.
 from numpy import (
     zeros,
@@ -37,7 +34,10 @@ from pandas import (
 # Imports for array manipulation to prepare for dimension reduction.
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
+## Import used to download the data.
+from wget import download
 
+path.append("chb-mit/")
 # Import of the class used to read the CHBMIT dataset.
 from patient import Patient
 
@@ -59,7 +59,6 @@ def zip_with_unique(base, list_suffix):
     ----------
     base: array-like, shape (1, )
         One (1) base prefix that will be paired with the suffixes.
-
     list_suffix : array-like, shape (n_suffix,)
         A suffix list that will be paired with one prefix.
 
@@ -137,13 +136,14 @@ def download_item(url_base, name_base, page=True, range_=(30, 50)):
     ----------
     url_base : str,
         Url to indicate where to download the dataset.
-
     name_base : str
         Pathname to indicate where to download the dataset.
-
     page : bool
         Parameter to be used to download the page"s html.
-
+    range_ : tuple(int, int)
+        Interval with patient id that will be excluded in 
+        the download. By default, it indexes an invalid range, 
+        that is, it downloads everything.
     Returns
     -------
     list : list [str]
@@ -195,7 +195,6 @@ def download_chbmit(url_base, path_save):
     ----------
     url_base : str
         url from physionet.
-
     path_save : str
         pathname where to save.
 
@@ -244,16 +243,15 @@ def download_chbmit(url_base, path_save):
     return patient_item
 
 
-def load_dataset_boon(path_data) -> [array]:
-
+def load_dataset_boon(path_data : str) -> [array]:
     """Function for reading the boon database, and return X and y.
     Also adapted from:
     https://mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
+
     Parameters
     ----------
-
-    path_child_fold : [str]
-        List of strings with path to the dataset.
+    path_data : str
+        PathName to the dataset.
 
     Returns
     -------
@@ -298,11 +296,13 @@ def load_dataset_boon(path_data) -> [array]:
 
     return X, y
 
+
 def filter_empty(n_array):
     """
     TODO: Description.
     """
     return filter(lambda x: x != [], n_array)
+
 
 def split_4096(n_array):
     """
@@ -311,7 +311,7 @@ def split_4096(n_array):
 
     Parameters
     ----------
-    array : array-like
+    n_array : array-like
 
     Returns
     -------
@@ -321,38 +321,41 @@ def split_4096(n_array):
     if len(n_array) >= 4096 and n_array != []:
         if len(n_array) % 4096 != 0:
 
-            max_length = int((len(n_array)//4096)*4096)
+            max_length = int((len(n_array) // 4096) * 4096)
             fix_size = n_array[:max_length]
 
         else:
             fix_size = n_array
 
-        return vstack(array_split(fix_size, len(n_array)//4096))
+        return vstack(array_split(fix_size, len(n_array) // 4096))
     return []
 
 def check_exist_chbmit(path_save: str):
     """
     TODO: Description.
     """
-    path_dataset = join(path_save, "as_dataset")
-
-    fold = Path(path_dataset)
+    fold = Path(path_save) / "as_dataset"
 
     if not fold.exists():
         fold.mkdir(parents=True, exist_ok=True)
         return False
     else:
         return True
-    
+
+
+
 def load_dataset_chbmit(path_save: str,
                         n_samples=200,
                         random_state=42) -> [array]:
     """
+    # TODO: fix docstring
+    
+    Parameters
     ----------
-
-    path_child_fold : [str]
-        List of strings with path to the dataset.
-
+    random_state : int
+    n_samples: int
+    path_save: str
+    
     Returns
     -------
     X : array-like, shape (n_samples, n_features)
@@ -385,18 +388,17 @@ def load_dataset_chbmit(path_save: str,
             s_clips = pat.get_seizure_clips()
 
             if s_clips != []:
-
                 seiz_epoch = list(filter_empty(list(map(split_4096, s_clips))))
 
                 data_frame_seiz.append(concatenate(seiz_epoch))
 
         data_frame_non = DataFrame(concatenate(data_frame_non))
-        data_frame_non['class'] = [0]*len(data_frame_non)
+        data_frame_non['class'] = [0] * len(data_frame_non)
         data_frame_non.columns = data_frame_non.columns.astype(str)
         data_frame_non.to_parquet(name_dataset_non, engine="pyarrow")
 
         data_frame_seiz = DataFrame(concatenate(data_frame_seiz))
-        data_frame_seiz['class'] = [1]*len(data_frame_seiz)
+        data_frame_seiz['class'] = [1] * len(data_frame_seiz)
         data_frame_seiz.columns = data_frame_seiz.columns.astype(str)
         data_frame_seiz.to_parquet(name_dataset_seiz, engine="pyarrow")
 
@@ -412,26 +414,20 @@ def load_dataset_chbmit(path_save: str,
 
     return data_frame.drop('class', 1).to_numpy(), data_frame['class'].values
 
-
-
 def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
     """Function to perform the train and test split
     and normalize the data set with Min-Max.
 
     Parameters
     ----------
-
     X : array-like, shape (n_samples, n_features)
         Training vectors, where n_samples is the number of samples
         and n_features is the number of features.
-
     y : array-like, shape (n_samples,)
         Target values.
-
     test_size : float
         Value between 0 and 1 to indicate the
         percentage that will be used in the test.
-
     random_state : int
         Seed to be able to replicate split
 
@@ -466,17 +462,13 @@ def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
 def read_feature_data(base_fold, dim):
     """
 
-
-
     Parameters
     ----------
     base_fold : str
         Pathname to indicate where to download the dataset.
-
     dim : int
         Size of the latent space that architecture will
         learn in the process of decoding and encoding.
-
     type_loss : str
         Which loss function will be minimized in the learning proces,
         with the options: "mae" or "maae"
@@ -637,9 +629,7 @@ def save_classification(scores,
     """
     TODO
     """
-    path_save = join(base_fold, "save")
-
-    fold = Path(path_save)
+    fold = Path(base_fold) / "save"
 
     if not fold.exists():
         fold.mkdir(parents=True, exist_ok=True)
@@ -649,7 +639,7 @@ def save_classification(scores,
                                                                      dim, 
                                                                      cv)
     # Join to take the path that we will save the train and test
-    save_classification_name = join(path_save, name_classification)
+    save_classification_name = join(fold, name_classification)
 
     # Saving as parquet to preserve the type.
     scores.to_parquet(save_classification_name, engine="pyarrow")

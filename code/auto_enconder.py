@@ -189,14 +189,12 @@ class AutoEnconder(BaseEstimator):
 
         if self.type_loss == "mae":
             fun_loss = losses.mean_absolute_error
+        elif self.type_loss == "maae":
+            fun_loss = mean_absolute_average_error
+        elif self.type_loss == "mape":
+            fun_loss = losses.mean_absolute_percentage_error
         else:
-            if self.type_loss == "maae":
-                fun_loss = mean_absolute_average_error
-            else:
-                if self.type_loss == "mape":
-                    fun_loss = losses.mean_absolute_percentage_error
-                else:
-                    raise ValueError("Loss function not yet implemented.")
+            raise ValueError("Loss function not yet implemented.")
 
         original_signal = Input(shape=(4096, 1))
 

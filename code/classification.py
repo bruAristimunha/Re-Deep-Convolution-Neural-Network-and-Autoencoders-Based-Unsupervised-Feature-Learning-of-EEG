@@ -43,21 +43,23 @@ def methods_classification(n_neighbors=3,
                            kernel_a="linear", kernel_b="rbf", max_depth=5,
                            n_estimators=10, random_state=42, max_features=1):
     """
+    TODO: Description.
     Parameters
     ----------
     n_neighbors : int
-
+        Number of neighbors to use
     kernel_a : str
-
+        Specifies the kernel type to be used in the SVC a.
     kernel_b : str
-
+        Specifies the kernel type to be used in the SVC b.
     max_depth : int
-
+        The maximum depth of the tree.
     n_estimators : int
-
+        The number of trees in the forest.
     random_state : int
-
+        Controls the randomness
     max_features : int
+        The number of features to consider when looking for the best split.
 
     Returns
     -------
@@ -133,7 +135,6 @@ def run_classification(path_dataset,
 
         for name_classifier, classifier in classifiers:
 
-
             scoring = ["accuracy"]  # , "precision", "recall","f1", "roc_auc"]
 
             #The following clf uses minmax scaling
@@ -178,7 +179,7 @@ def run_classification_nn(path_dataset, name_type,
 
     history_acc = []
     accumulate_acc = []
-    
+ 
     def create_model():
         model = Sequential()
         model.add(Dense(22, input_dim=dim, activation="relu"))
