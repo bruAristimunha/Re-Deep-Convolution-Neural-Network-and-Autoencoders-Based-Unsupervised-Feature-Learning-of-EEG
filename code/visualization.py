@@ -17,7 +17,7 @@ def plot_variance_accumulate(var):
     """
     fig, axes = subplots(figsize=(12, 5))
 
-    axes = var.sort_values().drop('time').plot.bar(axes=axes)
+    axes = var.sort_values().drop('time').plot.bar(ax=axes)
 
     ylabel("Accumulated variance per channel")
     xlabel("EEG Channel")
@@ -34,7 +34,7 @@ def plot_variance_by_file(variance_by_file):
     var = [file.drop('time').sort_values().index[-1]
            for file in variance_by_file]
 
-    axes = Series(var).value_counts().sort_values().plot.bar(axes=axes)
+    axes = Series(var).value_counts().sort_values().plot.bar(ax=axes)
 
     ylabel("Accumulated rank per channel per file")
     xlabel("EEG Channel")
@@ -51,7 +51,7 @@ def plot_variance_by_pearson(variance_per_person):
     var = [file.drop('time').sort_values().index[-1]
            for file in variance_per_person]
 
-    axes = Series(var).value_counts().sort_values().plot.bar(axes=axes)
+    axes = Series(var).value_counts().sort_values().plot.bar(ax=axes)
 
     ylabel("Accumulated rank per channel per pearson")
     xlabel("EEG Channel")
@@ -141,13 +141,13 @@ def plot_average_accuracy(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2):
     df_2 = DataFrame([ae_d2_l1, ae_d2_l2]).T
     df_2.index = df_2.index.astype(str)
 
-    axes[0] = df_1.plot.line(axes=axes[0], ylim=(0.5, 1), style='.-')
+    axes[0] = df_1.plot.line(ax=axes[0], ylim=(0.5, 1), style='.-')
     axes[0].set(ylabel="Average accuracy")
 
     axes[0].set_title("Dataset 1")
     axes[0].legend(loc='lower right')
 
-    axes[1] = df_2.plot.line(axes=axes[1], ylim=(0.5, 1), style='.-')
+    axes[1] = df_2.plot.line(ax=axes[1], ylim=(0.5, 1), style='.-')
     axes[1].set_title("Dataset 2")
     axes[1].set(ylabel="Average accuracy")
     axes[1].legend(loc='lower right')
@@ -203,13 +203,13 @@ def plot_average_accuracy_baseline(ae_d1_l1, ae_d1_l2, pca_d1, srp_d1,
     df_2 = DataFrame([ae_d2_l1, ae_d2_l2, pca_d2, srp_d2]).T
     df_2.index = df_2.index.astype(str)
 
-    axes[0] = df_1.plot.line(axes=axes[0], ylim=(0.5, 1), style='.-')
+    axes[0] = df_1.plot.line(ax=axes[0], ylim=(0.5, 1), style='.-')
     axes[0].set(ylabel="Average accuracy")
 
     axes[0].set_title("Dataset 1")
     axes[0].legend(loc='lower right')
 
-    axes[1] = df_2.plot.line(axes=axes[1], ylim=(0.5, 1), style='.-')
+    axes[1] = df_2.plot.line(ax=axes[1], ylim=(0.5, 1), style='.-')
     axes[1].set_title("Dataset 2")
     axes[1].set(ylabel="Average accuracy")
     axes[1].legend(loc='lower right')
@@ -244,7 +244,7 @@ def plot_feature_distribution(path_save, n_dims=4):
 
     data_frame_mae['class'] = y_mae.apply(encoded_class)
 
-    axes[0] = data_frame_mae.boxplot(by='class', axes=axes[0]).reshape(-1)
+    axes[0] = data_frame_mae.boxplot(by='class', ax=axes[0]).reshape(-1)
 
     path_read = join(path_base, "ae_{}".format("mae"))
     data_frame_maae, y_maae = read_feature_data(path_read, n_dims)
@@ -253,7 +253,7 @@ def plot_feature_distribution(path_save, n_dims=4):
 
     data_frame_maae['class'] = y_maae.apply(encoded_class)
 
-    axes[1] = data_frame_mae.boxplot(by='class', axes=axes[1]).reshape(-1)
+    axes[1] = data_frame_mae.boxplot(by='class', ax=axes[1]).reshape(-1)
 
     _ = list(map(clean_xlabel, axes[0]))
     _ = list(map(clean_xlabel, axes[1]))

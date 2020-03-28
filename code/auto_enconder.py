@@ -19,13 +19,6 @@ from tensorflow.keras.layers import (
 from tensorflow.python.ops import math_ops
 from tensorflow.python.framework import ops
 
-from tensorflow.compat.v1 import ConfigProto
-from tensorflow.compat.v1 import InteractiveSession
-
-CONFIG = ConfigProto()
-CONFIG.gpu_options.allow_growth = True
-SESSION = InteractiveSession(config=CONFIG)
-
 def mean_absolute_average_error(y_true, y_pred):
     """ Reproduction of equation 11 presented in the original article.
 

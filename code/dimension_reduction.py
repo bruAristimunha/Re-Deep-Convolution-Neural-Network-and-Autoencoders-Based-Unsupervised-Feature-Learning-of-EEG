@@ -19,6 +19,7 @@ from auto_enconder import AutoEnconder
 from data_management import (
     save_reduce,
     save_feature_model,
+    save_history_model,
 )
 
 
@@ -101,9 +102,9 @@ def build_feature(X_train,
         Path where the reduced set was saved.reduced
 
     """
-
-    print("Convert and save with value enconding dimension: {}".format(
-        value_encoding_dim))
+    
+    print("Convert and save with value enconding dimension: {} - {}".format(
+        type_loss, value_encoding_dim))
 
     # Initializing the Auto-Encoder model
     auto_encoder = AutoEnconder(epochs=epochs, batch_size=batch_size,
@@ -133,4 +134,7 @@ def build_feature(X_train,
     save_feature_model(auto_encoder, path_dataset,
                        type_loss, value_encoding_dim)
 
+    save_history_model(auto_encoder, path_dataset,
+                       type_loss, value_encoding_dim)
+    
     return auto_encoder, path_reduced

@@ -31,7 +31,7 @@ from numpy import (
 from pandas import (
     DataFrame,
     read_csv,
-    read_parquet
+    read_parquet,
 )
 
 # Imports for array manipulation to prepare for dimension reduction.
@@ -244,7 +244,7 @@ def download_chbmit(url_base, path_save):
     return patient_item
 
 
-def load_dataset_boon(path_child_fold) -> [array]:
+def load_dataset_boon(path_data) -> [array]:
 
     """Function for reading the boon database, and return X and y.
     Also adapted from:
@@ -264,7 +264,16 @@ def load_dataset_boon(path_child_fold) -> [array]:
         Target values.
 
     """
+    fold = Path(path_data)
+    child_fold = ["setA", "setB", "setC", "setD", "setE"]
 
+    path_child_fold = zip_with_unique(path_data, child_fold)
+
+    if not fold.exists():
+        print("Error file not find")
+        return "Error"
+            
+        
     data_segments = list()
     labels = list()
 
@@ -322,7 +331,9 @@ def split_4096(n_array):
     return []
 
 def check_exist_chbmit(path_save: str):
-
+    """
+    TODO: Description.
+    """
     path_dataset = join(path_save, "as_dataset")
 
     fold = Path(path_dataset)
@@ -452,6 +463,36 @@ def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
 
     return X_train, X_test, y_train, y_test
 
+def read_feature_data(base_fold, dim):
+    """
+
+
+
+    Parameters
+    ----------
+    base_fold : str
+        Pathname to indicate where to download the dataset.
+
+    dim : int
+        Size of the latent space that architecture will
+        learn in the process of decoding and encoding.
+
+    type_loss : str
+        Which loss function will be minimized in the learning proces,
+        with the options: "mae" or "maae"
+
+    Returns
+    -------
+    X : array
+
+    y : array
+
+    """
+    name_reduced = join(base_fold, "reduced_dataset_{}.parquet".format(dim))
+    X = read_parquet(name_reduced, engine="pyarrow").drop(["class"], 1)
+    y = read_parquet(name_reduced, engine="pyarrow")["class"]
+
+    return X, y
 
 def save_reduce(data_reduced,
                 value_encoding_dim,
@@ -496,7 +537,7 @@ def save_reduce(data_reduced,
 
     # If the folder does not exist, then create
     if not fold_base.exists():
-        fold_base.mkdir(parents=True, exist_ok=True)
+         fold_base.mkdir(parents=True, exist_ok=True)
 
     # Inside the folder to store the reduced space,
     # we save if it was a loss or baseline methode
@@ -557,3 +598,58 @@ def save_feature_model(auto_encoder,
     auto_enconder_name = join(path_save, auto_enconder_name)
 
     auto_encoder.method_enconder.save(auto_enconder_name)
+
+
+def save_history_model(auto_encoder, path_dataset, type_loss, value_encoding_dim):
+    # Join pathname between a string that contains the base
+    # pathname dataset and a folder called save_model,
+    # which will be created to save the whole-model
+    # Enconder and AutoEnconder.
+    path_save = join(path_dataset, "save_model")
+
+    # Conversion of the pathname string to the class PurePath,
+    # To use the class to create a folder on the system if it
+    # doesn"t exist.
+    fold_save = Path(path_save)
+
+    # If the folder does not exist, then create
+    if not fold_save.exists():
+        fold_save.mkdir(parents=True, exist_ok=True)
+
+    history = DataFrame(auto_encoder.method_autoenconder.history.history)
+    history = history.reset_index()
+    history['index'] = history['index']+1
+    history = history.rename(columns={'index': 'epoch'})
+
+    # Saving the auto enconder model
+    history_name = "loss_history_{}_{}.parquet".format(
+        type_loss, value_encoding_dim)
+    history_name = join(path_save, history_name)
+
+    history.to_parquet(history_name, engine="pyarrow")
+
+
+def save_classification(scores, 
+                        base_fold, 
+                        name_type,
+                        dim, 
+                        cv):
+    """
+    TODO
+    """
+    path_save = join(base_fold, "save")
+
+    fold = Path(path_save)
+
+    if not fold.exists():
+        fold.mkdir(parents=True, exist_ok=True)
+
+    # Formatted string to save size dimensions in name
+    name_classification = "classification_{}_{}_cv{}.parquet".format(name_type, 
+                                                                     dim, 
+                                                                     cv)
+    # Join to take the path that we will save the train and test
+    save_classification_name = join(path_save, name_classification)
+
+    # Saving as parquet to preserve the type.
+    scores.to_parquet(save_classification_name, engine="pyarrow")
