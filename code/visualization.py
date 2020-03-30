@@ -5,7 +5,7 @@ from os.path import join
 
 from pandas import Series
 from pandas import DataFrame
-from matplotlib.pylab import subplots, ylabel, xlabel
+from matplotlib.pylab import subplots, ylabel, xlabel, style
 from numpy import mean, around
 
 from classification import read_feature_data
@@ -89,8 +89,9 @@ def table_classification_dimension(metrics, original=True):
     accuracy = accuracy[["k_neighbors", "svm_linear", "svm_radial", "decision_tree",
                          "random_forest", "multi_layer", "ada_boost", "gaussian_nb"]]
 
-    return accuracy.apply(lambda x: around(x, decimals=4))
-
+    accuracy["average"] = accuracy.mean(axis=1)
+    
+    return accuracy
 
 def table_classification_fold(metrics, original=True, dimension=2):
     """
@@ -113,27 +114,27 @@ def table_classification_fold(metrics, original=True, dimension=2):
     return accuracy
 
 
-def plot_average_accuracy(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2):
+def plot_average_accuracy(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2, names = ["AE-CDNN-L1", "AE-CDNN-L2"]):
     """
       TO-DO:  Description
     """
     ae_d1_l1 = original_experiments(ae_d1_l1).groupby(
         ["Dimension"])["test_accuracy"].apply(mean)
-    ae_d1_l1.name = "AE-CDNN-L1"
+    ae_d1_l1.name = names[0]
 
     ae_d1_l2 = original_experiments(ae_d1_l2).groupby(
         ["Dimension"])["test_accuracy"].apply(mean)
-    ae_d1_l2.name = "AE-CDNN-L2"
+    ae_d1_l2.name = names[1]
 
     ae_d2_l1 = original_experiments(ae_d2_l1).groupby(
         ["Dimension"])["test_accuracy"].apply(mean)
-    ae_d2_l1.name = "AE-CDNN-L1"
+    ae_d2_l1.name = names[0]
 
     ae_d2_l2 = original_experiments(ae_d2_l2).groupby(
         ["Dimension"])["test_accuracy"].apply(mean)
-    ae_d2_l2.name = "AE-CDNN-L2"
+    ae_d2_l2.name = names[1]
 
-    fig, axes = subplots(nrows=1, ncols=2, figsize=(14, 10))
+    fig, axes = subplots(nrows=1, ncols=2, figsize=(14, 7))
 
     df_1 = DataFrame([ae_d1_l1, ae_d1_l2]).T
     df_1.index = df_1.index.astype(str)
@@ -264,23 +265,29 @@ def plot_feature_distribution(path_save, n_dims=4):
 
     return fig
 
-
-def plot_change_loss(history_l1, history_l2):
+def plot_change_loss(history_l1, history_l2, names = ["AE-CDNN-MAE", "AE-CDNN-MAAE"]):
     """
     TODO:  Description
     """
     fig, axes = subplots(figsize=(15, 5), ncols=2)
 
-    axes[0].plot(history_l1.history["loss"])
-    axes[0].plot(history_l1.history["val_loss"])
-    axes[0].set_title("AE-CDNN-L1")
+    axes[0].plot(history_l1["loss"])
+    axes[0].plot(history_l1["val_loss"])
+    axes[0].set_title(names[0])
     axes[0].set(ylabel="Loss values", xlabel="Iteration")
-    axes[0].legend(["loss", "val_loss"], loc="lower left")
+    axes[0].legend(["loss", "val_loss"], loc="best")
 
-    axes[1].plot(history_l2.history["loss"])
-    axes[1].plot(history_l2.history["val_loss"])
-    axes[1].set_title("AE-CDNN-L2")
+    axes[1].plot(history_l2["loss"])
+    axes[1].plot(history_l2["val_loss"])
+    axes[1].set_title(names[1])
     axes[1].set(ylabel="Loss values", xlabel="Iteration")
-    axes[1].legend(["loss", "val_loss"], loc="lower left")
+    axes[1].legend(["loss", "val_loss"], loc="best")
 
+    return fig
+
+def difference_orig_repro(original, reprodu):
+    fig, axes = subplots(figsize = (20,10))
+    axes = (original - reprodu).T.plot.bar(ax=axes)
+    _  = axes.set(ylabel="Difference between original and reproduced results",
+                 xlabel = "Classifiers name")
     return fig

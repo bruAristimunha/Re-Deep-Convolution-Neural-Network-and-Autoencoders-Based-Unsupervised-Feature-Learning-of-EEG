@@ -620,6 +620,20 @@ def save_history_model(auto_encoder, path_dataset, type_loss, value_encoding_dim
 
     history.to_parquet(history_name, engine="pyarrow")
 
+def read_history_model(path_dataset, type_loss, value_encoding_dim):
+    # Join pathname between a string that contains the base
+    # pathname dataset and a folder called save_model,
+    # which will be created to save the whole-model
+    # Enconder and AutoEnconder.
+    path_save = join(path_dataset, "save_model")
+
+    # Saving the auto enconder model
+    history_name = "loss_history_{}_{}.parquet".format(
+        type_loss, value_encoding_dim)
+    history_name = join(path_save, history_name)
+
+    history =  read_parquet(history_name, engine="pyarrow")
+    return history
 
 def save_classification(scores, 
                         base_fold, 
@@ -643,3 +657,9 @@ def save_classification(scores,
 
     # Saving as parquet to preserve the type.
     scores.to_parquet(save_classification_name, engine="pyarrow")
+    
+def get_original_results(id_table: str, path_original: str):
+
+    name_file = "Original_Tables - Table_{}.csv".format(id_table)
+
+    return read_csv(join (path_original, name_file), index_col="Dimension")
