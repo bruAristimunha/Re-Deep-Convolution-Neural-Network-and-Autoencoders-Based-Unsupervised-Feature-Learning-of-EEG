@@ -2,10 +2,14 @@
 
 TO-DO:
 
-    [ ] Visualization : convert all to function;
-
-    [ ] Results of 10-fold cross validation based on NN-2;
+    [ ] Visualization : convert appendix to function;
 
     [ ] run pydocstyle and pylint;
+
+    [ ] Fix all TO-DO, documentation;
     
-    [ ] Load history loss;
+    [ ] Transform appendix into the extension subsection.
+    
+    [ ] Fix warning in plot_feature_distribution;
+    
+    [ ] 
