@@ -106,7 +106,8 @@ def run_classification(path_dataset,
     """
     TO-DO
     """
-
+    print("Perform classification on data reduced by : {}".format(name_type))
+    
     path_base = join(path_dataset, "reduced")
 
     if name_type in ('mae', 'maae'):
