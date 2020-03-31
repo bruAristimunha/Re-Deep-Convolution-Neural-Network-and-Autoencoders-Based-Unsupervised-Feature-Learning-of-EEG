@@ -3,13 +3,66 @@
 """
 from os.path import join
 
-from pandas import Series
-from pandas import DataFrame
-from matplotlib.pylab import subplots, ylabel, xlabel, style
+from pandas import (
+    Series,
+    DataFrame,
+    melt,
+)
+
+from matplotlib.pylab import (
+    subplots,
+    ylabel,
+    xlabel,
+    style,
+)
 from numpy import mean, around
+
+from sklearn.utils._testing import ignore_warnings
 
 from classification import read_feature_data
 
+from seaborn import boxplot, set_context, lmplot
+
+def boxplot_difference(reprod_table, origin_table):
+
+    diff = melt(reprod_table-origin_table)
+    diff.columns = ["", ""]
+
+    fig, ax = subplots(figsize=(17, 5))
+
+    set_context("paper", font_scale=0.9)
+
+    diff.columns = ["Classifier",
+                    "Difference between\n obtained and reported accuracy."]
+
+    ax = boxplot(data=diff,
+                 y="Difference between\n obtained and reported accuracy.",
+                 x="Classifier", ax=ax)
+    return fig
+
+def regression_plot(metrics, name_metric="accuracy"):
+    
+    reprod_table = table_classification_dimension(metrics, False, False, name_metric)
+
+    graph = melt(reprod_table.reset_index(),  id_vars=["Dimension"])
+    graph.columns = ["Number of Feature - m", 
+                     "Classifier", 
+                     name_metric]
+
+    g = lmplot(x="Number of Feature - m", y=name_metric,
+               hue="Classifier", col="Classifier",
+               data=graph, aspect=1, col_wrap=3,
+               x_jitter=.1, sharex=True,
+               line_kws={"lw": 2, "ls": "--"},
+               seed=42)
+
+    g = g.set_axis_labels("", name_metric)
+
+    g = g.set(xlim=(-30, 280),
+              ylim=(0.5, 1),
+              xticks=[0, 32, 64, 128, 256]).fig.subplots_adjust(wspace=.4)
+
+    return g
 
 def plot_variance_accumulate(var):
     """
@@ -42,7 +95,7 @@ def plot_variance_by_file(variance_by_file):
     return fig
 
 
-def plot_variance_by_pearson(variance_per_person):
+def plot_variance_by_person(variance_per_person):
     """
       TO-DO:  Description
     """
@@ -53,7 +106,7 @@ def plot_variance_by_pearson(variance_per_person):
 
     axes = Series(var).value_counts().sort_values().plot.bar(ax=axes)
 
-    ylabel("Accumulated rank per channel per pearson")
+    ylabel("Accumulated rank per channel per person")
     xlabel("EEG Channel")
 
     return fig
@@ -73,65 +126,75 @@ def proposed_experiments(x):
     return x[(x["name_classifier"] == "ensemble") | (x["Dimension"] == 256)]
 
 
-def table_classification_dimension(metrics, original=True):
+def table_classification_dimension(metrics, original=True, 
+                                   proposed=True, metric="accuracy"):
     """
       TO-DO:  Description
     """
     if original:
         metrics = original_experiments(metrics)
-    else:
+    elif proposed:
         metrics = proposed_experiments(metrics)
+    else:
+        metrics = metrics
 
-    accuracy = metrics.groupby(
-        ["Dimension", "name_classifier"])["test_accuracy"].apply(mean).unstack()
+    values_metrics = metrics.groupby(
+        ["Dimension", "name_classifier"])["test_{}".format(metric)].apply(mean).unstack()
 
     # Order with base in paper.
-    accuracy = accuracy[["k_neighbors", "svm_linear", "svm_radial", "decision_tree",
+    values_metrics = values_metrics[["k_neighbors", "svm_linear", "svm_radial", "decision_tree",
                          "random_forest", "multi_layer", "ada_boost", "gaussian_nb"]]
 
-    accuracy["average"] = accuracy.mean(axis=1)
-    
-    return accuracy
+    values_metrics["average"] = values_metrics.mean(axis=1)
 
-def table_classification_fold(metrics, original=True, dimension=2):
+    return values_metrics
+
+
+def table_classification_fold(metrics, original=True, 
+                              proposed=True, dimension=2,
+                              metric="accuracy"):
     """
       TO-DO:  Description
     """
     if original:
         metrics = original_experiments(metrics)
-    else:
+    elif proposed:
         metrics = proposed_experiments(metrics)
-
-    accuracy = metrics[metrics["Dimension"] == dimension]
+    else:
+        metrics = metrics
+        
+    values_metrics = metrics[metrics["Dimension"] == dimension]
     # Order with base in paper.
-    accuracy = accuracy.pivot_table(index="5-fold",
+    values_metrics = values_metrics.pivot_table(index="5-fold",
                                     columns="name_classifier",
-                                    values="test_accuracy")
+                                    values="test_{}".format(metric))
 
-    accuracy = accuracy[["k_neighbors", "svm_linear", "svm_radial", "decision_tree",
+    values_metrics = values_metrics[["k_neighbors", "svm_linear", "svm_radial", "decision_tree",
                          "random_forest", "multi_layer", "ada_boost", "gaussian_nb"]]
 
-    return accuracy
+    return values_metrics
 
 
-def plot_average_accuracy(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2, names = ["AE-CDNN-L1", "AE-CDNN-L2"]):
+def plot_average_metric(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2,
+                        names=["AE-CDNN-MAE", "AE-CDNN-MAAE"],
+                        metric="accuracy"):
     """
       TO-DO:  Description
     """
     ae_d1_l1 = original_experiments(ae_d1_l1).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     ae_d1_l1.name = names[0]
 
     ae_d1_l2 = original_experiments(ae_d1_l2).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     ae_d1_l2.name = names[1]
 
     ae_d2_l1 = original_experiments(ae_d2_l1).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     ae_d2_l1.name = names[0]
 
     ae_d2_l2 = original_experiments(ae_d2_l2).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     ae_d2_l2.name = names[1]
 
     fig, axes = subplots(nrows=1, ncols=2, figsize=(14, 7))
@@ -142,58 +205,59 @@ def plot_average_accuracy(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2, names = ["AE-C
     df_2 = DataFrame([ae_d2_l1, ae_d2_l2]).T
     df_2.index = df_2.index.astype(str)
 
-    axes[0] = df_1.plot.line(ax=axes[0], ylim=(0.5, 1), style=".-")
-    axes[0].set(ylabel="Average accuracy")
+    axes[0] = df_1.plot.line(ax=axes[0], ylim=(0.4, 1), style=".-")
+    axes[0].set(ylabel="Average {}".format(metric))
 
     axes[0].set_title("Dataset 1")
     axes[0].legend(loc="lower right")
 
-    axes[1] = df_2.plot.line(ax=axes[1], ylim=(0.5, 1), style=".-")
+    axes[1] = df_2.plot.line(ax=axes[1], ylim=(0.4, 1), style=".-")
     axes[1].set_title("Dataset 2")
-    axes[1].set(ylabel="Average accuracy")
+    axes[1].set(ylabel="Average {}".format(metric))
     axes[1].legend(loc="lower right")
 
     return fig
 
 
-def plot_average_accuracy_baseline(ae_d1_l1, ae_d1_l2, pca_d1, srp_d1,
-                                   ae_d2_l1, ae_d2_l2, pca_d2, srp_d2):
+def plot_average_metric_baseline(ae_d1_l1, ae_d1_l2, pca_d1, srp_d1,
+                                 ae_d2_l1, ae_d2_l2, pca_d2, srp_d2,
+                                 metric="accuracy"):
     """
     TO-DO:  Description
     """
     # Auto-Enconder
     ae_d1_l1 = original_experiments(ae_d1_l1).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     ae_d1_l1.name = "AE-CDNN-L1"
 
     ae_d1_l2 = original_experiments(ae_d1_l2).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     ae_d1_l2.name = "AE-CDNN-L2"
 
     ae_d2_l1 = original_experiments(ae_d2_l1).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     ae_d2_l1.name = "AE-CDNN-L1"
 
     ae_d2_l2 = original_experiments(ae_d2_l2).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     ae_d2_l2.name = "AE-CDNN-L2"
 
     # Baseline
 
     pca_d1 = original_experiments(pca_d1).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     pca_d1.name = "PCA"
 
     pca_d2 = original_experiments(pca_d2).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     pca_d2.name = "PCA"
 
     srp_d1 = original_experiments(srp_d1).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     srp_d1.name = "SRP"
 
     srp_d2 = original_experiments(srp_d2).groupby(
-        ["Dimension"])["test_accuracy"].apply(mean)
+        ["Dimension"])["test_{}".format(metric)].apply(mean)
     srp_d2.name = "SRP"
 
     fig, axes = subplots(nrows=1, ncols=2, figsize=(14, 10))
@@ -204,24 +268,26 @@ def plot_average_accuracy_baseline(ae_d1_l1, ae_d1_l2, pca_d1, srp_d1,
     df_2 = DataFrame([ae_d2_l1, ae_d2_l2, pca_d2, srp_d2]).T
     df_2.index = df_2.index.astype(str)
 
-    axes[0] = df_1.plot.line(ax=axes[0], ylim=(0.5, 1), style=".-")
+    axes[0] = df_1.plot.line(ax=axes[0], ylim=(0.4, 1), style=".-")
     axes[0].set(ylabel="Average accuracy")
 
     axes[0].set_title("Dataset 1")
     axes[0].legend(loc="lower right")
 
-    axes[1] = df_2.plot.line(ax=axes[1], ylim=(0.5, 1), style=".-")
+    axes[1] = df_2.plot.line(ax=axes[1], ylim=(0.4, 1), style=".-")
     axes[1].set_title("Dataset 2")
     axes[1].set(ylabel="Average accuracy")
     axes[1].legend(loc="lower right")
 
     return fig
 
+
 def encoded_class(x):
     """
     TODO:  Description
     """
     return "$P$" if x == 1 else "$N$"
+
 
 def clean_xlabel(x):
     """
@@ -230,11 +296,14 @@ def clean_xlabel(x):
     return x.set(xlabel="")
 
 
-def plot_feature_distribution(path_save, n_dims=4):
+@ignore_warnings(category=UserWarning)
+def plot_feature_distribution(path_save, n_dims=4,
+                              names=["AE-CDNN-MAE", "AE-CDNN-MAAE"]):
     """
     TODO:  Description
     """
-    fig, axes = subplots(nrows=2, ncols=n_dims, figsize=(20, 10))
+    fig, axes = subplots(nrows=2, ncols=n_dims,
+                         figsize=(20, 10))
 
     path_base = join(path_save, "reduced")
 
@@ -247,25 +316,27 @@ def plot_feature_distribution(path_save, n_dims=4):
 
     axes[0] = data_frame_mae.boxplot(by="class", ax=axes[0]).reshape(-1)
 
-    path_read = join(path_base, "ae_{}".format("mae"))
+    path_read = join(path_base, "ae_{}".format("maae"))
     data_frame_maae, y_maae = read_feature_data(path_read, n_dims)
     data_frame_maae.columns = ["$f_{}$".format(int(name_col)+1)
                                for name_col in data_frame_maae.columns.values]
 
     data_frame_maae["class"] = y_maae.apply(encoded_class)
 
-    axes[1] = data_frame_mae.boxplot(by="class", ax=axes[1]).reshape(-1)
+    axes[1] = data_frame_maae.boxplot(by="class", ax=axes[1]).reshape(-1)
 
     _ = list(map(clean_xlabel, axes[0]))
     _ = list(map(clean_xlabel, axes[1]))
     _ = fig.suptitle("")
 
-    _ = axes[0][0].set(ylabel="AE-CDNN-L1")
-    _ = axes[1][0].set(ylabel="AE-CDNN-L2")
+    _ = axes[0][0].set(ylabel=names[0])
+    _ = axes[1][0].set(ylabel=names[1])
 
     return fig
 
-def plot_change_loss(history_l1, history_l2, names = ["AE-CDNN-MAE", "AE-CDNN-MAAE"]):
+
+def plot_change_loss(history_l1, history_l2,
+                     names=["AE-CDNN-MAE", "AE-CDNN-MAAE"]):
     """
     TODO:  Description
     """
@@ -285,9 +356,10 @@ def plot_change_loss(history_l1, history_l2, names = ["AE-CDNN-MAE", "AE-CDNN-MA
 
     return fig
 
+
 def difference_orig_repro(original, reprodu):
-    fig, axes = subplots(figsize = (20,10))
+    fig, axes = subplots(figsize=(20, 10))
     axes = (original - reprodu).T.plot.bar(ax=axes)
-    _  = axes.set(ylabel="Difference between original and reproduced results",
-                 xlabel = "Classifiers name")
+    _ = axes.set(ylabel="Difference between original and reproduced results",
+                 xlabel="Classifiers name")
     return fig
