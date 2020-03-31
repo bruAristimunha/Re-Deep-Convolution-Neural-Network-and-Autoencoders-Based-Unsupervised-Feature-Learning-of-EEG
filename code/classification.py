@@ -14,8 +14,14 @@ from sklearn.model_selection import (
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import make_pipeline
 from sklearn.model_selection import cross_validate
-from sklearn.metrics import accuracy_score
-
+from sklearn.metrics import (
+    make_scorer, 
+    accuracy_score, 
+    precision_score, 
+    recall_score, 
+    f1_score, 
+    roc_auc_score,
+)
 # Classification methods
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
@@ -28,7 +34,7 @@ from sklearn.ensemble import (
     VotingClassifier,
 )
 from sklearn.utils._testing import ignore_warnings
-from sklearn.exceptions import ConvergenceWarning
+from sklearn.exceptions import ConvergenceWarning, UndefinedMetricWarning
 
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense, Flatten
@@ -99,6 +105,7 @@ def methods_classification(n_neighbors=3,
     return classifiers
 
 @ignore_warnings(category=ConvergenceWarning)
+@ignore_warnings(category=UndefinedMetricWarning)
 def run_classification(path_dataset,
                        name_type,
                        range_values, 
@@ -106,6 +113,14 @@ def run_classification(path_dataset,
     """
     TO-DO
     """
+    
+    scoring = {"accuracy": make_scorer(accuracy_score),
+           "precision": make_scorer(precision_score),
+           "specificity": make_scorer(recall_score, pos_label=0),
+           "sensitivity": make_scorer(recall_score),
+           "f-measure": make_scorer(f1_score),
+           "roc-auc": make_scorer(roc_auc_score)}
+    
     print("Perform classification on data reduced by : {}".format(name_type))
     
     path_base = join(path_dataset, "reduced")
@@ -135,8 +150,6 @@ def run_classification(path_dataset,
         y = files[ind][1]
 
         for name_classifier, classifier in classifiers:
-
-            scoring = ["accuracy"]  # , "precision", "recall","f1", "roc_auc"]
 
             #The following clf uses minmax scaling
             clf = make_pipeline(MinMaxScaler(), classifier)
