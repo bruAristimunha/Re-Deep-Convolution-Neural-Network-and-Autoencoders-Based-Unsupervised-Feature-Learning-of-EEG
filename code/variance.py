@@ -131,7 +131,7 @@ def get_variance_by_file(path_dataset, range_=(1, 11)):
     return rank_variance
 
 
-def get_variance_by_pearson(path_dataset, range_=(1, 11)):
+def get_variance_by_person(path_dataset, range_=(1, 11)):
     """
     TO-DO:
     """
