@@ -133,17 +133,22 @@ def table_classification_dimension(metrics, original=True,
     """
     if original:
         metrics = original_experiments(metrics)
+        order_col = ["k_neighbors", "svm_linear", "svm_radial", 
+                     "decision_tree", "random_forest", "multi_layer", 
+                     "ada_boost", "gaussian_nb"]
     elif proposed:
         metrics = proposed_experiments(metrics)
     else:
         metrics = metrics
+        order_col = ["k_neighbors", "svm_linear", "svm_radial", 
+                     "decision_tree", "random_forest", "multi_layer", 
+                     "ada_boost", "gaussian_nb", "ensemble"]
 
     values_metrics = metrics.groupby(
         ["Dimension", "name_classifier"])["test_{}".format(metric)].apply(mean).unstack()
 
     # Order with base in paper.
-    values_metrics = values_metrics[["k_neighbors", "svm_linear", "svm_radial", "decision_tree",
-                         "random_forest", "multi_layer", "ada_boost", "gaussian_nb"]]
+    values_metrics = values_metrics[order_col]
 
     values_metrics["average"] = values_metrics.mean(axis=1)
 
