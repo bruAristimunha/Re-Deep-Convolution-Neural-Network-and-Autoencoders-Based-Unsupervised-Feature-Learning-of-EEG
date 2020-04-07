@@ -23,22 +23,6 @@ from classification import read_feature_data
 
 from seaborn import boxplot, set_context, lmplot
 
-def boxplot_difference(reprod_table, origin_table):
-
-    diff = melt(reprod_table-origin_table)
-    diff.columns = ["", ""]
-
-    fig, ax = subplots(figsize=(17, 5))
-
-    set_context("paper", font_scale=0.9)
-
-    diff.columns = ["Classifier",
-                    "Difference between\n obtained and reported accuracy."]
-
-    ax = boxplot(data=diff,
-                 y="Difference between\n obtained and reported accuracy.",
-                 x="Classifier", ax=ax)
-    return fig
 
 def regression_plot(metrics, name_metric="accuracy"):
     
@@ -226,46 +210,48 @@ def plot_average_metric(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2,
 
 def plot_average_metric_baseline(ae_d1_l1, ae_d1_l2, pca_d1, srp_d1,
                                  ae_d2_l1, ae_d2_l2, pca_d2, srp_d2,
-                                 metric="accuracy"):
+                                 metric="accuracy",
+                                 name = ["AE-CDNN-MAE", "AE-CDNN-MAAE",
+                                         "PCA", "SRP"]):
     """
     TO-DO:  Description
     """
     # Auto-Enconder
     ae_d1_l1 = original_experiments(ae_d1_l1).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
-    ae_d1_l1.name = "AE-CDNN-L1"
+    ae_d1_l1.name = name[0]
 
     ae_d1_l2 = original_experiments(ae_d1_l2).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
-    ae_d1_l2.name = "AE-CDNN-L2"
+    ae_d1_l2.name = name[1]
 
     ae_d2_l1 = original_experiments(ae_d2_l1).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
-    ae_d2_l1.name = "AE-CDNN-L1"
+    ae_d2_l1.name = name[0]
 
     ae_d2_l2 = original_experiments(ae_d2_l2).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
-    ae_d2_l2.name = "AE-CDNN-L2"
+    ae_d2_l2.name = name[1]
 
     # Baseline
 
     pca_d1 = original_experiments(pca_d1).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
-    pca_d1.name = "PCA"
+    pca_d1.name = name[2]
 
     pca_d2 = original_experiments(pca_d2).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
-    pca_d2.name = "PCA"
+    pca_d2.name = name[2]
 
     srp_d1 = original_experiments(srp_d1).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
-    srp_d1.name = "SRP"
+    srp_d1.name = name[3]
 
     srp_d2 = original_experiments(srp_d2).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
-    srp_d2.name = "SRP"
+    srp_d2.name = name[3]
 
-    fig, axes = subplots(nrows=1, ncols=2, figsize=(14, 10))
+    fig, axes = subplots(nrows=1, ncols=2, figsize=(14, 7))
 
     df_1 = DataFrame([ae_d1_l1, ae_d1_l2, pca_d1, srp_d1]).T
     df_1.index = df_1.index.astype(str)
@@ -362,9 +348,61 @@ def plot_change_loss(history_l1, history_l2,
     return fig
 
 
-def difference_orig_repro(original, reprodu):
-    fig, axes = subplots(figsize=(20, 10))
-    axes = (original - reprodu).T.plot.bar(ax=axes)
-    _ = axes.set(ylabel="Difference between original and reproduced results",
-                 xlabel="Classifiers name")
+def boxplot_difference(reprod_table, origin_table):
+
+    diff = melt(reprod_table-origin_table)
+    diff.columns = ["", ""]
+
+    fig, axes = subplots(figsize=(17, 5), nrows=2, sharex=True,
+                         sharey=True)
+
+    diff.columns = ["Classifier",
+                    "Difference between\n obtained and reported accuracy."]
+
+    axes[0] = boxplot(data=diff,
+                      y="Difference between\n obtained and reported accuracy.",
+                      x="Classifier", ax=axes[0])
+
+    axes[1] = (reprod_table-origin_table).T.plot.bar(ax=axes[1])
+
+    _ = axes[1].set(xlabel="Classifiers name")
+    _ = axes[1].set(ylabel="Difference between\n obtained and reported accuracy.")
+    _ = axes[0].set(ylabel="")
+
+    bb = (fig.subplotpars.left-0.5, fig.subplotpars.top-2.5,
+          fig.subplotpars.right-fig.subplotpars.left, .1)
+
+    legend = axes[1].legend(bbox_to_anchor=bb, loc="lower right",
+                       ncol=4, title="Dimension",
+                       fancybox=True, shadow=True,
+                       title_fontsize=16)
+
+    # plt.tight_layout(rect=[0,0,0.75,1])
     return fig
+
+def table_export_latex(path_save, dataset, name_dataset, metric, name_type):
+
+    data = table_classification_dimension(dataset[name_type],
+                                          False, False,
+                                          metric=metric)
+
+    metric_name = metric.capitalize()
+
+    title = "{} values obtained by the same methodology - {} Dataset with {}.".format(metric_name,
+                                                                                      name_dataset,
+                                                                                      name_type)
+    label_latex = "{}_{}_{}-reproduction".format(metric,
+                                                 name_dataset,
+                                                 name_type)
+
+    title_name = "{}.tex".format(label_latex)
+
+    columns = data.columns.to_list()
+
+    data.to_latex(buf=join(path_save, title_name),
+                  caption=title,
+                  label=label_latex,
+                  bold_rows=True,
+                  columns=columns)
+
+    return data.style.set_caption(title)
