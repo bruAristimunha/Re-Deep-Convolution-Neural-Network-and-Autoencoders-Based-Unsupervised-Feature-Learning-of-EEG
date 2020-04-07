@@ -1,55 +1,35 @@
-SOURCE   = Name-YEAR
-MDFILE   = $(SOURCE).md
-BIBFILE  = bibliography.bib
-TEXFILE  = $(SOURCE).tex
-PDFFILE  = $(SOURCE).pdf
-TEMPLATE = rescience-template.tex
+# From  https://tex.stackexchange.com/questions/40738/how-to-properly-make-a-latex-project
+# -----------------------------------------------------------------------------
+# You want latexmk to *always* run, because make does not have all the info.
+# Also, include non-file targets in .PHONY so they are run regardless of any
+# file of the given name existing.
+.PHONY: clean
 
-%.tex: $(MDFILE)
-        # @echo "Processing $<"
-	@pandoc --standalone                          \
-                --filter ~/.cabal/bin/pandoc-crossref \
-                --template=$(TEMPLATE)                \
-                --pdf-engine=xelatex                  \
-                --biblatex                            \
-                --bibliography=$(BIBFILE)             \
-                -M "crossrefYaml=crossref.yaml"       \
-                --output $(TEXFILE) $(MDFILE)
+# The first rule in a Makefile is the one executed by default ("make"). It
+# should always be the "all" rule, so that "make" and "make all" are identical.
 
-%.pdf: $(TEXFILE) $(BIBFILE) $(TEMPLATE)
-	@echo " [1/4] Processing $(TEXFILE) (pass 1)"
-	@xelatex $(TEXFILE) > make.log
-
-	@echo " [2/4] Processing $(BIBFILE)"
-	@biber $(SOURCE) >> make.log
-
-	@echo " [3/4] Processing $(TEXFILE) (pass 2)"
-	@xelatex $(TEXFILE) >> make.log
-
-	@echo " [4/4] Processing $(TEXFILE) (pass 3)"
-	@xelatex $(TEXFILE) >> make.log
-
-        # Remove the intermediate tex file because you're
-        # not supposed to edit it.
-	@rm $(TEXFILE)
+all: article
+article: article.pdf
 
 
-all: $(PDFFILE)
+# CUSTOM BUILD RULES
+# -----------------------------------------------------------------------------
+metadata.tex: metadata.yaml
+	./yaml-to-latex.py -i $< -o $@
 
 
-# This prevents make to remove intermediate object files
-# (we'll take care of it ourselves)
-.PRECIOUS: %.tex
+# MAIN LATEXMK RULE
+# -----------------------------------------------------------------------------
+# -pdf tells latexmk to generate PDF directly (instead of DVI).
+# -pdflatex="" tells latexmk to call a specific backend with specific options.
+# -use-make tells latexmk to call make for generating missing files.
+# -interaction=nonstopmode keeps the pdflatex backend from stopping at a
+# missing file reference and interactively asking you for an alternative.
+
+article.pdf: article.tex content.tex metadata.tex rescience.cls
+	latexmk -pdf -pdflatex="xelatex -interaction=nonstopmode" -use-make article.tex
 
 clean:
-	@rm -f make.log
-	@rm -f $(SOURCE).aux
-	@rm -f $(SOURCE).log
-	@rm -f $(SOURCE).bbl
-	@rm -f $(SOURCE).bcf
-	@rm -f $(SOURCE).blg
-	@rm -f $(SOURCE).log
-	@rm -f $(SOURCE).out
-        # @rm -f $(SOURCE).pdf
-	@rm -f $(SOURCE).tex
-	@rm -f $(SOURCE).run.xml
+	@latexmk -CA
+	@rm -f *.bbl
+	@rm -f *.run.xml

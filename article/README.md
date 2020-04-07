@@ -1,32 +1,30 @@
-### Important
+### [ReScience C](https://rescience.github.io/) article template
 
-Don't forget to change the name of the Name-YEAR file to reflect all the
-authors name and the current year.
+This repository contains the Latex (optional) template for writing a ReScience
+C article and the (mandatory) YAML metadata file. For the actual article,
+you're free to use any software you like as long as you enforce the proposed
+PDF style. A tool is available for the latex template that produces latex
+definitions from the metadata file. If you use another software, make sure that
+metadata and PDF are always synced.
 
-### Required tools for producing the pdf
+You can also use overleaf with the [provided template](https://www.overleaf.com/read/kfrwdmygjyqw) but in this case, you'll have to enter `metadata.tex` manually.
 
-You'll need [pandoc](http://pandoc.org) (a universal document converter) and a
-full [TeX distribution](https://www.tug.org/texlive/).
+#### Usage
 
-For pandoc, you'll also need the
-[pandoc-crossref](https://github.com/lierdakil/pandoc-crossref) filter that you can
-easily install with:
+For a submission, fill in information in
+[metadata.yaml](./metadata.yaml), modify [content.tex](content.tex)
+and type:
 
-```
-$ cabal update
-$ cabal install pandoc-crossref
-```
-
-### How to build the PDF ?
-
-In a console, type:
-
-```
-pandoc --standalone --filter ~/.cabal/bin/pandoc-crossref --template=rescience-template.tex --latex-engine=xelatex --biblatex --bibliography=bibliography.bib -M "crossrefYaml=crossref.yaml" --output Name-YEAR.tex Name-YEAR.md
-xelatex Name-YEAR
-biber Name-YEAR
-xelatex Name-YEAR
-xelatex Name-YEAR
+```bash
+$ make 
 ```
 
-Alternativaley, you can also type `make` after having edited the Makefile.
+This will produce an `article.pdf` using xelatex and provided font.
+
+
+After acceptance, you'll need to complete [metadata.yaml](./metadata.yaml) with information provided by the editor and type again:
+
+```bash
+$ make
+```
+
