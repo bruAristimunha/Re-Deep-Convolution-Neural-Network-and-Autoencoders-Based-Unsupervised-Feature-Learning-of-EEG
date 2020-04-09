@@ -377,13 +377,15 @@ def boxplot_difference(reprod_table, origin_table):
                        fancybox=True, shadow=True,
                        title_fontsize=16)
 
-    # plt.tight_layout(rect=[0,0,0.75,1])
     return fig
 
-def table_export_latex(path_save, dataset, name_dataset, metric, name_type):
+def table_export_latex(path_save, dataset,
+                       name_dataset, metric,
+                       name_type, original,
+                       proposed):
 
     data = table_classification_dimension(dataset[name_type],
-                                          False, False,
+                                          original, proposed,
                                           metric=metric)
 
     metric_name = metric.capitalize()
@@ -405,4 +407,4 @@ def table_export_latex(path_save, dataset, name_dataset, metric, name_type):
                   bold_rows=True,
                   columns=columns)
 
-    return data.style.set_caption(title)
+    return data, data.style.set_caption(title)
