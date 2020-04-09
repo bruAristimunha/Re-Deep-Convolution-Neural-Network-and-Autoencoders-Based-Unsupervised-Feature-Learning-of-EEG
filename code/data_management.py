@@ -118,11 +118,11 @@ def download_bonn(path_data="data/boon/") -> [str]:
 
         print("Downloading and unzipping the files")
 
-        for url, path in list(zip(urls, path_child_fold)):
-            file_directory = download(url, path)
+        for url, path_ in list(zip(urls, path_child_fold)):
+            file_directory = download(url, path_)
 
             with ZipFile(file_directory, "r") as zip_ref:
-                zip_ref.extractall(path)
+                zip_ref.extractall(path_)
 
     return path_child_fold
 
@@ -141,8 +141,8 @@ def download_item(url_base, name_base, page=True, range_=(30, 50)):
     page : bool
         Parameter to be used to download the page"s html.
     range_ : tuple(int, int)
-        Interval with patient id that will be excluded in 
-        the download. By default, it indexes an invalid range, 
+        Interval with patient id that will be excluded in
+        the download. By default, it indexes an invalid range,
         that is, it downloads everything.
     Returns
     -------
@@ -243,7 +243,7 @@ def download_chbmit(url_base, path_save):
     return patient_item
 
 
-def load_dataset_boon(path_data : str) -> [array]:
+def load_dataset_boon(path_data: str) -> [array]:
     """Function for reading the boon database, and return X and y.
     Also adapted from:
     https://mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
@@ -255,10 +255,10 @@ def load_dataset_boon(path_data : str) -> [array]:
 
     Returns
     -------
-    X : array-like, shape (n_samples, n_features)
+    data : array-like, shape (n_samples, n_features)
         Data vectors, where n_samples is the number of samples
         and n_features is the number of features.
-    y : array-like, shape (n_samples,)
+    class_ : array-like, shape (n_samples,)
         Target values.
 
     """
@@ -270,14 +270,13 @@ def load_dataset_boon(path_data : str) -> [array]:
     if not fold.exists():
         print("Error file not find")
         return "Error"
-            
-        
+
     data_segments = list()
     labels = list()
 
-    for path in path_child_fold:
+    for path_ in path_child_fold:
 
-        f_names = [s for s in Path(path).iterdir() if str(
+        f_names = [s for s in Path(path_).iterdir() if str(
             s).lower().endswith(".txt")]
 
         for f_name in f_names:
@@ -285,16 +284,16 @@ def load_dataset_boon(path_data : str) -> [array]:
 
             data_segments.append(_data.values.T[None, ...])
 
-        if ("setE" in path) or ("setC" in path) or ("setD" in path):
+        if ("setE" in path_) or ("setC" in path_) or ("setD" in path_):
 
             labels.append(ones((len(f_names),)))
         else:
             labels.append(zeros((len(f_names),)))
 
-    X = concatenate(data_segments).squeeze()
-    y = concatenate(labels, axis=0)
+    data = concatenate(data_segments).squeeze()
+    class_ = concatenate(labels, axis=0)
 
-    return X, y
+    return data, class_
 
 
 def filter_empty(n_array):
@@ -330,6 +329,7 @@ def split_4096(n_array):
         return vstack(array_split(fix_size, len(n_array) // 4096))
     return []
 
+
 def check_exist_chbmit(path_save: str):
     """
     TODO: Description.
@@ -339,23 +339,20 @@ def check_exist_chbmit(path_save: str):
     if not fold.exists():
         fold.mkdir(parents=True, exist_ok=True)
         return False
-    else:
-        return True
-
-
+    return True
 
 def load_dataset_chbmit(path_save: str,
                         n_samples=200,
                         random_state=42) -> [array]:
     """
     # TODO: fix docstring
-    
+
     Parameters
     ----------
     random_state : int
     n_samples: int
     path_save: str
-    
+
     Returns
     -------
     X : array-like, shape (n_samples, n_features)
@@ -408,22 +405,24 @@ def load_dataset_chbmit(path_save: str,
         data_frame_seiz = read_parquet(name_dataset_seiz, engine="pyarrow")
 
     sample_non = data_frame_non.sample(n=n_samples, random_state=random_state)
-    sample_seiz = data_frame_seiz.sample(n=n_samples, random_state=random_state)
+    sample_seiz = data_frame_seiz.sample(
+        n=n_samples, random_state=random_state)
 
     data_frame = sample_non.append(sample_seiz)
 
     return data_frame.drop('class', 1).to_numpy(), data_frame['class'].values
 
-def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
+
+def preprocessing_split(data, class_, test_size=.20, random_state=42) -> [array]:
     """Function to perform the train and test split
     and normalize the data set with Min-Max.
 
     Parameters
     ----------
-    X : array-like, shape (n_samples, n_features)
+    data : array-like, shape (n_samples, n_features)
         Training vectors, where n_samples is the number of samples
         and n_features is the number of features.
-    y : array-like, shape (n_samples,)
+    class_ : array-like, shape (n_samples,)
         Target values.
     test_size : float
         Value between 0 and 1 to indicate the
@@ -433,31 +432,34 @@ def preprocessing_split(X, y, test_size=.20, random_state=42) -> [array]:
 
     Returns
     -------
-    X_train, X_test, y_train, y_test : list
+    data_train, data_test, class_train, class_test : list array
         Separate data set for training and testing,
         standardized and correctly formatted for tensor.
     """
     # Separation of the data set in training and testing.
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state)
+    data_train, data_test, class_train, class_test = train_test_split(
+        data, class_, test_size=test_size, random_state=random_state)
 
     # Min max scaler method.
-    min_max = MinMaxScaler().fit(X_train)
+    min_max = MinMaxScaler().fit(data_train)
 
     # Applying the re-scaling the training set and test set.
-    X_train = min_max.transform(X_train)
-    X_test = min_max.transform(X_test)
+    data_train = min_max.transform(data_train)
+    data_test = min_max.transform(data_test)
 
     # Removal of the last point present in the vector
     # Or doing nothing :)
-    X_train = X_train[:, :4096]
-    X_test = X_test[:, :4096]
+    data_train = data_train[:, :4096]
+    data_test = data_test[:, :4096]
 
     # Applying to reshape to match the input as tensor.
-    X_train = reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
-    X_test = reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+    data_train = reshape(data_train,
+                         (data_train.shape[0], data_train.shape[1], 1))
+    data_test = reshape(data_test,
+                        (data_test.shape[0], data_test.shape[1], 1))
 
-    return X_train, X_test, y_train, y_test
+    return data_train, data_test, class_train, class_test
+
 
 def read_feature_data(base_fold, dim):
     """
@@ -475,16 +477,17 @@ def read_feature_data(base_fold, dim):
 
     Returns
     -------
-    X : array
+    data : array
 
-    y : array
+    class_ : array
 
     """
     name_reduced = join(base_fold, "reduced_dataset_{}.parquet".format(dim))
-    X = read_parquet(name_reduced, engine="pyarrow").drop(["class"], 1)
-    y = read_parquet(name_reduced, engine="pyarrow")["class"]
+    data = read_parquet(name_reduced, engine="pyarrow").drop(["class"], 1)
+    class_ = read_parquet(name_reduced, engine="pyarrow")["class"]
 
-    return X, y
+    return data, class_
+
 
 def save_reduce(data_reduced,
                 value_encoding_dim,
@@ -529,7 +532,7 @@ def save_reduce(data_reduced,
 
     # If the folder does not exist, then create
     if not fold_base.exists():
-         fold_base.mkdir(parents=True, exist_ok=True)
+        fold_base.mkdir(parents=True, exist_ok=True)
 
     # Inside the folder to store the reduced space,
     # we save if it was a loss or baseline methode
@@ -586,13 +589,17 @@ def save_feature_model(auto_encoder,
     auto_encoder.method_enconder.save(enconder_name)
 
     # Saving the auto enconder model
-    auto_enconder_name = "auto_enconder_{}_{}.h5".format(type_loss, value_encoding_dim)
+    auto_enconder_name = "auto_enconder_{}_{}.h5".format(
+        type_loss, value_encoding_dim)
     auto_enconder_name = join(path_save, auto_enconder_name)
 
     auto_encoder.method_enconder.save(auto_enconder_name)
 
 
 def save_history_model(auto_encoder, path_dataset, type_loss, value_encoding_dim):
+    """
+        TO-DO: Desc...
+    """
     # Join pathname between a string that contains the base
     # pathname dataset and a folder called save_model,
     # which will be created to save the whole-model
@@ -620,7 +627,11 @@ def save_history_model(auto_encoder, path_dataset, type_loss, value_encoding_dim
 
     history.to_parquet(history_name, engine="pyarrow")
 
+
 def read_history_model(path_dataset, type_loss, value_encoding_dim):
+    """
+        TO-DO: Desc...
+    """
     # Join pathname between a string that contains the base
     # pathname dataset and a folder called save_model,
     # which will be created to save the whole-model
@@ -632,14 +643,14 @@ def read_history_model(path_dataset, type_loss, value_encoding_dim):
         type_loss, value_encoding_dim)
     history_name = join(path_save, history_name)
 
-    history =  read_parquet(history_name, engine="pyarrow")
+    history = read_parquet(history_name, engine="pyarrow")
     return history
 
-def save_classification(scores, 
-                        base_fold, 
+
+def save_classification(scores,
+                        base_fold,
                         name_type,
-                        dim, 
-                        cv):
+                        cross_validation):
     """
     TODO
     """
@@ -649,17 +660,19 @@ def save_classification(scores,
         fold.mkdir(parents=True, exist_ok=True)
 
     # Formatted string to save size dimensions in name
-    name_classification = "classification_{}_{}_cv{}.parquet".format(name_type, 
-                                                                     dim, 
-                                                                     cv)
+    name_classification = "classification_{}_cv{}.parquet".format(name_type,
+                                                                  cross_validation)
     # Join to take the path that we will save the train and test
     save_classification_name = join(fold, name_classification)
 
     # Saving as parquet to preserve the type.
     scores.to_parquet(save_classification_name, engine="pyarrow")
-    
-def get_original_results(id_table: str, path_original: str):
 
+
+def get_original_results(id_table: str, path_original: str):
+    """
+        TO-DO: Desc...
+    """
     name_file = "Original_Tables - Table_{}.csv".format(id_table)
 
-    return read_csv(join (path_original, name_file), index_col="Dimension")
+    return read_csv(join(path_original, name_file), index_col="Dimension")

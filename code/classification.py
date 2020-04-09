@@ -2,10 +2,9 @@
   TO-DO:  Description
 """
 
-from pathlib import Path
 from os.path import join
 
-from pandas import read_parquet, DataFrame, concat
+from pandas import DataFrame, concat
 
 from sklearn.model_selection import (
     cross_validate,
@@ -13,13 +12,12 @@ from sklearn.model_selection import (
 )
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.pipeline import make_pipeline
-from sklearn.model_selection import cross_validate
 from sklearn.metrics import (
-    make_scorer, 
-    accuracy_score, 
-    precision_score, 
-    recall_score, 
-    f1_score, 
+    make_scorer,
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
     roc_auc_score,
 )
 # Classification methods
@@ -37,11 +35,11 @@ from sklearn.utils._testing import ignore_warnings
 from sklearn.exceptions import ConvergenceWarning, UndefinedMetricWarning
 
 from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense
 from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 
 from data_management import (
-    read_feature_data, 
+    read_feature_data,
     save_classification,
 )
 
@@ -104,25 +102,26 @@ def methods_classification(n_neighbors=3,
 
     return classifiers
 
+
 @ignore_warnings(category=ConvergenceWarning)
 @ignore_warnings(category=UndefinedMetricWarning)
 def run_classification(path_dataset,
                        name_type,
-                       range_values, 
-                       cv = 5):
+                       range_values,
+                       cross_values=5):
     """
     TO-DO
     """
-    
+
     scoring = {"accuracy": make_scorer(accuracy_score),
-           "precision": make_scorer(precision_score),
-           "specificity": make_scorer(recall_score, pos_label=0),
-           "sensitivity": make_scorer(recall_score),
-           "f-measure": make_scorer(f1_score),
-           "roc-auc": make_scorer(roc_auc_score)}
-    
+               "precision": make_scorer(precision_score),
+               "specificity": make_scorer(recall_score, pos_label=0),
+               "sensitivity": make_scorer(recall_score),
+               "f-measure": make_scorer(f1_score),
+               "roc-auc": make_scorer(roc_auc_score)}
+
     print("Perform classification on data reduced by : {}".format(name_type))
-    
+
     path_base = join(path_dataset, "reduced")
 
     if name_type in ('mae', 'maae'):
@@ -146,15 +145,15 @@ def run_classification(path_dataset,
 
         print("Running with {} dimensions".format(dim))
 
-        X = files[ind][0]
-        y = files[ind][1]
+        data = files[ind][0]
+        class_ = files[ind][1]
 
         for name_classifier, classifier in classifiers:
 
-            #The following clf uses minmax scaling
+            # The following clf uses minmax scaling
             clf = make_pipeline(MinMaxScaler(), classifier)
 
-            score = cross_validate(clf, X, y, cv=cv, scoring=scoring)
+            score = cross_validate(clf, data, class_, cv=cross_values, scoring=scoring)
             # Aggregate name in cross_validate
 
             score.update({"name_classifier": name_classifier,
@@ -165,19 +164,21 @@ def run_classification(path_dataset,
 
     scores = concat(scores).reset_index()
 
-    scores.columns = ["{}-fold".format(cv)] + scores.columns[1:].tolist()
+    scores.columns = ["{}-fold".format(cross_values)] + scores.columns[1:].tolist()
 
-    scores["{}-fold".format(cv)] = scores["{}-fold".format(cv)] + 1
-    
-    save_classification(scores, path_dataset, name_type, dim, cv)
+    scores["{}-fold".format(cross_values)] = scores["{}-fold".format(cross_values)] + 1
+
+    save_classification(scores, path_dataset, name_type, cross_values)
 
     return scores
 
 
-def run_classification_nn(path_dataset, name_type, 
-                          dim, cv,
-                          epochs = 100):
-
+def run_classification_nn(path_dataset, name_type,
+                          dim, cross_values,
+                          epochs=100):
+    """
+    TO-DO
+    """
     path_base = join(path_dataset, "reduced")
 
     if name_type in ("mae", "maae"):
@@ -185,15 +186,15 @@ def run_classification_nn(path_dataset, name_type,
     else:
         path_read = join(path_base, name_type)
 
-    X, y = read_feature_data(path_read, dim)
+    data, class_ = read_feature_data(path_read, dim)
 
-    X = X.to_numpy()
+    data = data.to_numpy()
 
-    kfold = KFold(n_splits=cv, random_state=42, shuffle=True)
+    kfold = KFold(n_splits=cross_values, random_state=42, shuffle=True)
 
     history_acc = []
     accumulate_acc = []
- 
+
     def create_model():
         model = Sequential()
         model.add(Dense(22, input_dim=dim, activation="relu"))
@@ -202,18 +203,18 @@ def run_classification_nn(path_dataset, name_type,
         model.compile(loss="binary_crossentropy",
                       optimizer="adam", metrics=["accuracy"])
         return model
-    
-    for train_index, val_index in kfold.split(X):
+
+    for train_index, val_index in kfold.split(data):
 
         model = KerasClassifier(build_fn=create_model,
                                 epochs=epochs,
                                 batch_size=128,
                                 verbose=0)
 
-        history = model.fit(X[train_index], y[train_index])
-        pred = model.predict(X[val_index])
+        history = model.fit(data[train_index], class_[train_index])
+        pred = model.predict(data[val_index])
 
-        accuracy = accuracy_score(y[val_index], pred)
+        accuracy = accuracy_score(class_[val_index], pred)
         accumulate_acc.append(accuracy)
 
         history_acc.append(history.history['loss'])

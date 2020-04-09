@@ -198,24 +198,24 @@ class AutoEnconder(BaseEstimator):
 
         original_signal = Input(shape=(4096, 1))
 
-        x = Conv1D(16, kernel_size=3, padding="same", activation="relu")(original_signal)
-        x = MaxPooling1D(pool_size=2)(x)
-        x = Conv1D(32, kernel_size=3, padding="same", activation="relu")(x)
-        x = MaxPooling1D(pool_size=2)(x)
-        x = Conv1D(64, kernel_size=3, padding="same", activation="relu")(x)
-        x = MaxPooling1D(pool_size=2)(x)
-        x = Flatten()(x)
-        enconded = Dense(self.value_encoding_dim, activation="relu")(x)
+        layer = Conv1D(16, kernel_size=3, padding="same", activation="relu")(original_signal)
+        layer = MaxPooling1D(pool_size=2)(layer)
+        layer = Conv1D(32, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = MaxPooling1D(pool_size=2)(layer)
+        layer = Conv1D(64, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = MaxPooling1D(pool_size=2)(layer)
+        layer = Flatten()(layer)
+        enconded = Dense(self.value_encoding_dim, activation="relu")(layer)
 
-        x = Dense(512 * 64, activation="relu", use_bias=False)(enconded)
-        x = Reshape((512, 64))(x)
-        x = Conv1D(64, kernel_size=3, padding="same", activation="relu")(x)
-        x = UpSampling1D()(x)
-        x = Conv1D(32, kernel_size=3, padding="same", activation="relu")(x)
-        x = UpSampling1D()(x)
-        x = Conv1D(16, kernel_size=3, padding="same", activation="relu")(x)
-        x = UpSampling1D()(x)
-        decoded = Conv1D(1, kernel_size=3, padding="same", activation="sigmoid")(x)
+        layer = Dense(512 * 64, activation="relu", use_bias=False)(enconded)
+        layer = Reshape((512, 64))(layer)
+        layer = Conv1D(64, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = UpSampling1D()(layer)
+        layer = Conv1D(32, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = UpSampling1D()(layer)
+        layer = Conv1D(16, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = UpSampling1D()(layer)
+        decoded = Conv1D(1, kernel_size=3, padding="same", activation="sigmoid")(layer)
 
         self.method_enconder = Model(original_signal, enconded, name="encoder")
 
@@ -228,16 +228,16 @@ class AutoEnconder(BaseEstimator):
                                          loss=fun_loss,
                                          metrics=["accuracy"])
 
-    def fit(self, X_train, X_validation):
+    def fit(self, data_train, data_validation):
         """ Fit the model to learn how to represent a latent
         space by encoding and decoding the original signal.
 
         Parameters
         ----------
-        X_train : array-like  (n_samples, n_features)
+        data_train : array-like  (n_samples, n_features)
             The input data to use in train process.
 
-        X_validation : array-like of shape (n_samples, n_features)
+        data_validation : array-like of shape (n_samples, n_features)
             The input data to use in validation process
 
         Returns
@@ -247,24 +247,24 @@ class AutoEnconder(BaseEstimator):
 
         self.build_auto_enconder()
         # Training auto-enconder
-        self.learn_history = self.method_autoenconder.fit(X_train,
-                                                          X_train,
+        self.learn_history = self.method_autoenconder.fit(data_train,
+                                                          data_train,
                                                           epochs=self.epochs,
                                                           batch_size=self.batch_size,
                                                           shuffle=True,
-                                                          validation_data=(X_validation,
-                                                                           X_validation),
+                                                          validation_data=(data_validation,
+                                                                           data_validation),
                                                           verbose=0)
         return self
 
-    def transform(self, X):
+    def transform(self, data):
         """
         Function for transforming the vector with original dimensions
         to latent dimensions.
 
         Parameters
         ----------
-        X : array-like  (n_samples, n_features)
+        data : array-like  (n_samples, n_features)
             The input data to use in transform process.
 
         Returns
@@ -272,4 +272,4 @@ class AutoEnconder(BaseEstimator):
         _ : array-like  (n_samples, value_encoding_dim)
             The data transformed to latent dimensions format.
         """
-        return self.method_enconder.predict(X)
+        return self.method_enconder.predict(data)

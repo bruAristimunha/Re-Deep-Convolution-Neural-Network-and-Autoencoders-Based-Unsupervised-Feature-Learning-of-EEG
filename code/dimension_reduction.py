@@ -23,7 +23,7 @@ from data_management import (
 )
 
 
-def reduce_dimension(X, y,
+def reduce_dimension(data, class_,
                      path_dataset,
                      name_type,
                      n_components):
@@ -40,15 +40,15 @@ def reduce_dimension(X, y,
         else:
             raise ValueError("Invalid method option.")
 
-    X_reduced = method.fit_transform(X)
+    data_reduced = method.fit_transform(data)
 
     # Conversion of numpy.array to a DataFrame
-    data_reduced = DataFrame(X_reduced)
+    data_reduced = DataFrame(data_reduced)
     # On the DataFrame each column has a numeric value,
     # which is converted to a string
     data_reduced.columns = data_reduced.columns.astype(str)
     # Join with class label
-    data_reduced["class"] = y
+    data_reduced["class"] = class_
 
     path_reduced = save_reduce(data_reduced=data_reduced,
                                value_encoding_dim=n_components,
@@ -58,10 +58,10 @@ def reduce_dimension(X, y,
     return path_reduced
 
 
-def build_feature(X_train,
-                  X_valid,
-                  y_train,
-                  y_valid,
+def build_feature(data_train,
+                  data_valid,
+                  class_train,
+                  class_valid,
                   path_dataset,
                   epochs,
                   batch_size,
@@ -78,14 +78,14 @@ def build_feature(X_train,
 
     Parameters
     ----------
-    X_train : array-like  (n_samples, n_features)
+    data_train : array-like  (n_samples, n_features)
         The input data to use in train process.
-    X_valid : array-like  (n_samples, n_features)
+    data_valid : array-like  (n_samples, n_features)
         The input data to use in train process.
-    Y_train : array-like  (n_samples, )
-        The label data related to the X_train.
-    Y_valid : array-like  (n_samples, )
-        The label data related to the X_test.
+    class_train : array-like  (n_samples, )
+        The label data related to the data_train.
+    class_valid : array-like  (n_samples, )
+        The label data related to the data_test.
 
     The rest of the parameters and explanation of the
     variables are homonymous with those of the original class.
@@ -98,7 +98,7 @@ def build_feature(X_train,
         Path where the reduced set was saved.reduced
 
     """
-    
+
     print("Convert and save with value enconding dimension: {} - {}".format(
         type_loss, value_encoding_dim))
 
@@ -108,19 +108,19 @@ def build_feature(X_train,
                                 type_loss=type_loss,
                                 name_dataset=path_dataset)
     # For validreducedation, as described in the text, we use the test dataset.
-    auto_encoder.fit(X_train, X_valid)
+    auto_encoder.fit(data_train, data_valid)
 
     # Data transformation
-    X_train_encoded = auto_encoder.transform(X_train)
-    X_valid_encoded = auto_encoder.transform(X_valid)
+    data_train_encoded = auto_encoder.transform(data_train)
+    data_valid_encoded = auto_encoder.transform(data_valid)
 
     # Conversion of numpy.array to a DataFrame
-    data_reduced = DataFrame(concatenate([X_train_encoded, X_valid_encoded]))
+    data_reduced = DataFrame(concatenate([data_train_encoded, data_valid_encoded]))
     # On the DataFrame each column has a numeric value,
     # which is converted to a string
     data_reduced.columns = data_reduced.columns.astype(str)
     # Join with class label
-    data_reduced["class"] = concatenate([y_train, y_valid])
+    data_reduced["class"] = concatenate([class_train, class_valid])
 
     path_reduced = save_reduce(data_reduced=data_reduced,
                                value_encoding_dim=value_encoding_dim,
@@ -132,5 +132,5 @@ def build_feature(X_train,
 
     save_history_model(auto_encoder, path_dataset,
                        type_loss, value_encoding_dim)
-    
+
     return auto_encoder, path_reduced

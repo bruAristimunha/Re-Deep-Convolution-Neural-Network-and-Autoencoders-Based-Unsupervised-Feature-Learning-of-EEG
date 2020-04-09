@@ -13,40 +13,41 @@ from matplotlib.pylab import (
     subplots,
     ylabel,
     xlabel,
-    style,
 )
-from numpy import mean, around
+from numpy import mean
 
 from sklearn.utils._testing import ignore_warnings
 
+from seaborn import boxplot, lmplot
+
 from classification import read_feature_data
 
-from seaborn import boxplot, set_context, lmplot
-
-
 def regression_plot(metrics, name_metric="accuracy"):
-    
-    reprod_table = table_classification_dimension(metrics, False, False, name_metric)
+    """
+      TO-DO:  Description
+    """
+    reprod_table = table_classification_dimension(
+        metrics, False, False, name_metric)
 
-    graph = melt(reprod_table.reset_index(),  id_vars=["Dimension"])
-    graph.columns = ["Number of Feature - m", 
-                     "Classifier", 
+    graph = melt(reprod_table.reset_index(), id_vars=["Dimension"])
+    graph.columns = ["Number of Feature - m",
+                     "Classifier",
                      name_metric]
 
-    g = lmplot(x="Number of Feature - m", y=name_metric,
-               hue="Classifier", col="Classifier",
-               data=graph, aspect=1, col_wrap=3,
-               x_jitter=.1, sharex=True,
-               line_kws={"lw": 2, "ls": "--"},
-               seed=42)
+    g_plot = lmplot(x="Number of Feature - m", y=name_metric,
+                    hue="Classifier", col="Classifier",
+                    data=graph, aspect=1, col_wrap=3,
+                    x_jitter=.1, sharex=True,
+                    line_kws={"lw": 2, "ls": "--"},
+                    seed=42)
 
-    g = g.set_axis_labels("", name_metric)
+    g_plot = g_plot.set_axis_labels("", name_metric)
 
-    g = g.set(xlim=(-30, 280),
-              ylim=(0.5, 1),
-              xticks=[0, 32, 64, 128, 256]).fig.subplots_adjust(wspace=.4)
+    g_plot = g_plot.set(xlim=(-30, 280), ylim=(0.5, 1),
+                        xticks=[0, 32, 64, 128, 256]).fig.subplots_adjust(wspace=.4)
 
-    return g
+    return g_plot
+
 
 def plot_variance_accumulate(var):
     """
@@ -96,36 +97,37 @@ def plot_variance_by_person(variance_per_person):
     return fig
 
 
-def original_experiments(x):
+def original_experiments(data_fram):
     """
       TO-DO:  Description
     """
-    return x[(x["name_classifier"] != "ensemble") & (x["Dimension"] != 256)]
+    return data_fram[(data_fram["name_classifier"] != "ensemble") &
+                     (data_fram["Dimension"] != 256)]
 
 
-def proposed_experiments(x):
+def proposed_experiments(data_fram):
     """
       TO-DO:  Description
     """
-    return x[(x["name_classifier"] == "ensemble") | (x["Dimension"] == 256)]
+    return data_fram[(data_fram["name_classifier"] == "ensemble") |
+                     (data_fram["Dimension"] == 256)]
 
 
-def table_classification_dimension(metrics, original=True, 
+def table_classification_dimension(metrics, original=True,
                                    proposed=True, metric="accuracy"):
     """
       TO-DO:  Description
     """
     if original:
         metrics = original_experiments(metrics)
-        order_col = ["k_neighbors", "svm_linear", "svm_radial", 
-                     "decision_tree", "random_forest", "multi_layer", 
+        order_col = ["k_neighbors", "svm_linear", "svm_radial",
+                     "decision_tree", "random_forest", "multi_layer",
                      "ada_boost", "gaussian_nb"]
     elif proposed:
         metrics = proposed_experiments(metrics)
     else:
-        metrics = metrics
-        order_col = ["k_neighbors", "svm_linear", "svm_radial", 
-                     "decision_tree", "random_forest", "multi_layer", 
+        order_col = ["k_neighbors", "svm_linear", "svm_radial",
+                     "decision_tree", "random_forest", "multi_layer",
                      "ada_boost", "gaussian_nb", "ensemble"]
 
     values_metrics = metrics.groupby(
@@ -139,7 +141,7 @@ def table_classification_dimension(metrics, original=True,
     return values_metrics
 
 
-def table_classification_fold(metrics, original=True, 
+def table_classification_fold(metrics, original=True,
                               proposed=True, dimension=2,
                               metric="accuracy"):
     """
@@ -150,23 +152,22 @@ def table_classification_fold(metrics, original=True,
     elif proposed:
         metrics = proposed_experiments(metrics)
     else:
-        metrics = metrics
-        
+        pass
+
     values_metrics = metrics[metrics["Dimension"] == dimension]
     # Order with base in paper.
     values_metrics = values_metrics.pivot_table(index="5-fold",
-                                    columns="name_classifier",
-                                    values="test_{}".format(metric))
+                                                columns="name_classifier",
+                                                values="test_{}".format(metric))
 
     values_metrics = values_metrics[["k_neighbors", "svm_linear", "svm_radial", "decision_tree",
-                         "random_forest", "multi_layer", "ada_boost", "gaussian_nb"]]
+                                     "random_forest", "multi_layer", "ada_boost", "gaussian_nb"]]
 
     return values_metrics
 
 
 def plot_average_metric(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2,
-                        names=["AE-CDNN-MAE", "AE-CDNN-MAAE"],
-                        metric="accuracy"):
+                        names, metric="accuracy"):
     """
       TO-DO:  Description
     """
@@ -211,8 +212,7 @@ def plot_average_metric(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2,
 def plot_average_metric_baseline(ae_d1_l1, ae_d1_l2, pca_d1, srp_d1,
                                  ae_d2_l1, ae_d2_l2, pca_d2, srp_d2,
                                  metric="accuracy",
-                                 name = ["AE-CDNN-MAE", "AE-CDNN-MAAE",
-                                         "PCA", "SRP"]):
+                                 name=None):
     """
     TO-DO:  Description
     """
@@ -273,23 +273,23 @@ def plot_average_metric_baseline(ae_d1_l1, ae_d1_l2, pca_d1, srp_d1,
     return fig
 
 
-def encoded_class(x):
+def encoded_class(data):
     """
     TODO:  Description
     """
-    return "$P$" if x == 1 else "$N$"
+    return "$P$" if data == 1 else "$N$"
 
 
-def clean_xlabel(x):
+def clean_xlabel(axes):
     """
     TODO:  Description
     """
-    return x.set(xlabel="")
+    return axes.set(xlabel="")
 
 
 @ignore_warnings(category=UserWarning)
 def plot_feature_distribution(path_save, n_dims=4,
-                              names=["AE-CDNN-MAE", "AE-CDNN-MAAE"]):
+                              names=None):
     """
     TODO:  Description
     """
@@ -327,7 +327,7 @@ def plot_feature_distribution(path_save, n_dims=4,
 
 
 def plot_change_loss(history_l1, history_l2,
-                     names=["AE-CDNN-MAE", "AE-CDNN-MAAE"]):
+                     names=None):
     """
     TODO:  Description
     """
@@ -349,7 +349,9 @@ def plot_change_loss(history_l1, history_l2,
 
 
 def boxplot_difference(reprod_table, origin_table):
-
+    """
+      TO-DO:  Description
+    """
     diff = melt(reprod_table-origin_table)
     diff.columns = ["", ""]
 
@@ -366,24 +368,29 @@ def boxplot_difference(reprod_table, origin_table):
     axes[1] = (reprod_table-origin_table).T.plot.bar(ax=axes[1])
 
     _ = axes[1].set(xlabel="Classifiers name")
-    _ = axes[1].set(ylabel="Difference between\n obtained and reported accuracy.")
+    _ = axes[1].set(
+        ylabel="Difference between\n obtained and reported accuracy.")
     _ = axes[0].set(ylabel="")
 
-    bb = (fig.subplotpars.left-0.5, fig.subplotpars.top-2.5,
-          fig.subplotpars.right-fig.subplotpars.left, .1)
+    bbox_anchor = (fig.subplotpars.left-0.5, fig.subplotpars.top-2.5,
+                   fig.subplotpars.right-fig.subplotpars.left, .1)
 
-    legend = axes[1].legend(bbox_to_anchor=bb, loc="lower right",
+    _ = axes[1].legend(bbox_to_anchor=bbox_anchor,
+                       loc="lower right",
                        ncol=4, title="Dimension",
                        fancybox=True, shadow=True,
                        title_fontsize=16)
 
     return fig
 
+
 def table_export_latex(path_save, dataset,
                        name_dataset, metric,
                        name_type, original,
                        proposed):
-
+    """
+      TO-DO:  Description
+    """
     data = table_classification_dimension(dataset[name_type],
                                           original, proposed,
                                           metric=metric)
