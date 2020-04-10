@@ -131,7 +131,7 @@ def download_bonn(path_data="data/boon/") -> [str]:
     return path_child_fold
 
 
-def download_item(url_base, name_base, page=True, range_=(30, 50)):
+def download_item(url_base, name_base, page=True, range_=(11, 50)):
     """Download the files in an isolated way.
 
     Used when the file listing is different from a folder.
@@ -215,7 +215,7 @@ def download_chbmit(url_base, path_save):
 
         folders = get_folders(folders_description)
         description = get_files(folders_description)
-
+cod
         patient_url = zip_with_unique(url_base, folders)
         patient_item = zip_with_unique(path_save, folders)
         description_base = zip_with_unique(url_base, description)
