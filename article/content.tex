@@ -66,9 +66,9 @@ The experiments were performed using a CPU with Intel Core i7-5930K with 3.50 GH
 
 \subsection{AutoEncoders}
 
-The autoencoder implemented is a specific case of neural network structure. It is formed by three layers, the input layer, output layer and a hidden layer. The training is done to set the weights of hidden layer to force the input layer and output layer to be as close to each other as possible. Our features are extracted from the hidden layer, which reduces the dimension of data.
+The autoencoder implemented is a specific case of neural network structure. It is formed by three layers, the input layer, output layer and a hidden layer. The training is done to set the weights of hidden layer to force the input layer and output layer to be as close to each other as possible. Our features are extracted from the hidden layer, which reduces the dimension of data. 
 
-Therefore we have a	encoding process and a decoding process, and we obtain the hidden layer $h$ by applying the encoding function:
+Therefore we have a encoding process and a decoding process, and we obtain the hidden layer $h$ by applying the encoding function:
 
 \begin{equation}
 h = encoder(x) = g(W*x+b),
@@ -327,7 +327,9 @@ Figures \ref{fig:acc-AE-CDNN-MAE-d2} and \ref{fig:acc-AE-CDNN-MAAE-d2}
 
 \newpage
 
-Considering Dataset 2 and Tables we acquired similar results when compared with the results obtained by the original authors \cite{WenZha:2018}. In general, the original paper acquired a maximum accuracy greater than those obtained by our reproduction implementation, but the average and unique values per dimension are close in most cases considering both functions AE-CDNN-MAE and AE-CDNN-MAAE. However, for Dataset 1 the accuracy values obtained in this paper are significantly lower than the ones obtained by the original paper considering both AE-CDNN-MAE and AE-CDNN-MAAE, as shown in Figure \ref{fig:average}. \textbf{Nam dui ligula, fringilla a, euismod sodales, sollicitudin vel, wisi. Morbi auctorlorem non justo. Nam lacus libero, pretium at, lobortis vitae, ultricies et, tellus. Donecaliquet, tortor sed accumsan bibendum, erat ligula aliquet magna, vitae.} 
+Considering Dataset 2 and Tables we acquired similar results when compared with the results obtained by the original authors \cite{WenZha:2018}. In general, the original paper acquired a maximum accuracy greater than those obtained by our reproduction implementation, but the average and unique values per dimension are close in most cases considering both functions AE-CDNN-MAE and AE-CDNN-MAAE. However, for Dataset 1 the accuracy values obtained in this paper are significantly lower than the ones obtained by the original paper considering both AE-CDNN-MAE and AE-CDNN-MAAE, as shown in Figure \ref{fig:average}. 
+
+\newpage
 
 
 \begin{figure}[!ht]
