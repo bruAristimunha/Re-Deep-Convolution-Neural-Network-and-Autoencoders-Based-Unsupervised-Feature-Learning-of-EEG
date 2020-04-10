@@ -1,5 +1,11 @@
-"""
-  TO-DO:  Description
+"""Copyright 2019, Bruno Aristimunha.
+
+This file is part of paper [Re] Deep Convolution
+Neural Network and Autoencoders-Based Unsupervised
+Feature Learning of EEG Signals.
+
+--------------------------------------------
+Classification methods and function control of process.
 """
 
 from os.path import join
@@ -43,11 +49,13 @@ from data_management import (
     save_classification,
 )
 
+
 def methods_classification(n_neighbors=3,
                            kernel_a="linear", kernel_b="rbf", max_depth=5,
                            n_estimators=10, random_state=42, max_features=1):
     """
-    TODO: Description.
+    Group methods used in classification, as well as creating the ensemble.
+
     Parameters
     ----------
     n_neighbors : int
@@ -69,7 +77,6 @@ def methods_classification(n_neighbors=3,
     -------
     classifiers : list
     """
-
     k_neighbors = KNeighborsClassifier(n_neighbors=n_neighbors)  # 1
     svm_linear = svm.SVC(kernel=kernel_a)  # 2
     svm_radial = svm.SVC(kernel=kernel_b)  # 3
@@ -88,7 +95,8 @@ def methods_classification(n_neighbors=3,
                                             ("RF", random_forest),
                                             ("MLP", multi_layer),
                                             ("ADB", ada_boost),
-                                            ("GNB", gaussian_nb)], voting="hard")
+                                            ("GNB", gaussian_nb)],
+                                voting="hard")
 
     classifiers = [("k_neighbors", k_neighbors),
                    ("svm_linear", svm_linear),
@@ -109,10 +117,7 @@ def run_classification(path_dataset,
                        name_type,
                        range_values,
                        cross_values=5):
-    """
-    TO-DO
-    """
-
+    """Perform the classification, save the result for all classifiers."""
     scoring = {"accuracy": make_scorer(accuracy_score),
                "precision": make_scorer(precision_score),
                "specificity": make_scorer(recall_score, pos_label=0),
@@ -153,7 +158,9 @@ def run_classification(path_dataset,
             # The following clf uses minmax scaling
             clf = make_pipeline(MinMaxScaler(), classifier)
 
-            score = cross_validate(clf, data, class_, cv=cross_values, scoring=scoring)
+            score = cross_validate(clf, data,
+                                   class_,
+                                   cv=cross_values, scoring=scoring)
             # Aggregate name in cross_validate
 
             score.update({"name_classifier": name_classifier,
@@ -164,9 +171,13 @@ def run_classification(path_dataset,
 
     scores = concat(scores).reset_index()
 
-    scores.columns = ["{}-fold".format(cross_values)] + scores.columns[1:].tolist()
+    columns_name = scores.columns[1:].tolist()
 
-    scores["{}-fold".format(cross_values)] = scores["{}-fold".format(cross_values)] + 1
+    fold_name_columns = "{}-fold".format(cross_values)
+
+    scores.columns = fold_name_columns + columns_name
+
+    scores[fold_name_columns] = scores[fold_name_columns] + 1
 
     save_classification(scores, path_dataset, name_type, cross_values)
 
@@ -176,9 +187,7 @@ def run_classification(path_dataset,
 def run_classification_nn(path_dataset, name_type,
                           dim, cross_values,
                           epochs=100):
-    """
-    TO-DO
-    """
+    """Draft classification function with NN2. Development stopped."""
     path_base = join(path_dataset, "reduced")
 
     if name_type in ("mae", "maae"):

@@ -1,7 +1,11 @@
-"""
-TODO: Description about the file.
+"""Copyright 2019, Bruno Aristimunha.
 
+This file is part of paper [Re] Deep Convolution
+Neural Network and Autoencoders-Based Unsupervised
+Feature Learning of EEG Signals.
 
+--------------------------------------------
+Variance functions.
 """
 
 from glob import glob
@@ -13,7 +17,8 @@ from tqdm import tqdm_notebook
 
 
 def parallel_variance(count_a, avg_a, var_a, count_b, avg_b, var_b):
-    """
+    """Variance computed in parallel.
+    
     Function for calculating the variance in a
     distributed way, adapted from:
     https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance
@@ -36,7 +41,8 @@ def parallel_variance(count_a, avg_a, var_a, count_b, avg_b, var_b):
 
 
 def get_variance_accumulated(path_dataset, range_=(1, 11)):
-    """
+    """Variance computed in parallel.
+    
     Calculation of accumulated variance in channels and files.
     Parameter receives the path where the folder with files is located.
     Calculates the variance only in the first ten people.
@@ -58,7 +64,8 @@ def get_variance_accumulated(path_dataset, range_=(1, 11)):
                          "P8-O2", "FZ-CZ", "CZ-PZ", "P7-T7",
                          "T7-FT9", "FT9-FT10", "FT10-T8", "T8-P8-1"]
 
-    for id_patient in tqdm_notebook(range(range_[0], range_[1]), desc="Patient"):
+    for id_patient in tqdm_notebook(range(range_[0], range_[1]),
+                                    desc="Patient"):
 
         path_files = join(path_dataset, "chb{0:0=2d}/*.edf".format(id_patient))
 
@@ -91,10 +98,7 @@ def get_variance_accumulated(path_dataset, range_=(1, 11)):
 
 
 def get_variance_by_file(path_dataset, range_=(1, 11)):
-    """
-    TO-DO
-    """
-
+    """Calculate the variance by file."""
     filterwarnings("ignore")
 
     rank_variance = []
@@ -106,7 +110,8 @@ def get_variance_by_file(path_dataset, range_=(1, 11)):
                          "P8-O2", "FZ-CZ", "CZ-PZ", "P7-T7",
                          "T7-FT9", "FT9-FT10", "FT10-T8", "T8-P8-1"]
 
-    for id_patient in tqdm_notebook(range(range_[0], range_[1]), desc="Patient"):
+    for id_patient in tqdm_notebook(range(range_[0], range_[1]),
+                                    desc="Patient"):
 
         path_files = join(path_dataset, "chb{0:0=2d}/*.edf".format(id_patient))
 
@@ -132,10 +137,7 @@ def get_variance_by_file(path_dataset, range_=(1, 11)):
 
 
 def get_variance_by_person(path_dataset, range_=(1, 11)):
-    """
-    TO-DO:
-    """
-
+    """Calculate the variance by person."""
     filterwarnings("ignore")
 
     var_pearson = []
@@ -145,9 +147,11 @@ def get_variance_by_person(path_dataset, range_=(1, 11)):
                          "P3-O1", "FP2-F4", "F4-C4", "C4-P4",
                          "P4-O2", "FP2-F8", "F8-T8", "T8-P8-0",
                          "P8-O2", "FZ-CZ", "CZ-PZ", "P7-T7",
-                         "T7-FT9", "FT9-FT10", "FT10-T8", "T8-P8-1"]
+                         "T7-FT9", "FT9-FT10", "FT10-T8",
+                         "T8-P8-1"]
 
-    for id_patient in tqdm_notebook(range(range_[0], range_[1]), desc="Patient"):
+    for id_patient in tqdm_notebook(range(range_[0], range_[1]),
+                                    desc="Patient"):
 
         accumulate_count = 0
         accumulate_avg = 0

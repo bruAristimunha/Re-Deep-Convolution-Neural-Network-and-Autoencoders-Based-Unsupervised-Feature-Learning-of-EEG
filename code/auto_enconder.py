@@ -1,7 +1,12 @@
-"""
-Description
-"""
+"""Copyright 2019, Bruno Aristimunha.
 
+This file is part of paper [Re] Deep Convolution
+Neural Network and Autoencoders-Based Unsupervised
+Feature Learning of EEG Signals.
+
+--------------------------------------------
+Auto-Encoder class and implemented loss function.
+"""
 from sklearn.base import BaseEstimator
 from tensorflow.keras import backend as K
 from tensorflow.keras import losses
@@ -19,25 +24,21 @@ from tensorflow.keras.layers import (
 from tensorflow.python.ops import math_ops
 from tensorflow.python.framework import ops
 
+
 def mean_absolute_average_error(y_true, y_pred):
-    """ Reproduction of equation 11 presented in the original article.
+    """Reproduction of equation 11 presented in the original article.
 
-    Paper Url: https://ieeeXplore.ieee.org/document/8355473#deqn11
-
-    Although the teXt suggests that the second loss function
+    Paper Url: https://ieeexplore.ieee.org/document/8355473#deqn11
+    Although the text suggests that the second loss function
     presented is `mean_absolute_percentage_error`,
     there is a divergence in the equation.
-
     Thus, we chose to reproduce the formula presented, instead
-    of the teXt.
-
+    of the text.
     To this end, we adapted the code available in
     Tensorflow to calculate the "mean_absolute_percentage_error"
-    (MAPE), and we call it mean_absolute_average_error  (maae).
-
+    (MAPE), and we call it mean_absolute_average_error (maae).
     TensorFlow Url:
     https://github.com/tensorflow/tensorflow/blob/v2.1.0/tensorflow/python/keras/losses.py#L786-L797
-
 
     Parameters
     ----------
@@ -51,7 +52,6 @@ def mean_absolute_average_error(y_true, y_pred):
     -------
         loss float `Tensor`
     """
-
     y_pred = ops.convert_to_tensor(y_pred)
     y_true = math_ops.cast(y_true, y_pred.dtype)
     diff = math_ops.abs((y_true - y_pred) / K.maximum(K.mean(y_true),
@@ -60,7 +60,7 @@ def mean_absolute_average_error(y_true, y_pred):
 
 
 class AutoEnconder(BaseEstimator):
-    """ AutoEnconder Class.
+    """AutoEnconder Class.
 
     Reproduction of the AutoEncoder architecture reported
     in the article by T. Wen and Z. Zhang (2018).
@@ -116,7 +116,7 @@ class AutoEnconder(BaseEstimator):
                  value_encoding_dim=2,
                  type_loss="mae",
                  name_dataset=None):
-
+        """Construct objects intended to AutoEnconder."""
         # auto-enconder parameters
         self.value_encoding_dim = value_encoding_dim
         self.batch_size = batch_size
@@ -134,13 +134,10 @@ class AutoEnconder(BaseEstimator):
         self.method_enconder = []
 
     def build_auto_enconder(self):
-        """ Function for building and compiling the AutoEnconder class.
+        """Build and compile the AutoEnconder class.
 
-        Since the loss function and the number of dimensions are parameters,
-        each AutoEncoder will have different inputs at compilation
-        and in the middle of the architecture.
-
-        Model: "autoenconder_m_{}_loss_{}"
+        Create a AutoEnconder Model.
+        Loss function and the number of dimensions are parameters.
         _________________________________________________________________
         Layer (type)                 Output Shape              Param #
         =================================================================
@@ -183,10 +180,7 @@ class AutoEnconder(BaseEstimator):
         Total params: 159,043
         Trainable params: 159,043
         Non-trainable params: 0
-        _________________________________________________________________
-
         """
-
         if self.type_loss == "mae":
             fun_loss = losses.mean_absolute_error
         elif self.type_loss == "maae":
@@ -198,45 +192,55 @@ class AutoEnconder(BaseEstimator):
 
         original_signal = Input(shape=(4096, 1))
 
-        layer = Conv1D(16, kernel_size=3, padding="same", activation="relu")(original_signal)
+        layer = Conv1D(16, kernel_size=3, padding="same",
+                       activation="relu")(original_signal)
         layer = MaxPooling1D(pool_size=2)(layer)
-        layer = Conv1D(32, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = Conv1D(32, kernel_size=3, padding="same",
+                       activation="relu")(layer)
         layer = MaxPooling1D(pool_size=2)(layer)
-        layer = Conv1D(64, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = Conv1D(64, kernel_size=3, padding="same",
+                       activation="relu")(layer)
         layer = MaxPooling1D(pool_size=2)(layer)
         layer = Flatten()(layer)
         enconded = Dense(self.value_encoding_dim, activation="relu")(layer)
 
         layer = Dense(512 * 64, activation="relu", use_bias=False)(enconded)
         layer = Reshape((512, 64))(layer)
-        layer = Conv1D(64, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = Conv1D(64, kernel_size=3, padding="same",
+                       activation="relu")(layer)
         layer = UpSampling1D()(layer)
-        layer = Conv1D(32, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = Conv1D(32, kernel_size=3, padding="same",
+                       activation="relu")(layer)
         layer = UpSampling1D()(layer)
-        layer = Conv1D(16, kernel_size=3, padding="same", activation="relu")(layer)
+        layer = Conv1D(16, kernel_size=3, padding="same",
+                       activation="relu")(layer)
         layer = UpSampling1D()(layer)
-        decoded = Conv1D(1, kernel_size=3, padding="same", activation="sigmoid")(layer)
+        decoded = Conv1D(1, kernel_size=3, padding="same",
+                         activation="sigmoid")(layer)
 
         self.method_enconder = Model(original_signal, enconded, name="encoder")
 
-        self.method_autoenconder = Model(original_signal, decoded,
-                                         name="autoenconder_m_{}_loss_{}".format(
+        auto_enconder_name = "autoenconder_m_{}_loss_{}".format(
                                              self.value_encoding_dim,
-                                             self.type_loss))
+                                             self.type_loss)
+
+        self.method_autoenconder = Model(original_signal, decoded,
+                                         name=auto_enconder_name)
 
         self.method_autoenconder.compile(optimizer="adam",
                                          loss=fun_loss,
                                          metrics=["accuracy"])
 
-    def fit(self, data_train, data_validation):
-        """ Fit the model to learn how to represent a latent
-        space by encoding and decoding the original signal.
+    def fit(self, data_train, data_valid):
+        """Fit the model to learn.
+
+        Learn how to represent a latent space by
+        encoding and decoding the original signal.
 
         Parameters
         ----------
         data_train : array-like  (n_samples, n_features)
             The input data to use in train process.
-
         data_validation : array-like of shape (n_samples, n_features)
             The input data to use in validation process
 
@@ -244,23 +248,23 @@ class AutoEnconder(BaseEstimator):
         -------
         self : returns a trained AutoEnconder class model.
         """
-
         self.build_auto_enconder()
         # Training auto-enconder
-        self.learn_history = self.method_autoenconder.fit(data_train,
-                                                          data_train,
-                                                          epochs=self.epochs,
-                                                          batch_size=self.batch_size,
-                                                          shuffle=True,
-                                                          validation_data=(data_validation,
-                                                                           data_validation),
-                                                          verbose=0)
+        history = self.method_autoenconder.fit(data_train,
+                                               data_train,
+                                               epochs=self.epochs,
+                                               batch_size=self.batch_size,
+                                               shuffle=True,
+                                               validation_data=(data_valid,
+                                                                data_valid),
+                                               verbose=0)
+        self.learn_history = history
         return self
 
     def transform(self, data):
-        """
-        Function for transforming the vector with original dimensions
-        to latent dimensions.
+        """Transform the vector.
+
+        From original dimensions to latent dimensions.
 
         Parameters
         ----------

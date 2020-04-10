@@ -1,5 +1,11 @@
-"""
-Description
+"""Copyright 2019, Bruno Aristimunha.
+
+This file is part of paper [Re] Deep Convolution
+Neural Network and Autoencoders-Based Unsupervised
+Feature Learning of EEG Signals.
+
+--------------------------------------------
+Dimension Reduction process.
 """
 
 # Import of scale reduction methods.
@@ -27,8 +33,24 @@ def reduce_dimension(data, class_,
                      path_dataset,
                      name_type,
                      n_components):
-    """
-    TODO
+    """Perform dimension reduction and save.
+
+    Parameters
+    ----------
+    data : array-like  (n_samples, n_features)
+        The input data to use in reduce process.
+    class_ : array-like  (n_samples, )
+        The label data related to the data.
+    name_type : str
+        With the options: "mae" or "maae".
+    n_components : int
+        Dimension values to reduce.
+    path_dataset : str
+        Path where the dataset was saved.
+    Returns
+    -------
+    path_reduced : str
+        Path where was saved the reduced dataset.
     """
     if name_type == "pca":
         method = PCA(n_components=n_components,
@@ -67,9 +89,7 @@ def build_feature(data_train,
                   batch_size,
                   type_loss,
                   value_encoding_dim):
-    """
-    Control function to use the AutoEnconder
-    class as a dimension reducer.
+    """Control function to use the AutoEnconder class as a dimension reducer.
 
     This function also saves the values obtained
     after the dimension reduction process. By performing a process
@@ -96,9 +116,7 @@ def build_feature(data_train,
         Object of the class already trained.
     path_reduce : str
         Path where the reduced set was saved.reduced
-
     """
-
     print("Convert and save with value enconding dimension: {} - {}".format(
         type_loss, value_encoding_dim))
 
@@ -115,7 +133,8 @@ def build_feature(data_train,
     data_valid_encoded = auto_encoder.transform(data_valid)
 
     # Conversion of numpy.array to a DataFrame
-    data_reduced = DataFrame(concatenate([data_train_encoded, data_valid_encoded]))
+    data_reduced = DataFrame(concatenate([data_train_encoded,
+                                          data_valid_encoded]))
     # On the DataFrame each column has a numeric value,
     # which is converted to a string
     data_reduced.columns = data_reduced.columns.astype(str)

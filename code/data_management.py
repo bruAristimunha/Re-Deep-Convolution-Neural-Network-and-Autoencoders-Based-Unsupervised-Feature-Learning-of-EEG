@@ -1,12 +1,17 @@
-"""
-TODO: Description about the file.
+"""Copyright 2019, Bruno Aristimunha.
 
+This file is part of paper [Re] Deep Convolution
+Neural Network and Autoencoders-Based Unsupervised
+Feature Learning of EEG Signals.
 
+--------------------------------------------
+Data manipulation, input-output of files.
 """
 # IO imports
 
-## Imports for manipulating, accessing, reading and writing files.
+# Imports for manipulating, accessing, reading and writing files.
 from sys import path
+from importlib import import_module
 from os import listdir
 from os.path import join, isfile
 from pathlib import Path
@@ -34,17 +39,18 @@ from pandas import (
 # Imports for array manipulation to prepare for dimension reduction.
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
-## Import used to download the data.
+# Import used to download the data.
 from wget import download
 
-path.append("chb-mit/")
+path.insert("chb-mit/", 0)
 # Import of the class used to read the CHBMIT dataset.
-from patient import Patient
+patient = import_module('patient')
+# get method or function from patient
+Patient = getattr(patient, 'Patient')
+
 
 def zip_with_unique(base, list_suffix):
-    """
-    Auxiliary function to generate a paired
-    list considering a unique element.
+    """Auxiliary function to generate a paired list with a unique element.
 
     An adaptation of the convolution function (`zip`)
     to map a single value in a sequence tuple.
@@ -67,14 +73,16 @@ def zip_with_unique(base, list_suffix):
     list: array-like, shape (n_suffix)
         Base added with the suffix.
     """
-
     return list(base + suffix for suffix in list_suffix)
 
 
 def download_bonn(path_data="data/boon/") -> [str]:
-    """
-    Adapted from mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
+    """Download dataset function.
+
+    Adapted from
+    mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
     Code changes were:
+
         * Adding more folders;
         * Control for folder creation;
 
@@ -88,7 +96,6 @@ def download_bonn(path_data="data/boon/") -> [str]:
     path_child_fold : str,
         List of strings with the path where
         the dataset files were downloaded.
-
     """
     fold = Path(path_data)
     child_fold = ["setA", "setB", "setC", "setD", "setE"]
@@ -128,8 +135,8 @@ def download_bonn(path_data="data/boon/") -> [str]:
 
 
 def download_item(url_base, name_base, page=True, range_=(30, 50)):
-    """
-    Function to download the files in an isolated way.
+    """Download the files in an isolated way.
+
     Used when the file listing is different from a folder.
 
     Parameters
@@ -148,21 +155,19 @@ def download_item(url_base, name_base, page=True, range_=(30, 50)):
     -------
     list : list [str]
         Filter list with files and folder, not included when id people > 10.
-
     """
     download(url_base, name_base)
     if page:
         base = open(name_base, "r").read()
         soup = BeautifulSoup(base, "html.parser")
-        return filter_list([link.get("href") for link in soup.find_all("a")], range_=range_)
+        return filter_list([link.get("href")
+                            for link in soup.find_all("a")], range_=range_)
 
     return None
 
 
 def filter_list(folders_description, range_=(11, 25)):
-    """
-        TODO: Description
-    """
+    """Filter folder list to download."""
     listchb = ["chb" + str(i) + "/" for i in range(range_[0], range_[1])]
     listchb.append("../")
 
@@ -170,22 +175,19 @@ def filter_list(folders_description, range_=(11, 25)):
 
 
 def get_folders(folders_description):
-    """
-        TODO: Description
-    """
+    """Get folder in a list."""
     return [item for item in folders_description if item.find("/") != -1]
 
 
 def get_files(folders_description):
-    """
-        TODO: Description
-    """
+    """Get files in a list."""
     return [item for item in folders_description if item.find("/") == -1]
 
 
 def download_chbmit(url_base, path_save):
-    """
-    Function to download the Chbmit dataset, [the 10 firsts patients only].
+    """Download the Chbmit dataset.
+
+    The 10 firsts patients only.
     This function also creates the folder, and if already exists the folder,
     returns the list of files.
 
@@ -203,9 +205,7 @@ def download_chbmit(url_base, path_save):
     path_child_fold : str,
         List of strings with the path where
         the dataset files were downloaded.
-
     """
-
     print("Downloading the folder information: {}".format(path_save))
     fold_save = Path(path_save)
 
@@ -244,9 +244,10 @@ def download_chbmit(url_base, path_save):
 
 
 def load_dataset_boon(path_data: str) -> [array]:
-    """Function for reading the boon database, and return X and y.
-    Also adapted from:
-    https://mne-tools.github.io/mne-features/auto_examples/plot_seizure_example.html
+    """Read the boon database, and return data and class.
+
+    Also adapted from: https://mne-tools.github.io/mne-
+    features/auto_examples/plot_seizure_example.html.
 
     Parameters
     ----------
@@ -260,7 +261,6 @@ def load_dataset_boon(path_data: str) -> [array]:
         and n_features is the number of features.
     class_ : array-like, shape (n_samples,)
         Target values.
-
     """
     fold = Path(path_data)
     child_fold = ["setA", "setB", "setC", "setD", "setE"]
@@ -297,16 +297,12 @@ def load_dataset_boon(path_data: str) -> [array]:
 
 
 def filter_empty(n_array):
-    """
-    TODO: Description.
-    """
+    """Filter empty values in a list."""
     return filter(lambda x: x != [], n_array)
 
 
 def split_4096(n_array):
-    """
-    Function to divide an array into n-arrays
-    with size 4096 points each.
+    """Split an array into n-arrays with size 4096 points each.
 
     Parameters
     ----------
@@ -315,7 +311,6 @@ def split_4096(n_array):
     Returns
     -------
     [array] : [array-like]
-
     """
     if len(n_array) >= 4096 and n_array != []:
         if len(n_array) % 4096 != 0:
@@ -331,9 +326,7 @@ def split_4096(n_array):
 
 
 def check_exist_chbmit(path_save: str):
-    """
-    TODO: Description.
-    """
+    """Check if the fold dataset exists."""
     fold = Path(path_save) / "as_dataset"
 
     if not fold.exists():
@@ -341,11 +334,13 @@ def check_exist_chbmit(path_save: str):
         return False
     return True
 
+
 def load_dataset_chbmit(path_save: str,
                         n_samples=200,
                         random_state=42) -> [array]:
-    """
-    # TODO: fix docstring
+    """Read the chbmit database, and return data and class.
+
+    Split the dataset to the appropriate size.
 
     Parameters
     ----------
@@ -360,9 +355,7 @@ def load_dataset_chbmit(path_save: str,
         and n_features is the number of features.
     y : array-like, shape (n_samples,)
         Target values.
-
     """
-
     data_frame_non = []
     data_frame_seiz = []
 
@@ -413,9 +406,11 @@ def load_dataset_chbmit(path_save: str,
     return data_frame.drop('class', 1).to_numpy(), data_frame['class'].values
 
 
-def preprocessing_split(data, class_, test_size=.20, random_state=42) -> [array]:
-    """Function to perform the train and test split
-    and normalize the data set with Min-Max.
+def preprocessing_split(data, class_,
+                        test_size=.20, random_state=42) -> [array]:
+    """Split the train and test split.
+
+    Also normalize the data set with Min-Max.
 
     Parameters
     ----------
@@ -462,7 +457,9 @@ def preprocessing_split(data, class_, test_size=.20, random_state=42) -> [array]
 
 
 def read_feature_data(base_fold, dim):
-    """
+    """Read feature dataset.
+
+    Function to read the dataset already built by the auto-enconder.
 
     Parameters
     ----------
@@ -478,9 +475,7 @@ def read_feature_data(base_fold, dim):
     Returns
     -------
     data : array
-
     class_ : array
-
     """
     name_reduced = join(base_fold, "reduced_dataset_{}.parquet".format(dim))
     data = read_parquet(name_reduced, engine="pyarrow").drop(["class"], 1)
@@ -493,7 +488,7 @@ def save_reduce(data_reduced,
                 value_encoding_dim,
                 path_dataset,
                 name_type) -> [str]:
-    """
+    """Save reduce dataset.
 
     Parameters
     ----------
@@ -516,9 +511,7 @@ def save_reduce(data_reduced,
     -------
     save_reduced_name : str
         Path name where the reducing dataset was saved on the computer.
-
     """
-
     # Join pathname between a string that contains the base
     # pathname dataset and a folder called reduced,
     # which will be created to save the latent spaces
@@ -563,8 +556,25 @@ def save_feature_model(auto_encoder,
                        path_dataset,
                        type_loss,
                        value_encoding_dim):
-    """
-        TO-DO: Desc...
+    """Save feature model.
+
+    Parameters
+    ----------
+    auto_encoder : AutoEnconder,
+
+    value_encoding_dim : int,
+        Size of the latent space that architecture will
+        learn in the process of decoding and encoding.
+
+    path_dataset : str,
+        Path name where is the dataset in computer.
+
+    name_type : str
+        If feature learning:
+            Which loss function will be minimized in the learning proces,
+            with the options: "mae" or "maae".
+        Else:
+            Baseline method, with the options: "pca" or "srp"
     """
     # Join pathname between a string that contains the base
     # pathname dataset and a folder called save_model,
@@ -596,9 +606,25 @@ def save_feature_model(auto_encoder,
     auto_encoder.method_enconder.save(auto_enconder_name)
 
 
-def save_history_model(auto_encoder, path_dataset, type_loss, value_encoding_dim):
-    """
-        TO-DO: Desc...
+def save_history_model(auto_encoder,
+                       path_dataset,
+                       type_loss,
+                       value_encoding_dim):
+    """Save history model.
+
+    Parameters
+    ----------
+    auto_encoder : AutoEnconder,
+
+    value_encoding_dim : int,
+        Size of the latent space that architecture will
+        learn in the process of decoding and encoding.
+
+    path_dataset : str,
+        Path name where is the dataset in computer.
+
+    name_type : str
+        with the options: "mae" or "maae".
     """
     # Join pathname between a string that contains the base
     # pathname dataset and a folder called save_model,
@@ -629,8 +655,19 @@ def save_history_model(auto_encoder, path_dataset, type_loss, value_encoding_dim
 
 
 def read_history_model(path_dataset, type_loss, value_encoding_dim):
-    """
-        TO-DO: Desc...
+    """Read history model.
+
+    Parameters
+    ----------
+    value_encoding_dim : int,
+        Size of the latent space that architecture will
+        learn in the process of decoding and encoding.
+
+    path_dataset : str,
+        Path name where is the dataset in computer.
+
+    name_type : str
+        with the options: "mae" or "maae".
     """
     # Join pathname between a string that contains the base
     # pathname dataset and a folder called save_model,
@@ -650,9 +687,19 @@ def read_history_model(path_dataset, type_loss, value_encoding_dim):
 def save_classification(scores,
                         base_fold,
                         name_type,
-                        cross_validation):
-    """
-    TODO
+                        cross_val):
+    """Save classification results.
+
+    Parameters
+    ----------
+    scores : DataFrame
+        Results classsification aggregate.
+    base_fold : str,
+        Pathname where is the dataset in computer.
+    name_type : str
+        with the options: "mae" or "maae".
+    cross_val : int
+        value with cross values.
     """
     fold = Path(base_fold) / "save"
 
@@ -661,7 +708,7 @@ def save_classification(scores,
 
     # Formatted string to save size dimensions in name
     name_classification = "classification_{}_cv{}.parquet".format(name_type,
-                                                                  cross_validation)
+                                                                  cross_val)
     # Join to take the path that we will save the train and test
     save_classification_name = join(fold, name_classification)
 
@@ -670,9 +717,7 @@ def save_classification(scores,
 
 
 def get_original_results(id_table: str, path_original: str):
-    """
-        TO-DO: Desc...
-    """
+    """Read function to get the original results from article."""
     name_file = "Original_Tables - Table_{}.csv".format(id_table)
 
     return read_csv(join(path_original, name_file), index_col="Dimension")

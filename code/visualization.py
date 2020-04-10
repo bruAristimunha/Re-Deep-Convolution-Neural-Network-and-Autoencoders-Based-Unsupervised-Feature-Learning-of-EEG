@@ -1,5 +1,11 @@
-"""
-  TO-DO:  Description
+"""Copyright 2019, Bruno Aristimunha.
+
+This file is part of paper [Re] Deep Convolution
+Neural Network and Autoencoders-Based Unsupervised
+Feature Learning of EEG Signals.
+
+--------------------------------------------
+Plot Function and table function.
 """
 from os.path import join
 
@@ -22,10 +28,9 @@ from seaborn import boxplot, lmplot
 
 from classification import read_feature_data
 
+
 def regression_plot(metrics, name_metric="accuracy"):
-    """
-      TO-DO:  Description
-    """
+    """Regression plot with dimension values, by classifiers."""
     reprod_table = table_classification_dimension(
         metrics, False, False, name_metric)
 
@@ -50,9 +55,7 @@ def regression_plot(metrics, name_metric="accuracy"):
 
 
 def plot_variance_accumulate(var):
-    """
-      TO-DO:  Description
-    """
+    """Variance accumulate plot, by Channel."""
     fig, axes = subplots(figsize=(12, 5))
 
     axes = var.sort_values().drop("time").plot.bar(ax=axes)
@@ -64,9 +67,7 @@ def plot_variance_accumulate(var):
 
 
 def plot_variance_by_file(variance_by_file):
-    """
-      TO-DO:  Description
-    """
+    """Variance accumulate plot by file."""
     fig, axes = subplots(figsize=(12, 5))
 
     var = [file.drop("time").sort_values().index[-1]
@@ -81,9 +82,7 @@ def plot_variance_by_file(variance_by_file):
 
 
 def plot_variance_by_person(variance_per_person):
-    """
-      TO-DO:  Description
-    """
+    """Variance accumulate plot by person."""
     fig, axes = subplots(figsize=(12, 5))
 
     var = [file.drop("time").sort_values().index[-1]
@@ -98,26 +97,20 @@ def plot_variance_by_person(variance_per_person):
 
 
 def original_experiments(data_fram):
-    """
-      TO-DO:  Description
-    """
+    """Filter just original experiments."""
     return data_fram[(data_fram["name_classifier"] != "ensemble") &
                      (data_fram["Dimension"] != 256)]
 
 
 def proposed_experiments(data_fram):
-    """
-      TO-DO:  Description
-    """
+    """Filter just the proposed experiments."""
     return data_fram[(data_fram["name_classifier"] == "ensemble") |
                      (data_fram["Dimension"] == 256)]
 
 
 def table_classification_dimension(metrics, original=True,
                                    proposed=True, metric="accuracy"):
-    """
-      TO-DO:  Description
-    """
+    """Select one metric from the table metrics by dimension."""
     if original:
         metrics = original_experiments(metrics)
         order_col = ["k_neighbors", "svm_linear", "svm_radial",
@@ -144,9 +137,7 @@ def table_classification_dimension(metrics, original=True,
 def table_classification_fold(metrics, original=True,
                               proposed=True, dimension=2,
                               metric="accuracy"):
-    """
-      TO-DO:  Description
-    """
+    """Select one dimension and one metric from the metrics table by fold."""
     if original:
         metrics = original_experiments(metrics)
     elif proposed:
@@ -168,9 +159,7 @@ def table_classification_fold(metrics, original=True,
 
 def plot_average_metric(ae_d1_l1, ae_d1_l2, ae_d2_l1, ae_d2_l2,
                         names, metric="accuracy"):
-    """
-      TO-DO:  Description
-    """
+    """Plot the Average result by dimension, and loss function."""
     ae_d1_l1 = original_experiments(ae_d1_l1).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
     ae_d1_l1.name = names[0]
@@ -213,9 +202,7 @@ def plot_average_metric_baseline(ae_d1_l1, ae_d1_l2, pca_d1, srp_d1,
                                  ae_d2_l1, ae_d2_l2, pca_d2, srp_d2,
                                  metric="accuracy",
                                  name=None):
-    """
-    TO-DO:  Description
-    """
+    """Plot the Average result by dimension and loss function, and baseline."""
     # Auto-Enconder
     ae_d1_l1 = original_experiments(ae_d1_l1).groupby(
         ["Dimension"])["test_{}".format(metric)].apply(mean)
@@ -274,25 +261,19 @@ def plot_average_metric_baseline(ae_d1_l1, ae_d1_l2, pca_d1, srp_d1,
 
 
 def encoded_class(data):
-    """
-    TODO:  Description
-    """
+    """Enconder the class for boxplot."""
     return "$P$" if data == 1 else "$N$"
 
 
 def clean_xlabel(axes):
-    """
-    TODO:  Description
-    """
+    """Clean the xlabel."""
     return axes.set(xlabel="")
 
 
 @ignore_warnings(category=UserWarning)
 def plot_feature_distribution(path_save, n_dims=4,
                               names=None):
-    """
-    TODO:  Description
-    """
+    """Plot the feature distribution in the reduced dataset."""
     fig, axes = subplots(nrows=2, ncols=n_dims,
                          figsize=(20, 10))
 
@@ -328,9 +309,7 @@ def plot_feature_distribution(path_save, n_dims=4,
 
 def plot_change_loss(history_l1, history_l2,
                      names=None):
-    """
-    TODO:  Description
-    """
+    """Plot the loss variance in auto-enconder."""
     fig, axes = subplots(figsize=(15, 5), ncols=2)
 
     axes[0].plot(history_l1["loss"])
@@ -349,9 +328,7 @@ def plot_change_loss(history_l1, history_l2,
 
 
 def boxplot_difference(reprod_table, origin_table):
-    """
-      TO-DO:  Description
-    """
+    """Boxplot the difference beetween reproduced and original."""
     diff = melt(reprod_table-origin_table)
     diff.columns = ["", ""]
 
@@ -388,9 +365,7 @@ def table_export_latex(path_save, dataset,
                        name_dataset, metric,
                        name_type, original,
                        proposed):
-    """
-      TO-DO:  Description
-    """
+    """Export and save metrics as latex."""
     data = table_classification_dimension(dataset[name_type],
                                           original, proposed,
                                           metric=metric)
