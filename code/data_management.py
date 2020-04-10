@@ -42,12 +42,9 @@ from sklearn.preprocessing import MinMaxScaler
 # Import used to download the data.
 from wget import download
 
-path.insert("chb-mit/", 0)
+path.append("chb-mit/")
 # Import of the class used to read the CHBMIT dataset.
-patient = import_module('patient')
-# get method or function from patient
-Patient = getattr(patient, 'Patient')
-
+from patient import Patient
 
 def zip_with_unique(base, list_suffix):
     """Auxiliary function to generate a paired list with a unique element.
