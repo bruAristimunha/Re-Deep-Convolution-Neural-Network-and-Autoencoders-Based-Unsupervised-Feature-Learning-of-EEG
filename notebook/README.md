@@ -7,10 +7,6 @@ TO-DO:
 
     [ ] Rodar em um novo ambiente, redefinir as importações necessárias, executar fim a fim do zero.
 
-    [ ] Escrever documentação das funções;
-
-    [ ] Roda e melhorar a qualidade do código com pydocstyle e pylint;
-
     [ ] Alterar as modificações que vocês levantarem nessa última rodada;
 
     [ ] Adicionar as referências no texto de introdução;
