@@ -367,7 +367,7 @@ def load_dataset_chbmit(path_save: str,
         for person_id in range(1, 11):
             print("Loading Patients nº {}".format(person_id))
             pat = Patient(person_id, path_save)
-
+            print(path_save)
             non_epoch_array = list(map(split_4096, pat.get_non_seizures()))
 
             data_frame_non.append(concatenate(non_epoch_array))
