@@ -1,5 +1,6 @@
 
-This paper presents our efforts to implement, acquire similar results and improve the ones achieved by the authors of the original article. We follow the steps and models described in their article and the same public data sets of EEG Signals. The EEG Signals are critical to analyze and recognize epilepsy, which is a neurological disorder that affects more than 65 million people worldwide. Although the efforts in the last years, it is still challenging to extract useful information from these signals and select useful features from numerous them in a diagnostic application. We construct a deep convolution network and autoencoders-based model (AE-CDNN) in order to perform unsupervised feature learning. We use the AE-CDNN to extract the features of the available data sets, and then we use some common classifiers to classify the features. The results obtained demonstrate that the proposed AE-CDNN to perform the traditional feature extraction based classification techniques by achieving better accuracy of classification.
+This paper presents our efforts to reproduce and improve the results achieved by the authors of the original article. We follow the steps and models described in their article and the same public data sets of EEG Signals. Epilepsy affects more than 65 million people globally, and EEG Signals are critical to analyze and recognize epilepsy. Although the efforts in the last years, it is still challenging to extract useful information from these signals and select useful features in a diagnostic application. We construct a deep convolution network and autoencoders-based model (AE-CDNN) in order to perform unsupervised feature learning. We use the AE-CDNN to extract the features of the available data sets, and then we use some common classifiers to classify the features. The results obtained demonstrate that the proposed AE-CDNN outperforms the traditional feature extraction based classification techniques by achieving better accuracy of classification.
+
 
 \section{Introduction}
 
@@ -35,14 +36,14 @@ Some researchers have applied Deep Belief Networks (DBNs) to the detection of se
 
 \cite{xun2016detecting} propose an approach unusual when decoding each window of possible interval as an {\it EEG word} from the {\it EEG} dictionary. They explore temporal knowledge by learning context information from EEG fragments (Context-EEG). The authors obtained a $22.93\%$ error rate in the control classification vs epileptic crisis using the second dataset present in \cite{WenZha:2018}. 
 
-\cite{emami2019autoencoding}  obtained $100\%$ sensitivity with a simpler methodology than our. For each channel, it builds a autoencoder and through the error of reconstruction is classified. The dataset was self and with no access available. \cite{ullah2018automated} propose a pyramidal model of one dimension for convolution (P-1D-CNN). The method obtains $99.1$ $\pm$ $0.9$ in our first dataset.
+\cite{emami2019autoencoding} obtained $100\%$ sensitivity with a simpler methodology than our. For each channel, it builds a autoencoder and through the error of reconstruction is classified. The dataset was self and with no access available. \cite{ullah2018automated} propose a pyramidal model of one dimension for convolution (P-1D-CNN). The method obtains $99.1$ $\pm$ $0.9$ in our first dataset.
 
 \section{Methodology Proposal}
 \label{sec:propose}
 
 In this section, we describe implementation details, as the core is the reproducible aspect of our reference article. We introduce the idea and implementation of autoencoder/feature learning and our version of the model in \cite{WenZha:2018}, explaining the differences we have made to the original model.
 
-In our study, we keep the autoencoder and feature learning as proposed. However, in the classification, we no longer consider classifiers individually; these methods now make up a large ensemble learning classifier, which decides by majority vote the object class.
+In our study, we keep the autoencoder and feature learning as proposed. However, in the classification, in addition to the individual classifiers, we also employ a large ensemble learning classifier, which decides by majority vote the object class.
 
 \subsection{Implementation Details}
 
@@ -54,7 +55,7 @@ Given the lack of information about implementation in the original paper, some a
 \item The number of epoch in the AutoEnconder is assumed to be $5000$; 
 \item The number of samples per batch size is assumed to be $256$; 
 \item A column of the first database is removed, there is disagreement in the literature on the total instances, $4097$ or $4096$. In the specific database we use there is $4097$. The removed attribute is at the endpoint of each object; 
-\item In the second dataset, considering the information gap, we use the channel reported by the author to train the AutoEncoder;
+\item In the second dataset, we use the channel reported by the author to train the AutoEncoder;
 \item The loss function presented in equation $12$ of the \cite{WenZha:2018} was implemented and we also compared the result obtained with \textit{MAPE}; 
 \item The value of the seeds selected in all classifiers, data splitting and elsewhere was $42$; 
 \item The train-validation ratio was $80\%-20\%$ to AutoEnconder, in classifiers we use cross-validation with 5 or 10-fold; 
@@ -90,7 +91,7 @@ where $y^{(i)}$ is the output signal and $x^{(i)}$ is the input signal.
 
 \subsection{Feature Learning Model}
 
-In this subsection, we will omit equations and minor details (for complete information, see \cite{Shoeb,emami2019autoencoding}. Since we have the dimension reduced by autoencoder we focus on the next challenge: how to obtain effective features from EEG signals.  The AE-CDNN implemented follows the steps:
+In this subsection, we will omit equations and minor details (for complete information, see \cite{Shoeb,emami2019autoencoding}. Since we have the dimension reduced by autoencoder we focus on the next challenge: how to obtain effective features from EEG signals. The AE-CDNN implemented follows the steps:
 
 \begin{itemize}
 \item Encoder: sample input, convolution layer, down-sampling layer, reshape operation, full connection layer, and the feature coding.
@@ -167,46 +168,45 @@ In addition, there was also the AUC-ROC (Area Under The Curve - Receiver Operati
 \section{Results and Discussion}
 \label{sec:resu}
 
-In this section we analyze three analytical approaches, a first subsection an analysis of the variance present in the channels.
-The second being a sub-section with the reproduction of all possible tables and figures, with a discussion of the reasons for the differences. In the third sub-section, we present an extension of the results, evaluating other classification metrics, proposing a new classifier and varying the classifier parameters.
+In this section, we analyze three analytical approaches. In the first subsection we analyze the variance present in the channels. The second contains the reproduction of all possible tables and figures, with a discussion of the reasons for the differences. In the third we present an extension of the results, evaluating other classification metrics, proposing a new classifier and varying the classifier parameters.
 
 \subsection{Checking the Variance} 
 
 According to the original authors, the choice of the channel in the second dataset observed the variance present in the channels. For that, they followed the methodology: ``1) calculate the variance of each channel in each sample, and select the channel with the maximum variance for each sample; 2) count these channels.\,''
 
-Thereby, we model the three scenarios for the interpretation of what is the sample defined by the author. In the first, we analyzed each recording file of the dataset as a sample, having an average length of $921600$ referring to the recorded $3600s$. In these files, we compute and list the electrode with more variance and discard the rest. We accumulate and count for all files. The results obtained can be seen in the Figure below:
+Thereby, we model the three interpretations of what is the sample defined by the author. In the first, we analyzed each recording file of the dataset as a sample, having an average length of $921600$ referring to the recorded $3600s$. In these files, we compute and list the electrode with more variance and discard the rest. We accumulate and count for all files. The results obtained can be seen in the Figure below:
 
 \begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\linewidth]{figure/variance_per_file.pdf}
-    \caption{Accumulated variance per sample, considering a sample as each recording file.}
-    \label{fig:variance_per_file}
+  \centering
+  \includegraphics[width=\linewidth]{figure/variance_per_file.pdf}
+  \caption{Accumulated variance per sample, considering a sample as each recording file.}
+  \label{fig:variance_per_file}
 \end{figure}
 
-In the second scenario, we understand that each sample is accumulated per person with all his recordings. So the variance was calculated in parallel in the files and combined for each person. For each person, we count the occurrence of the channel with more variance. As shown in Figure \ref{fig:variance_per_person}.
+In the second interpretation, we understand that each sample is accumulated per person with all his recordings. So the variance was calculated in parallel in the files and combined for each person. For each person, we count the occurrence of the channel with more variance. As shown in Figure \ref{fig:variance_per_person}.
 
 
 \begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\linewidth]{figure/variance_per_person.pdf}
-    \caption{Accumulated variance per sample, considering a sample as being all the recordings of each person.}
-    \label{fig:variance_per_person}
+  \centering
+  \includegraphics[width=\linewidth]{figure/variance_per_person.pdf}
+  \caption{Accumulated variance per sample, considering a sample as being all the recordings of each person.}
+  \label{fig:variance_per_person}
 \end{figure}
 
 
 
-Finally, as a final scenario, we calculate the cumulative variance across all people and all records, thus, we did not perform a sampling process. In other words, we put all the files together and calculate the variance as if it were a single record. For this, we compute the variance, number of points and average per channel in each file and accumulate through the cumulative variance calculation algorithm. The result of this analysis approach can be seen in Figure \ref{fig:variance_all_files}.
+Finally, as a final interpretation, we calculate the cumulative variance across all people and all records, thus, we did not perform a sampling process. In other words, we put all the files together and calculate the variance as if it were a single record. For this, we compute the variance, number of points and average per channel in each file and accumulate through the cumulative variance calculation algorithm. The result of this analysis approach can be seen in Figure \ref{fig:variance_all_files}.
 
 
 \begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\linewidth]{figure/variance_all.pdf}
-    \caption{Total accumulated variance in the first ten people of the dataset, as granular as possible.}
+  \centering
+  \includegraphics[width=\linewidth]{figure/variance_all.pdf}
+  \caption{Total accumulated variance in the first ten people of the dataset, as granular as possible.}
 \label{fig:variance_all_files}
 \end{figure}
 
 
-The results obtained in the first, second and three scenario were not consistent with those reported by the author. Thus, not in any of the scenarios analyzed did we obtain the same results in the variance as the original authors. There is still another possible scenario, however, not reproducible, being the possibility that the authors randomly sampled the dataset and in this they verified the variance. 
+The results obtained in the first, second and third interpretations were not consistent with those reported by the author. There is still another possible scenario, however, not reproducible, where the authors randomly sampled the dataset and evaluated the variance.
 
 However, given the associated uncertainty, we decided to repeat the choice of the channel $FT9-FT10$, although this is not the one with the most variance in the modeled scenarios.
 
@@ -219,14 +219,14 @@ The results obtained in our reproduction experiment, for the first dataset, are 
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|ccccccccc}
-\textbf{Dimension} & \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree }&  \textbf{random\_forest} &  \textbf{multi\_layer} &  \textbf{ada\_boost} & \textbf{ gaussian\_nb} &  \textbf{average} \\ \hline 
-\textbf{2}  &        0.702 &       0.600 &       0.600 &          0.712 &          0.700 &        0.600 &      0.710 &        0.562 &  0.64825 \\ 
-\textbf{4}  &        0.674 &       0.600 &       0.600 &          0.700 &          0.678 &        0.600 &      0.758 &        0.562 &  0.64650 \\ 
-\textbf{8}  &        0.480 &       0.600 &       0.600 &          0.600 &          0.600 &        0.600 &      0.600 &        0.400 &  0.56000 \\  
-\textbf{16} &        0.802 &       0.600 &       0.600 &          0.762 &          0.812 &        0.634 &      0.784 &        0.636 &  0.70375 \\ 
-\textbf{32} &        0.794 &       0.600 &       0.606 &          0.758 &          0.830 &        0.666 &      0.790 &        0.638 &  0.71025 \\ 
-\textbf{64} &        0.772 &       0.714 &       0.754 &          0.682 &          0.786 &        0.792 &      0.808 &        0.618 &  0.74075 \\  
-\textbf{128}&        0.800 &       0.662 &       0.726 &          0.756 &          0.776 &        0.742 &      0.780 &        0.608 &  0.73125 \\ \hline 
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} & \textbf{average} \\ \hline 
+\textbf{2} &    0.702 &    0.600 &    0.600 &     0.712 &     0.700 &    0.600 &   0.710 &    0.562 & 0.64825 \\ 
+\textbf{4} &    0.674 &    0.600 &    0.600 &     0.700 &     0.678 &    0.600 &   0.758 &    0.562 & 0.64650 \\ 
+\textbf{8} &    0.480 &    0.600 &    0.600 &     0.600 &     0.600 &    0.600 &   0.600 &    0.400 & 0.56000 \\ 
+\textbf{16} &    0.802 &    0.600 &    0.600 &     0.762 &     0.812 &    0.634 &   0.784 &    0.636 & 0.70375 \\ 
+\textbf{32} &    0.794 &    0.600 &    0.606 &     0.758 &     0.830 &    0.666 &   0.790 &    0.638 & 0.71025 \\ 
+\textbf{64} &    0.772 &    0.714 &    0.754 &     0.682 &     0.786 &    0.792 &   0.808 &    0.618 & 0.74075 \\ 
+\textbf{128}&    0.800 &    0.662 &    0.726 &     0.756 &     0.776 &    0.742 &   0.780 &    0.608 & 0.73125 \\ \hline 
 \end{tabular}
 }
 \caption{Accuracy values obtained in reproduction, AE-CDNN-MAE for Dataset 1.}
@@ -237,14 +237,14 @@ The results obtained in our reproduction experiment, for the first dataset, are 
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|ccccccccc}
-\textbf{Dimension} & \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree }&  \textbf{random\_forest} &  \textbf{multi\_layer} &  \textbf{ada\_boost} & \textbf{ gaussian\_nb} &  \textbf{average} \\ \hline 
-\textbf{2}  &        0.722 &         0.6 &       0.600 &          0.718 &          0.690 &        0.600 &      0.750 &        0.560 &  0.65500 \\  
-\textbf{4}  &        0.480 &         0.6 &       0.600 &          0.600 &          0.600 &        0.600 &      0.600 &        0.400 &  0.56000 \\  
-\textbf{8}  &        0.776 &         0.6 &       0.600 &          0.708 &          0.784 &        0.600 &      0.744 &        0.574 &  0.67325 \\
-\textbf{16} &        0.804 &         0.6 &       0.600 &          0.678 &          0.788 &        0.596 &      0.760 &        0.610 &  0.67950 \\  
-\textbf{32} &        0.740 &         0.6 &       0.600 &          0.734 &          0.744 &        0.600 &      0.754 &        0.586 &  0.66975 \\  
-\textbf{64} &        0.800 &         0.6 &       0.600 &          0.774 &          0.820 &        0.658 &      0.772 &        0.670 &  0.71175 \\  
-\textbf{128}&        0.784 &         0.6 &       0.624 &          0.738 &          0.818 &        0.700 &      0.812 &        0.640 &  0.71450 \\ \hline 
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} & \textbf{average} \\ \hline 
+\textbf{2} &    0.722 &     0.6 &    0.600 &     0.718 &     0.690 &    0.600 &   0.750 &    0.560 & 0.65500 \\ 
+\textbf{4} &    0.480 &     0.6 &    0.600 &     0.600 &     0.600 &    0.600 &   0.600 &    0.400 & 0.56000 \\ 
+\textbf{8} &    0.776 &     0.6 &    0.600 &     0.708 &     0.784 &    0.600 &   0.744 &    0.574 & 0.67325 \\
+\textbf{16} &    0.804 &     0.6 &    0.600 &     0.678 &     0.788 &    0.596 &   0.760 &    0.610 & 0.67950 \\ 
+\textbf{32} &    0.740 &     0.6 &    0.600 &     0.734 &     0.744 &    0.600 &   0.754 &    0.586 & 0.66975 \\ 
+\textbf{64} &    0.800 &     0.6 &    0.600 &     0.774 &     0.820 &    0.658 &   0.772 &    0.670 & 0.71175 \\ 
+\textbf{128}&    0.784 &     0.6 &    0.624 &     0.738 &     0.818 &    0.700 &   0.812 &    0.640 & 0.71450 \\ \hline 
 \end{tabular}
 }
 \caption{Accuracy values obtained in reproduction, AE-CDNN-MAAE for Dataset 1.}
@@ -252,16 +252,16 @@ The results obtained in our reproduction experiment, for the first dataset, are 
 \end{table}
 
 \begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.8\linewidth]{figure/table_2.pdf}
-    \caption{Classification Accuracy Results of AE-CDNN-MAE for Dataset 1 \cite{WenZha:2018}, Reproduced Original and Difference.}
+  \centering
+  \includegraphics[width=0.8\linewidth]{figure/table_2.pdf}
+  \caption{Classification Accuracy Results of AE-CDNN-MAE for Dataset 1 \cite{WenZha:2018}, Reproduced Original and Difference.}
 \label{fig:acc-AE-CDNN-MAE-d1}
 \end{figure}
 
 \begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.8\linewidth]{figure/table_3.pdf}
-    \caption{Classification Accuracy Results of AE-CDNN-MAAE for Dataset 1 \cite{WenZha:2018}, Reproduced Original and Difference.}
+  \centering
+  \includegraphics[width=0.8\linewidth]{figure/table_3.pdf}
+  \caption{Classification Accuracy Results of AE-CDNN-MAAE for Dataset 1 \cite{WenZha:2018}, Reproduced Original and Difference.}
 \label{fig:acc-AE-CDNN-MAAE-d1}
 \end{figure}
 
@@ -272,14 +272,14 @@ We can perceive some differences when compared to the original results. In Table
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|ccccccccc}
-\textbf{Dimension} & \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree }&  \textbf{random\_forest} &  \textbf{multi\_layer} &  \textbf{ada\_boost} & \textbf{ gaussian\_nb} &  \textbf{average} \\ \hline 
-\textbf{2}  &       0.5000 &      0.5000 &      0.5000 &         0.5000 &         0.5000 &       0.5000 &     0.5000 &       0.5000 &  0.500000 \\  
-\textbf{4}  &       0.7125 &      0.5000 &      0.5525 &         0.7300 &         0.6575 &       0.4725 &     0.7075 &       0.7525 &  0.635625 \\  
-\textbf{8}  &       0.8025 &      0.5325 &      0.6325 &         0.8075 &         0.7925 &       0.7050 &     0.8000 &       0.7025 &  0.721875 \\ 
-\textbf{16} &       0.8150 &      0.6500 &      0.7575 &         0.8175 &         0.8350 &       0.7725 &     0.8175 &       0.7800 &  0.780625 \\ 
-\textbf{32} &       0.7400 &      0.8575 &      0.8625 &         0.8225 &         0.8550 &       0.8725 &     0.8475 &       0.8675 &  0.840625 \\ 
-\textbf{64} &       0.7200 &      0.8325 &      0.8450 &         0.7625 &         0.8350 &       0.8525 &     0.8150 &       0.8650 &  0.815937 \\ 
-\textbf{128}&       0.6925 &      0.8300 &      0.8300 &         0.7450 &         0.8025 &       0.8275 &     0.7850 &       0.8225 &  0.791875 \\ \hline 
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} & \textbf{average} \\ \hline 
+\textbf{2} &    0.5000 &   0.5000 &   0.5000 &     0.5000 &     0.5000 &    0.5000 &   0.5000 &    0.5000 & 0.500000 \\ 
+\textbf{4} &    0.7125 &   0.5000 &   0.5525 &     0.7300 &     0.6575 &    0.4725 &   0.7075 &    0.7525 & 0.635625 \\ 
+\textbf{8} &    0.8025 &   0.5325 &   0.6325 &     0.8075 &     0.7925 &    0.7050 &   0.8000 &    0.7025 & 0.721875 \\ 
+\textbf{16} &    0.8150 &   0.6500 &   0.7575 &     0.8175 &     0.8350 &    0.7725 &   0.8175 &    0.7800 & 0.780625 \\ 
+\textbf{32} &    0.7400 &   0.8575 &   0.8625 &     0.8225 &     0.8550 &    0.8725 &   0.8475 &    0.8675 & 0.840625 \\ 
+\textbf{64} &    0.7200 &   0.8325 &   0.8450 &     0.7625 &     0.8350 &    0.8525 &   0.8150 &    0.8650 & 0.815937 \\ 
+\textbf{128}&    0.6925 &   0.8300 &   0.8300 &     0.7450 &     0.8025 &    0.8275 &   0.7850 &    0.8225 & 0.791875 \\ \hline 
 \end{tabular}}
 \caption{Accuracy values obtained in reproduction, AE-CDNN-MAE for Dataset 2.}
 \label{table:accuracy-ae-l1-d2}
@@ -289,14 +289,14 @@ We can perceive some differences when compared to the original results. In Table
 \resizebox{\textwidth}{!}{
 \centering
 \begin{tabular}{c|ccccccccc}
-\textbf{Dimension} & \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree }&  \textbf{random\_forest} &  \textbf{multi\_layer} &  \textbf{ada\_boost} & \textbf{ gaussian\_nb} &  \textbf{average} \\ \hline 
-\textbf{2}  &       0.5000 &      0.5000 &      0.5000 &         0.5000 &         0.5000 &       0.5000 &     0.5000 &       0.5000 &  0.500000 \\ 
-\textbf{4}  &       0.7200 &      0.5000 &      0.5575 &         0.6825 &         0.6725 &       0.5500 &     0.7000 &       0.7525 &  0.641875 \\ 
-\textbf{8}  &       0.8400 &      0.6975 &      0.8025 &         0.8150 &         0.8450 &       0.7825 &     0.8550 &       0.8375 &  0.809375 \\ 
-\textbf{16} &       0.7900 &      0.7475 &      0.8250 &         0.7725 &         0.8250 &       0.8200 &     0.7950 &       0.8525 &  0.803438 \\ 
-\textbf{32} &       0.8125 &      0.7450 &      0.8125 &         0.8100 &         0.8625 &       0.7950 &     0.8225 &       0.8675 &  0.815937 \\ 
-\textbf{64} &       0.7125 &      0.8150 &      0.8475 &         0.7550 &         0.8225 &       0.8300 &     0.8250 &       0.8525 &  0.807500 \\ 
-\textbf{128}&       0.6950 &      0.8400 &      0.8375 &         0.7700 &         0.8325 &       0.8275 &     0.8100 &       0.8500 &  0.807813 \\ \hline 
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} & \textbf{average} \\ \hline 
+\textbf{2} &    0.5000 &   0.5000 &   0.5000 &     0.5000 &     0.5000 &    0.5000 &   0.5000 &    0.5000 & 0.500000 \\ 
+\textbf{4} &    0.7200 &   0.5000 &   0.5575 &     0.6825 &     0.6725 &    0.5500 &   0.7000 &    0.7525 & 0.641875 \\ 
+\textbf{8} &    0.8400 &   0.6975 &   0.8025 &     0.8150 &     0.8450 &    0.7825 &   0.8550 &    0.8375 & 0.809375 \\ 
+\textbf{16} &    0.7900 &   0.7475 &   0.8250 &     0.7725 &     0.8250 &    0.8200 &   0.7950 &    0.8525 & 0.803438 \\ 
+\textbf{32} &    0.8125 &   0.7450 &   0.8125 &     0.8100 &     0.8625 &    0.7950 &   0.8225 &    0.8675 & 0.815937 \\ 
+\textbf{64} &    0.7125 &   0.8150 &   0.8475 &     0.7550 &     0.8225 &    0.8300 &   0.8250 &    0.8525 & 0.807500 \\ 
+\textbf{128}&    0.6950 &   0.8400 &   0.8375 &     0.7700 &     0.8325 &    0.8275 &   0.8100 &    0.8500 & 0.807813 \\ \hline 
 \end{tabular}
 }
 \caption{Accuracy values obtained in reproduction, AE-CDNN-MAAE for Dataset 2.}
@@ -305,16 +305,16 @@ We can perceive some differences when compared to the original results. In Table
 
 
 \begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\linewidth]{figure/table_4.pdf}
-    \caption{Classification Accuracy Results of AE-CDNN-MAE for Dataset 2 \cite{WenZha:2018}, Reproduced Original and Difference.}
+  \centering
+  \includegraphics[width=\linewidth]{figure/table_4.pdf}
+  \caption{Classification Accuracy Results of AE-CDNN-MAE for Dataset 2 \cite{WenZha:2018}, Reproduced Original and Difference.}
 \label{fig:acc-AE-CDNN-MAE-d2}
 \end{figure}
 
 \begin{figure}[!ht]
-    \centering
-    \includegraphics[width=\linewidth]{figure/table_5.pdf}
-    \caption{Classification Accuracy Results of AE-CDNN-MAAE for Dataset 2 \cite{WenZha:2018}, Reproduced Original and Difference.}
+  \centering
+  \includegraphics[width=\linewidth]{figure/table_5.pdf}
+  \caption{Classification Accuracy Results of AE-CDNN-MAAE for Dataset 2 \cite{WenZha:2018}, Reproduced Original and Difference.}
 \label{fig:acc-AE-CDNN-MAAE-d2}
 \end{figure}
 
@@ -329,7 +329,7 @@ Considering Dataset 2 and Tables \ref{table:accuracy-ae-l1-d2}, \ref{table:accur
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.8\linewidth]{figure/average.pdf}
-    \caption{Average Accuracy Results of AE-CDNN-MAE and AE-CDNN-MAAE, with different dimension values in the two dataset.}
+  \caption{Average Accuracy Results of AE-CDNN-MAE and AE-CDNN-MAAE, with different dimension values in the two dataset.}
 \label{fig:average}
 \end{figure}
 
@@ -340,7 +340,7 @@ When analyzing the behavior of the different loss functions, we see that the MAA
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.8\linewidth]{figure/average-MAAE-MAPE.pdf}
-    \caption{Average Accuracy Results of AE-CDNN-MAAE and AE-CDNN-MAPE in the two dataset.}
+  \caption{Average Accuracy Results of AE-CDNN-MAAE and AE-CDNN-MAPE in the two dataset.}
 \label{fig:average-maae-mape}
 \end{figure}
 
@@ -351,12 +351,12 @@ When observing the values obtained in the classification, in the k-fold, we have
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccc}
-\textbf{5-fold} & \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree }&  \textbf{random\_forest} &  \textbf{multi\_layer} &  \textbf{ada\_boost} & \textbf{gaussian\_nb} \\ \hline 
-1      &         0.66 &         0.6 &         0.6 &           0.71 &           0.61 &          0.6 &       0.68 &         0.51 \\
-2      &         0.70 &         0.6 &         0.6 &           0.65 &           0.72 &          0.6 &       0.70 &         0.66 \\
-3      &         0.68 &         0.6 &         0.6 &           0.73 &           0.75 &          0.6 &       0.73 &         0.54 \\
-4      &         0.74 &         0.6 &         0.6 &           0.76 &           0.74 &          0.6 &       0.74 &         0.56 \\
-5      &         0.73 &         0.6 &         0.6 &           0.71 &           0.68 &          0.6 &       0.70 &         0.54 \\ \hline
+\textbf{5-fold} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{gaussian\_nb} \\ \hline 
+1   &     0.66 &     0.6 &     0.6 &      0.71 &      0.61 &     0.6 &    0.68 &     0.51 \\
+2   &     0.70 &     0.6 &     0.6 &      0.65 &      0.72 &     0.6 &    0.70 &     0.66 \\
+3   &     0.68 &     0.6 &     0.6 &      0.73 &      0.75 &     0.6 &    0.73 &     0.54 \\
+4   &     0.74 &     0.6 &     0.6 &      0.76 &      0.74 &     0.6 &    0.74 &     0.56 \\
+5   &     0.73 &     0.6 &     0.6 &      0.71 &      0.68 &     0.6 &    0.70 &     0.54 \\ \hline
 \end{tabular}
 }
 \caption{Accuracy in Classification, with loss MAE, on each fold cross-validation, for Dataset 1.}
@@ -369,12 +369,12 @@ When observing the values obtained in the classification, in the k-fold, we have
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccc}
-\textbf{5-fold} & \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree }&  \textbf{random\_forest} &  \textbf{multi\_layer} &  \textbf{ada\_boost} & \textbf{gaussian\_nb} \\ \hline 
-1      &         0.65 &         0.6 &         0.6 &           0.66 &           0.64 &          0.6 &       0.73 &         0.53 \\
-2      &         0.72 &         0.6 &         0.6 &           0.72 &           0.64 &          0.6 &       0.72 &         0.64 \\
-3      &         0.76 &         0.6 &         0.6 &           0.72 &           0.72 &          0.6 &       0.77 &         0.54 \\
-4      &         0.70 &         0.6 &         0.6 &           0.73 &           0.70 &          0.6 &       0.75 &         0.53 \\
-5      &         0.78 &         0.6 &         0.6 &           0.76 &           0.75 &          0.6 &       0.78 &         0.56 \\ \hline
+\textbf{5-fold} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{gaussian\_nb} \\ \hline 
+1   &     0.65 &     0.6 &     0.6 &      0.66 &      0.64 &     0.6 &    0.73 &     0.53 \\
+2   &     0.72 &     0.6 &     0.6 &      0.72 &      0.64 &     0.6 &    0.72 &     0.64 \\
+3   &     0.76 &     0.6 &     0.6 &      0.72 &      0.72 &     0.6 &    0.77 &     0.54 \\
+4   &     0.70 &     0.6 &     0.6 &      0.73 &      0.70 &     0.6 &    0.75 &     0.53 \\
+5   &     0.78 &     0.6 &     0.6 &      0.76 &      0.75 &     0.6 &    0.78 &     0.56 \\ \hline
 \end{tabular}
 }
 \caption{Accuracy in Classification, with loss MAAE, on each fold cross-validation, for Dataset 1.}
@@ -390,12 +390,12 @@ In the second dataset, in Tables \ref{table:acc-mae-chbmit-fold-2} and \ref{tabl
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccc}
-\textbf{5-fold} & \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree }&  \textbf{random\_forest} &  \textbf{multi\_layer} &  \textbf{ada\_boost} & \textbf{ gaussian\_nb} \\ \hline 
-1      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\
-2      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\
-3      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\
-4      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\
-5      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\ \hline
+\textbf{5-fold} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} \\ \hline 
+1   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\
+2   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\
+3   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\
+4   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\
+5   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\ \hline
 \end{tabular}
 }
 \caption{Accuracy in Classification, with loss MAE, on each fold cross-validation, for Dataset 2.}
@@ -406,12 +406,12 @@ In the second dataset, in Tables \ref{table:acc-mae-chbmit-fold-2} and \ref{tabl
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccc}
-\textbf{5-fold} & \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree }&  \textbf{random\_forest} &  \textbf{multi\_layer} &  \textbf{ada\_boost} & \textbf{ gaussian\_nb} \\ \hline 
-1      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\
-2      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\
-3      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\
-4      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\
-5      &          0.5 &         0.5 &         0.5 &            0.5 &            0.5 &          0.5 &        0.5 &          0.5 \\ \hline
+\textbf{5-fold} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} \\ \hline 
+1   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\
+2   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\
+3   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\
+4   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\
+5   &     0.5 &     0.5 &     0.5 &      0.5 &      0.5 &     0.5 &    0.5 &     0.5 \\ \hline
 \end{tabular}
 }
 \caption{Accuracy in Classification, with loss MAAE, on each fold cross-validation, for Dataset 2.}
@@ -424,7 +424,7 @@ When analyzing the reduced values by class, specifically with $m = 4$ we have $3
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.8\linewidth]{figure/feature_distribution_4.pdf}
-    \caption{Feature Distribution of AE-CDNN-MAE and AE-CDNN-MAAE, with $m=4$, in the first dataset. }
+  \caption{Feature Distribution of AE-CDNN-MAE and AE-CDNN-MAAE, with $m=4$, in the first dataset. }
 \label{fig:feature_distribution_4}
 \end{figure}
 
@@ -436,7 +436,7 @@ When we analyze the behavior of the loss functions at the epoch, in Figure \ref{
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.8\linewidth]{figure/change_loss_mae_maae.pdf}
-    \caption{Change of loss function of AE-CDNN-MAE and AE-CDNN-MAAE, in the first dataset, with $m=4$.}
+  \caption{Change of loss function of AE-CDNN-MAE and AE-CDNN-MAAE, in the first dataset, with $m=4$.}
 \label{fig:change_loss_mae_maae}
 \end{figure}
 
@@ -446,7 +446,7 @@ Even assuming that the author used the MAPE loss function, we still do not obtai
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=0.8\linewidth]{figure/change_loss_mae_mape.pdf}
-    \caption{Change of loss function of AE-CDNN-MAE and AE-CDNN-MAPE, in the first dataset, with $m=4$.}
+  \caption{Change of loss function of AE-CDNN-MAE and AE-CDNN-MAPE, in the first dataset, with $m=4$.}
 \label{fig:change_loss_mae_mape}
 \end{figure}
 
@@ -457,7 +457,7 @@ These differences also occur in the establishment in the baseline methods, indic
 \begin{figure}[!ht]
 \centering
 \includegraphics[width=\linewidth]{figure/baseline_methods.pdf}
-    \caption{Comparison of accuracy for different loss functions (AE-CDNN-MAE, AE-CDNN-MAAE), and also with baseline (PCA, SRP).}
+  \caption{Comparison of accuracy for different loss functions (AE-CDNN-MAE, AE-CDNN-MAAE), and also with baseline (PCA, SRP).}
 \label{fig:baseline_methods}
 \end{figure}
 
@@ -467,9 +467,9 @@ The same is observed in the original article, as well as a similar behavior, but
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|ccccccccc}
-\textbf{Dimension} & \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree }&  \textbf{random\_forest} &  \textbf{multi\_layer} &  \textbf{ada\_boost} & \textbf{ gaussian\_nb} & \textbf{average} \\ \hline 
-\textbf{16} &        0.800 &         0.6 &       0.600 &          0.766 &          0.820 &        0.652 &      0.778 &        0.632 &  0.70600 \\
-\textbf{32} &        0.802 &         0.6 &       0.602 &          0.756 &          0.832 &        0.674 &      0.802 &        0.638 &  0.71325 \\
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} & \textbf{average} \\ \hline 
+\textbf{16} &    0.800 &     0.6 &    0.600 &     0.766 &     0.820 &    0.652 &   0.778 &    0.632 & 0.70600 \\
+\textbf{32} &    0.802 &     0.6 &    0.602 &     0.756 &     0.832 &    0.674 &   0.802 &    0.638 & 0.71325 \\
 \end{tabular}
 }
 \caption{Accuracy in Classification, in the first dataset with $CV=10$.}
@@ -491,15 +491,15 @@ By our method, we note that the three metrics indicate that a progression in the
 \resizebox{\textwidth}{!}{
 \centering
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.757324 &    0.600000 &    0.600000 &       0.741488 &       0.761257 &     0.600000 &   0.750363 &     0.730169 &  0.719986 &  0.695621 \\
-\textbf{4}  &     0.737413 &    0.600000 &    0.600000 &       0.757120 &       0.748638 &     0.600000 &   0.799839 &     0.733892 &  0.736059 &  0.701440 \\
-\textbf{8}  &     0.240000 &    0.600000 &    0.600000 &       0.600000 &       0.600000 &     0.600000 &   0.600000 &     0.000000 &  0.600000 &  0.493333 \\
-\textbf{16} &     0.886412 &    0.600000 &    0.600000 &       0.856665 &       0.875097 &     0.660251 &   0.830206 &     0.992857 &  0.857434 &  0.795436 \\
-\textbf{32} &     0.881359 &    0.600000 &    0.616173 &       0.888903 &       0.899581 &     0.724420 &   0.849551 &     0.985926 &  0.906119 &  0.816892 \\
-\textbf{64} &     0.835445 &    0.875415 &    0.929524 &       0.825899 &       0.846616 &     0.864681 &   0.840069 &     0.966667 &  0.951357 &  0.881741 \\
-\textbf{128}&     0.882557 &    0.751233 &    0.899303 &       0.861868 &       0.854048 &     0.832873 &   0.817969 &     0.975096 &  0.923408 &  0.866484 \\
-\textbf{256}&     0.773418 &    0.823845 &    0.855714 &       0.769434 &       0.794883 &     0.855478 &   0.838311 &     0.990000 &  0.923576 &  0.847185 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.757324 &  0.600000 &  0.600000 &    0.741488 &    0.761257 &   0.600000 &  0.750363 &   0.730169 & 0.719986 & 0.695621 \\
+\textbf{4} &   0.737413 &  0.600000 &  0.600000 &    0.757120 &    0.748638 &   0.600000 &  0.799839 &   0.733892 & 0.736059 & 0.701440 \\
+\textbf{8} &   0.240000 &  0.600000 &  0.600000 &    0.600000 &    0.600000 &   0.600000 &  0.600000 &   0.000000 & 0.600000 & 0.493333 \\
+\textbf{16} &   0.886412 &  0.600000 &  0.600000 &    0.856665 &    0.875097 &   0.660251 &  0.830206 &   0.992857 & 0.857434 & 0.795436 \\
+\textbf{32} &   0.881359 &  0.600000 &  0.616173 &    0.888903 &    0.899581 &   0.724420 &  0.849551 &   0.985926 & 0.906119 & 0.816892 \\
+\textbf{64} &   0.835445 &  0.875415 &  0.929524 &    0.825899 &    0.846616 &   0.864681 &  0.840069 &   0.966667 & 0.951357 & 0.881741 \\
+\textbf{128}&   0.882557 &  0.751233 &  0.899303 &    0.861868 &    0.854048 &   0.832873 &  0.817969 &   0.975096 & 0.923408 & 0.866484 \\
+\textbf{256}&   0.773418 &  0.823845 &  0.855714 &    0.769434 &    0.794883 &   0.855478 &  0.838311 &   0.990000 & 0.923576 & 0.847185 \\ \hline
 \end{tabular}
 }
 \caption{Precision values obtained by the same methodology - First Dataset with MAE.}
@@ -510,15 +510,15 @@ By our method, we note that the three metrics indicate that a progression in the
 \resizebox{\textwidth}{!}{
 \centering
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.770458 &    0.600000 &    0.600000 &       0.750852 &       0.746194 &     0.600000 &   0.822911 &     0.733094 &  0.748318 &  0.707981 \\
-\textbf{4}  &     0.240000 &    0.600000 &    0.600000 &       0.600000 &       0.600000 &     0.600000 &   0.600000 &     0.000000 &  0.600000 &  0.493333 \\
-\textbf{8}  &     0.869678 &    0.600000 &    0.600000 &       0.714619 &       0.854352 &     0.600000 &   0.788958 &     1.000000 &  0.787597 &  0.757245 \\
-\textbf{16} &     0.882438 &    0.600000 &    0.600000 &       0.806733 &       0.848472 &     0.598384 &   0.813369 &     0.938229 &  0.816352 &  0.767109 \\
-\textbf{32} &     0.802725 &    0.600000 &    0.600000 &       0.762479 &       0.807989 &     0.600000 &   0.795577 &     1.000000 &  0.795239 &  0.751557 \\
-\textbf{64} &     0.882736 &    0.600000 &    0.600000 &       0.894553 &       0.879284 &     0.673461 &   0.839122 &     0.978744 &  0.912343 &  0.806694 \\
-\textbf{128}&     0.870097 &    0.600000 &    0.698276 &       0.839078 &       0.890596 &     0.801880 &   0.847304 &     0.954335 &  0.907713 &  0.823253 \\
-\textbf{256}&     0.791896 &    0.798756 &    0.886401 &       0.792746 &       0.790266 &     0.804737 &   0.816419 &     0.897697 &  0.922234 &  0.833461 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.770458 &  0.600000 &  0.600000 &    0.750852 &    0.746194 &   0.600000 &  0.822911 &   0.733094 & 0.748318 & 0.707981 \\
+\textbf{4} &   0.240000 &  0.600000 &  0.600000 &    0.600000 &    0.600000 &   0.600000 &  0.600000 &   0.000000 & 0.600000 & 0.493333 \\
+\textbf{8} &   0.869678 &  0.600000 &  0.600000 &    0.714619 &    0.854352 &   0.600000 &  0.788958 &   1.000000 & 0.787597 & 0.757245 \\
+\textbf{16} &   0.882438 &  0.600000 &  0.600000 &    0.806733 &    0.848472 &   0.598384 &  0.813369 &   0.938229 & 0.816352 & 0.767109 \\
+\textbf{32} &   0.802725 &  0.600000 &  0.600000 &    0.762479 &    0.807989 &   0.600000 &  0.795577 &   1.000000 & 0.795239 & 0.751557 \\
+\textbf{64} &   0.882736 &  0.600000 &  0.600000 &    0.894553 &    0.879284 &   0.673461 &  0.839122 &   0.978744 & 0.912343 & 0.806694 \\
+\textbf{128}&   0.870097 &  0.600000 &  0.698276 &    0.839078 &    0.890596 &   0.801880 &  0.847304 &   0.954335 & 0.907713 & 0.823253 \\
+\textbf{256}&   0.791896 &  0.798756 &  0.886401 &    0.792746 &    0.790266 &   0.804737 &  0.816419 &   0.897697 & 0.922234 & 0.833461 \\ \hline
 \end{tabular}
 }
 \caption{Precision values obtained by the same methodology - First Dataset with MAAE.}
@@ -531,15 +531,15 @@ In the first dataset, when we analyze the accuracy we have that the naive bayes 
 \resizebox{\textwidth}{!}{
 \centering
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.400000 &    0.500000 &    0.500000 &       0.000000 &       0.000000 &     0.200000 &   0.000000 &     0.000000 &  0.000000 &  0.177778 \\
-\textbf{4}  &     0.733781 &    0.000000 &    0.800000 &       0.788375 &       0.670690 &     0.441892 &   0.760461 &     0.901095 &  0.857197 &  0.661499 \\
-\textbf{8}  &     0.823843 &    0.800000 &    0.980000 &       0.853339 &       0.817331 &     0.971852 &   0.841619 &     0.987500 &  0.988235 &  0.895969 \\
-\textbf{16} &     0.857868 &    1.000000 &    0.979144 &       0.862932 &       0.869046 &     0.965722 &   0.843127 &     0.965152 &  0.974609 &  0.924178 \\
-\textbf{32} &     0.943593 &    0.947251 &    0.927162 &       0.848473 &       0.861083 &     0.915744 &   0.852046 &     0.917396 &  0.938637 &  0.905709 \\
-\textbf{64} &     0.916540 &    0.892930 &    0.902664 &       0.803868 &       0.847252 &     0.893022 &   0.842228 &     0.948086 &  0.918116 &  0.884967 \\
-\textbf{128}&     0.915294 &    0.895945 &    0.852936 &       0.762151 &       0.809500 &     0.859518 &   0.788800 &     0.939528 &  0.903233 &  0.858545 \\
-\textbf{256}&     0.930307 &    0.863353 &    0.869493 &       0.768955 &       0.807719 &     0.840146 &   0.792065 &     0.958701 &  0.879169 &  0.856657 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.400000 &  0.500000 &  0.500000 &    0.000000 &    0.000000 &   0.200000 &  0.000000 &   0.000000 & 0.000000 & 0.177778 \\
+\textbf{4} &   0.733781 &  0.000000 &  0.800000 &    0.788375 &    0.670690 &   0.441892 &  0.760461 &   0.901095 & 0.857197 & 0.661499 \\
+\textbf{8} &   0.823843 &  0.800000 &  0.980000 &    0.853339 &    0.817331 &   0.971852 &  0.841619 &   0.987500 & 0.988235 & 0.895969 \\
+\textbf{16} &   0.857868 &  1.000000 &  0.979144 &    0.862932 &    0.869046 &   0.965722 &  0.843127 &   0.965152 & 0.974609 & 0.924178 \\
+\textbf{32} &   0.943593 &  0.947251 &  0.927162 &    0.848473 &    0.861083 &   0.915744 &  0.852046 &   0.917396 & 0.938637 & 0.905709 \\
+\textbf{64} &   0.916540 &  0.892930 &  0.902664 &    0.803868 &    0.847252 &   0.893022 &  0.842228 &   0.948086 & 0.918116 & 0.884967 \\
+\textbf{128}&   0.915294 &  0.895945 &  0.852936 &    0.762151 &    0.809500 &   0.859518 &  0.788800 &   0.939528 & 0.903233 & 0.858545 \\
+\textbf{256}&   0.930307 &  0.863353 &  0.869493 &    0.768955 &    0.807719 &   0.840146 &  0.792065 &   0.958701 & 0.879169 & 0.856657 \\ \hline
 \end{tabular}
 }
 \caption{Precision values obtained by the same methodology - Second Dataset with MAE.}
@@ -551,15 +551,15 @@ In the first dataset, when we analyze the accuracy we have that the naive bayes 
 \resizebox{\textwidth}{!}{
 \centering
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.400000 &    0.500000 &    0.500000 &       0.000000 &       0.000000 &     0.300000 &   0.000000 &     0.000000 &  0.000000 &  0.188889 \\
-\textbf{4}  &     0.744177 &    0.000000 &    1.000000 &       0.739486 &       0.683738 &     0.787324 &   0.763358 &     0.913765 &  0.882316 &  0.723796 \\
-\textbf{8}  &     0.877945 &    1.000000 &    0.987879 &       0.849861 &       0.871662 &     0.942000 &   0.872110 &     0.917184 &  0.925018 &  0.915962 \\
-\textbf{16} &     0.920560 &    0.954474 &    0.904111 &       0.810101 &       0.841281 &     0.903250 &   0.817114 &     0.882190 &  0.914344 &  0.883047 \\
-\textbf{32} &     0.919487 &    0.983333 &    0.943688 &       0.844350 &       0.887551 &     0.910233 &   0.834831 &     0.917046 &  0.933478 &  0.908222 \\
-\textbf{64} &     0.921607 &    0.888863 &    0.878184 &       0.783616 &       0.822289 &     0.866394 &   0.846359 &     0.871348 &  0.894940 &  0.863733 \\
-\textbf{128}&     0.873810 &    0.873781 &    0.858687 &       0.817420 &       0.833871 &     0.865899 &   0.830227 &     0.879029 &  0.871860 &  0.856065 \\
-\textbf{256}&     0.938120 &    0.848311 &    0.847865 &       0.745542 &       0.791865 &     0.832058 &   0.801048 &     0.916435 &  0.866233 &  0.843053 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.400000 &  0.500000 &  0.500000 &    0.000000 &    0.000000 &   0.300000 &  0.000000 &   0.000000 & 0.000000 & 0.188889 \\
+\textbf{4} &   0.744177 &  0.000000 &  1.000000 &    0.739486 &    0.683738 &   0.787324 &  0.763358 &   0.913765 & 0.882316 & 0.723796 \\
+\textbf{8} &   0.877945 &  1.000000 &  0.987879 &    0.849861 &    0.871662 &   0.942000 &  0.872110 &   0.917184 & 0.925018 & 0.915962 \\
+\textbf{16} &   0.920560 &  0.954474 &  0.904111 &    0.810101 &    0.841281 &   0.903250 &  0.817114 &   0.882190 & 0.914344 & 0.883047 \\
+\textbf{32} &   0.919487 &  0.983333 &  0.943688 &    0.844350 &    0.887551 &   0.910233 &  0.834831 &   0.917046 & 0.933478 & 0.908222 \\
+\textbf{64} &   0.921607 &  0.888863 &  0.878184 &    0.783616 &    0.822289 &   0.866394 &  0.846359 &   0.871348 & 0.894940 & 0.863733 \\
+\textbf{128}&   0.873810 &  0.873781 &  0.858687 &    0.817420 &    0.833871 &   0.865899 &  0.830227 &   0.879029 & 0.871860 & 0.856065 \\
+\textbf{256}&   0.938120 &  0.848311 &  0.847865 &    0.745542 &    0.791865 &   0.832058 &  0.801048 &   0.916435 & 0.866233 & 0.843053 \\ \hline
 \end{tabular}
 }
 \caption{Precision values obtained by the same methodology - Second Dataset with MAAE.}
@@ -580,15 +580,15 @@ The performance of the Gaussian classifier may be related to the fact that the i
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &        0.645 &       0.000 &       0.000 &          0.580 &          0.660 &        0.000 &      0.610 &        0.765 &     0.515 &  0.419444 \\
-\textbf{4}  &        0.620 &       0.000 &       0.000 &          0.635 &          0.645 &        0.000 &      0.700 &        0.770 &     0.560 &  0.436667 \\
-\textbf{8}  &        0.600 &       0.000 &       0.000 &          0.000 &          0.000 &        0.000 &      0.000 &        1.000 &     0.000 &  0.177778 \\
-\textbf{16} &        0.850 &       0.000 &       0.000 &          0.800 &          0.815 &        0.345 &      0.745 &        0.995 &     0.780 &  0.592222 \\
-\textbf{32} &        0.845 &       0.000 &       0.110 &          0.870 &          0.865 &        0.605 &      0.785 &        0.990 &     0.880 &  0.661111 \\
-\textbf{64} &        0.770 &       0.865 &       0.930 &          0.805 &          0.785 &        0.820 &      0.760 &        0.980 &     0.950 &  0.851667 \\
-\textbf{128}&        0.845 &       0.635 &       0.895 &          0.825 &          0.805 &        0.775 &      0.725 &        0.985 &     0.915 &  0.822778 \\
-\textbf{256}&        0.640 &       0.745 &       0.800 &          0.690 &          0.695 &        0.780 &      0.755 &        0.995 &     0.905 &  0.778333 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &    0.645 &    0.000 &    0.000 &     0.580 &     0.660 &    0.000 &   0.610 &    0.765 &   0.515 & 0.419444 \\
+\textbf{4} &    0.620 &    0.000 &    0.000 &     0.635 &     0.645 &    0.000 &   0.700 &    0.770 &   0.560 & 0.436667 \\
+\textbf{8} &    0.600 &    0.000 &    0.000 &     0.000 &     0.000 &    0.000 &   0.000 &    1.000 &   0.000 & 0.177778 \\
+\textbf{16} &    0.850 &    0.000 &    0.000 &     0.800 &     0.815 &    0.345 &   0.745 &    0.995 &   0.780 & 0.592222 \\
+\textbf{32} &    0.845 &    0.000 &    0.110 &     0.870 &     0.865 &    0.605 &   0.785 &    0.990 &   0.880 & 0.661111 \\
+\textbf{64} &    0.770 &    0.865 &    0.930 &     0.805 &     0.785 &    0.820 &   0.760 &    0.980 &   0.950 & 0.851667 \\
+\textbf{128}&    0.845 &    0.635 &    0.895 &     0.825 &     0.805 &    0.775 &   0.725 &    0.985 &   0.915 & 0.822778 \\
+\textbf{256}&    0.640 &    0.745 &    0.800 &     0.690 &     0.695 &    0.780 &   0.755 &    0.995 &   0.905 & 0.778333 \\ \hline
 \end{tabular}
 }
 \caption{Specificity values obtained by the same methodology - First Dataset with MAE.}
@@ -599,15 +599,15 @@ The performance of the Gaussian classifier may be related to the fact that the i
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &        0.660 &       0.000 &        0.00 &          0.590 &          0.630 &        0.000 &      0.760 &        0.770 &     0.590 &  0.444444 \\
-\textbf{4}  &        0.600 &       0.000 &        0.00 &          0.000 &          0.000 &        0.000 &      0.000 &        1.000 &     0.000 &  0.177778 \\
-\textbf{8}  &        0.835 &       0.000 &        0.00 &          0.475 &          0.800 &        0.000 &      0.685 &        1.000 &     0.645 &  0.493333 \\
-\textbf{16} &        0.840 &       0.000 &        0.00 &          0.755 &          0.780 &        0.000 &      0.715 &        0.965 &     0.705 &  0.528889 \\
-\textbf{32} &        0.715 &       0.000 &        0.00 &          0.620 &          0.730 &        0.000 &      0.685 &        1.000 &     0.660 &  0.490000 \\
-\textbf{64} &        0.845 &       0.000 &        0.00 &          0.875 &          0.830 &        0.405 &      0.780 &        0.985 &     0.880 &  0.622222 \\
-\textbf{128}&        0.830 &       0.000 &        0.42 &          0.795 &          0.855 &        0.750 &      0.775 &        0.970 &     0.890 &  0.698333 \\
-\textbf{256}&        0.700 &       0.725 &        0.87 &          0.750 &          0.700 &        0.720 &      0.725 &        0.930 &     0.915 &  0.781667 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &    0.660 &    0.000 &    0.00 &     0.590 &     0.630 &    0.000 &   0.760 &    0.770 &   0.590 & 0.444444 \\
+\textbf{4} &    0.600 &    0.000 &    0.00 &     0.000 &     0.000 &    0.000 &   0.000 &    1.000 &   0.000 & 0.177778 \\
+\textbf{8} &    0.835 &    0.000 &    0.00 &     0.475 &     0.800 &    0.000 &   0.685 &    1.000 &   0.645 & 0.493333 \\
+\textbf{16} &    0.840 &    0.000 &    0.00 &     0.755 &     0.780 &    0.000 &   0.715 &    0.965 &   0.705 & 0.528889 \\
+\textbf{32} &    0.715 &    0.000 &    0.00 &     0.620 &     0.730 &    0.000 &   0.685 &    1.000 &   0.660 & 0.490000 \\
+\textbf{64} &    0.845 &    0.000 &    0.00 &     0.875 &     0.830 &    0.405 &   0.780 &    0.985 &   0.880 & 0.622222 \\
+\textbf{128}&    0.830 &    0.000 &    0.42 &     0.795 &     0.855 &    0.750 &   0.775 &    0.970 &   0.890 & 0.698333 \\
+\textbf{256}&    0.700 &    0.725 &    0.87 &     0.750 &     0.700 &    0.720 &   0.725 &    0.930 &   0.915 & 0.781667 \\ \hline
 \end{tabular}
 }
 \caption{Specificity values obtained by the same methodology - First Dataset with MAAE.}
@@ -618,15 +618,15 @@ The performance of the Gaussian classifier may be related to the fact that the i
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &        0.200 &       0.000 &       0.000 &          1.000 &          1.000 &        0.600 &      1.000 &        1.000 &     1.000 &  0.644444 \\
-\textbf{4}  &        0.760 &       1.000 &       1.000 &          0.830 &          0.705 &        0.390 &      0.795 &        0.940 &     0.905 &  0.813889 \\
-\textbf{8}  &        0.825 &       1.000 &       0.995 &          0.855 &          0.820 &        0.985 &      0.850 &        0.995 &     0.995 &  0.924444 \\
-\textbf{16} &        0.870 &       1.000 &       0.990 &          0.865 &          0.865 &        0.980 &      0.850 &        0.980 &     0.985 &  0.931667 \\
-\textbf{32} &        0.965 &       0.960 &       0.930 &          0.865 &          0.860 &        0.925 &      0.850 &        0.930 &     0.950 &  0.915000 \\
-\textbf{64} &        0.945 &       0.910 &       0.910 &          0.825 &          0.850 &        0.905 &      0.850 &        0.950 &     0.930 &  0.897222 \\
-\textbf{128}&        0.970 &       0.915 &       0.865 &          0.770 &          0.815 &        0.870 &      0.795 &        0.960 &     0.925 &  0.876111 \\
-\textbf{256}&        0.970 &       0.880 &       0.875 &          0.790 &          0.825 &        0.845 &      0.805 &        0.970 &     0.905 &  0.873889 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &    0.200 &    0.000 &    0.000 &     1.000 &     1.000 &    0.600 &   1.000 &    1.000 &   1.000 & 0.644444 \\
+\textbf{4} &    0.760 &    1.000 &    1.000 &     0.830 &     0.705 &    0.390 &   0.795 &    0.940 &   0.905 & 0.813889 \\
+\textbf{8} &    0.825 &    1.000 &    0.995 &     0.855 &     0.820 &    0.985 &   0.850 &    0.995 &   0.995 & 0.924444 \\
+\textbf{16} &    0.870 &    1.000 &    0.990 &     0.865 &     0.865 &    0.980 &   0.850 &    0.980 &   0.985 & 0.931667 \\
+\textbf{32} &    0.965 &    0.960 &    0.930 &     0.865 &     0.860 &    0.925 &   0.850 &    0.930 &   0.950 & 0.915000 \\
+\textbf{64} &    0.945 &    0.910 &    0.910 &     0.825 &     0.850 &    0.905 &   0.850 &    0.950 &   0.930 & 0.897222 \\
+\textbf{128}&    0.970 &    0.915 &    0.865 &     0.770 &     0.815 &    0.870 &   0.795 &    0.960 &   0.925 & 0.876111 \\
+\textbf{256}&    0.970 &    0.880 &    0.875 &     0.790 &     0.825 &    0.845 &   0.805 &    0.970 &   0.905 & 0.873889 \\ \hline
 \end{tabular}
 }
 \caption{Specificity values obtained by the same methodology - Second Dataset with MAE.}
@@ -637,15 +637,15 @@ The performance of the Gaussian classifier may be related to the fact that the i
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &        0.200 &       0.000 &       0.000 &          1.000 &          1.000 &        0.400 &      1.000 &        1.000 &     1.000 &  0.622222 \\
-\textbf{4}  &        0.770 &       1.000 &       1.000 &          0.790 &          0.700 &        0.600 &      0.825 &        0.950 &     0.930 &  0.840556 \\
-\textbf{8}  &        0.890 &       1.000 &       0.990 &          0.865 &          0.875 &        0.970 &      0.880 &        0.930 &     0.945 &  0.927222 \\
-\textbf{16} &        0.955 &       0.980 &       0.930 &          0.830 &          0.850 &        0.925 &      0.835 &        0.895 &     0.935 &  0.903889 \\
-\textbf{32} &        0.945 &       0.990 &       0.960 &          0.855 &          0.895 &        0.935 &      0.845 &        0.930 &     0.955 &  0.923333 \\
-\textbf{64} &        0.970 &       0.910 &       0.890 &          0.810 &          0.820 &        0.880 &      0.850 &        0.880 &     0.910 &  0.880000 \\
-\textbf{128}&        0.960 &       0.885 &       0.870 &          0.835 &          0.835 &        0.880 &      0.835 &        0.890 &     0.890 &  0.875556 \\
-\textbf{256}&        0.965 &       0.875 &       0.855 &          0.750 &          0.790 &        0.840 &      0.805 &        0.940 &     0.880 &  0.855556 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &    0.200 &    0.000 &    0.000 &     1.000 &     1.000 &    0.400 &   1.000 &    1.000 &   1.000 & 0.622222 \\
+\textbf{4} &    0.770 &    1.000 &    1.000 &     0.790 &     0.700 &    0.600 &   0.825 &    0.950 &   0.930 & 0.840556 \\
+\textbf{8} &    0.890 &    1.000 &    0.990 &     0.865 &     0.875 &    0.970 &   0.880 &    0.930 &   0.945 & 0.927222 \\
+\textbf{16} &    0.955 &    0.980 &    0.930 &     0.830 &     0.850 &    0.925 &   0.835 &    0.895 &   0.935 & 0.903889 \\
+\textbf{32} &    0.945 &    0.990 &    0.960 &     0.855 &     0.895 &    0.935 &   0.845 &    0.930 &   0.955 & 0.923333 \\
+\textbf{64} &    0.970 &    0.910 &    0.890 &     0.810 &     0.820 &    0.880 &   0.850 &    0.880 &   0.910 & 0.880000 \\
+\textbf{128}&    0.960 &    0.885 &    0.870 &     0.835 &     0.835 &    0.880 &   0.835 &    0.890 &   0.890 & 0.875556 \\
+\textbf{256}&    0.965 &    0.875 &    0.855 &     0.750 &     0.790 &    0.840 &   0.805 &    0.940 &   0.880 & 0.855556 \\ \hline
 \end{tabular}
 }
 \caption{Specificity values obtained by the same methodology - Second Dataset with MAAE.}
@@ -656,15 +656,15 @@ The performance of the Gaussian classifier may be related to the fact that the i
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.740000 &    1.000000 &    1.000000 &       0.800000 &       0.726667 &     1.000000 &   0.776667 &     0.426667 &  0.830000 &  0.811111 \\
-\textbf{4}  &     0.710000 &    1.000000 &    1.000000 &       0.743333 &       0.700000 &     1.000000 &   0.796667 &     0.423333 &  0.813333 &  0.798519 \\
-\textbf{8}  &     0.400000 &    1.000000 &    1.000000 &       1.000000 &       1.000000 &     1.000000 &   1.000000 &     0.000000 &  1.000000 &  0.822222 \\
-\textbf{16} &     0.770000 &    1.000000 &    1.000000 &       0.753333 &       0.810000 &     0.840000 &   0.810000 &     0.396667 &  0.830000 &  0.801111 \\
-\textbf{32} &     0.760000 &    1.000000 &    0.936667 &       0.686667 &       0.806667 &     0.690000 &   0.793333 &     0.403333 &  0.763333 &  0.760000 \\
-\textbf{64} &     0.773333 &    0.613333 &    0.636667 &       0.593333 &       0.786667 &     0.760000 &   0.840000 &     0.376667 &  0.676667 &  0.672963 \\
-\textbf{128}&     0.770000 &    0.680000 &    0.613333 &       0.716667 &       0.756667 &     0.730000 &   0.816667 &     0.356667 &  0.673333 &  0.679259 \\
-\textbf{256}&     0.790000 &    0.793333 &    0.783333 &       0.690000 &       0.783333 &     0.856667 &   0.836667 &     0.380000 &  0.766667 &  0.742222 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.740000 &  1.000000 &  1.000000 &    0.800000 &    0.726667 &   1.000000 &  0.776667 &   0.426667 & 0.830000 & 0.811111 \\
+\textbf{4} &   0.710000 &  1.000000 &  1.000000 &    0.743333 &    0.700000 &   1.000000 &  0.796667 &   0.423333 & 0.813333 & 0.798519 \\
+\textbf{8} &   0.400000 &  1.000000 &  1.000000 &    1.000000 &    1.000000 &   1.000000 &  1.000000 &   0.000000 & 1.000000 & 0.822222 \\
+\textbf{16} &   0.770000 &  1.000000 &  1.000000 &    0.753333 &    0.810000 &   0.840000 &  0.810000 &   0.396667 & 0.830000 & 0.801111 \\
+\textbf{32} &   0.760000 &  1.000000 &  0.936667 &    0.686667 &    0.806667 &   0.690000 &  0.793333 &   0.403333 & 0.763333 & 0.760000 \\
+\textbf{64} &   0.773333 &  0.613333 &  0.636667 &    0.593333 &    0.786667 &   0.760000 &  0.840000 &   0.376667 & 0.676667 & 0.672963 \\
+\textbf{128}&   0.770000 &  0.680000 &  0.613333 &    0.716667 &    0.756667 &   0.730000 &  0.816667 &   0.356667 & 0.673333 & 0.679259 \\
+\textbf{256}&   0.790000 &  0.793333 &  0.783333 &    0.690000 &    0.783333 &   0.856667 &  0.836667 &   0.380000 & 0.766667 & 0.742222 \\ \hline
 \end{tabular}
 }
 \caption{Sensitivity values obtained by the same methodology - First Dataset with MAE.}
@@ -674,15 +674,15 @@ The performance of the Gaussian classifier may be related to the fact that the i
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.763333 &        1.00 &    1.000000 &       0.803333 &       0.730000 &     1.000000 &   0.743333 &     0.420000 &  0.806667 &  0.807407 \\
-\textbf{4}  &     0.400000 &        1.00 &    1.000000 &       1.000000 &       1.000000 &     1.000000 &   1.000000 &     0.000000 &  1.000000 &  0.822222 \\
-\textbf{8}  &     0.736667 &        1.00 &    1.000000 &       0.876667 &       0.773333 &     1.000000 &   0.783333 &     0.290000 &  0.876667 &  0.815185 \\
-\textbf{16} &     0.780000 &        1.00 &    1.000000 &       0.626667 &       0.793333 &     0.993333 &   0.790000 &     0.373333 &  0.850000 &  0.800741 \\
-\textbf{32} &     0.756667 &        1.00 &    1.000000 &       0.810000 &       0.753333 &     1.000000 &   0.800000 &     0.310000 &  0.873333 &  0.811481 \\
-\textbf{64} &     0.770000 &        1.00 &    1.000000 &       0.706667 &       0.813333 &     0.810000 &   0.766667 &     0.460000 &  0.823333 &  0.794444 \\
-\textbf{128}&     0.753333 &        1.00 &    0.760000 &       0.706667 &       0.793333 &     0.676667 &   0.836667 &     0.420000 &  0.730000 &  0.741852 \\
-\textbf{256}&     0.743333 &        0.69 &    0.653333 &       0.596667 &       0.753333 &     0.753333 &   0.803333 &     0.403333 &  0.673333 &  0.674444 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.763333 &    1.00 &  1.000000 &    0.803333 &    0.730000 &   1.000000 &  0.743333 &   0.420000 & 0.806667 & 0.807407 \\
+\textbf{4} &   0.400000 &    1.00 &  1.000000 &    1.000000 &    1.000000 &   1.000000 &  1.000000 &   0.000000 & 1.000000 & 0.822222 \\
+\textbf{8} &   0.736667 &    1.00 &  1.000000 &    0.876667 &    0.773333 &   1.000000 &  0.783333 &   0.290000 & 0.876667 & 0.815185 \\
+\textbf{16} &   0.780000 &    1.00 &  1.000000 &    0.626667 &    0.793333 &   0.993333 &  0.790000 &   0.373333 & 0.850000 & 0.800741 \\
+\textbf{32} &   0.756667 &    1.00 &  1.000000 &    0.810000 &    0.753333 &   1.000000 &  0.800000 &   0.310000 & 0.873333 & 0.811481 \\
+\textbf{64} &   0.770000 &    1.00 &  1.000000 &    0.706667 &    0.813333 &   0.810000 &  0.766667 &   0.460000 & 0.823333 & 0.794444 \\
+\textbf{128}&   0.753333 &    1.00 &  0.760000 &    0.706667 &    0.793333 &   0.676667 &  0.836667 &   0.420000 & 0.730000 & 0.741852 \\
+\textbf{256}&   0.743333 &    0.69 &  0.653333 &    0.596667 &    0.753333 &   0.753333 &  0.803333 &   0.403333 & 0.673333 & 0.674444 \\ \hline
 \end{tabular}
 }
 \caption{Sensitivity values obtained by the same methodology - First Dataset with MAAE.}
@@ -692,15 +692,15 @@ The performance of the Gaussian classifier may be related to the fact that the i
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &        0.800 &       1.000 &       1.000 &          0.000 &          0.000 &        0.400 &      0.000 &        0.000 &     0.000 &  0.355556 \\
-\textbf{4}  &        0.665 &       0.000 &       0.105 &          0.630 &          0.610 &        0.560 &      0.620 &        0.565 &     0.565 &  0.480000 \\
-\textbf{8}  &        0.780 &       0.065 &       0.270 &          0.770 &          0.765 &        0.425 &      0.750 &        0.410 &     0.470 &  0.522778 \\
-\textbf{16} &        0.760 &       0.300 &       0.525 &          0.780 &          0.805 &        0.565 &      0.785 &        0.580 &     0.615 &  0.635000 \\
-\textbf{32} &        0.515 &       0.755 &       0.795 &          0.765 &          0.850 &        0.820 &      0.845 &        0.805 &     0.810 &  0.773333 \\
-\textbf{64} &        0.495 &       0.755 &       0.780 &          0.710 &          0.820 &        0.800 &      0.780 &        0.780 &     0.760 &  0.742222 \\
-\textbf{128}&        0.415 &       0.745 &       0.795 &          0.725 &          0.790 &        0.805 &      0.775 &        0.685 &     0.740 &  0.719444 \\
-\textbf{256}&        0.320 &       0.770 &       0.825 &          0.675 &          0.740 &        0.810 &      0.745 &        0.570 &     0.710 &  0.685000 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &    0.800 &    1.000 &    1.000 &     0.000 &     0.000 &    0.400 &   0.000 &    0.000 &   0.000 & 0.355556 \\
+\textbf{4} &    0.665 &    0.000 &    0.105 &     0.630 &     0.610 &    0.560 &   0.620 &    0.565 &   0.565 & 0.480000 \\
+\textbf{8} &    0.780 &    0.065 &    0.270 &     0.770 &     0.765 &    0.425 &   0.750 &    0.410 &   0.470 & 0.522778 \\
+\textbf{16} &    0.760 &    0.300 &    0.525 &     0.780 &     0.805 &    0.565 &   0.785 &    0.580 &   0.615 & 0.635000 \\
+\textbf{32} &    0.515 &    0.755 &    0.795 &     0.765 &     0.850 &    0.820 &   0.845 &    0.805 &   0.810 & 0.773333 \\
+\textbf{64} &    0.495 &    0.755 &    0.780 &     0.710 &     0.820 &    0.800 &   0.780 &    0.780 &   0.760 & 0.742222 \\
+\textbf{128}&    0.415 &    0.745 &    0.795 &     0.725 &     0.790 &    0.805 &   0.775 &    0.685 &   0.740 & 0.719444 \\
+\textbf{256}&    0.320 &    0.770 &    0.825 &     0.675 &     0.740 &    0.810 &   0.745 &    0.570 &   0.710 & 0.685000 \\ \hline
 \end{tabular}
 }
 \caption{Sensitivity values obtained by the same methodology - Second Dataset with MAE.}
@@ -711,15 +711,15 @@ The performance of the Gaussian classifier may be related to the fact that the i
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &        0.800 &       1.000 &       1.000 &          0.000 &          0.000 &        0.600 &      0.000 &        0.000 &     0.000 &  0.377778 \\
-\textbf{4}  &        0.670 &       0.000 &       0.115 &          0.575 &          0.645 &        0.410 &      0.575 &        0.555 &     0.505 &  0.450000 \\
-\textbf{8}  &        0.790 &       0.395 &       0.615 &          0.765 &          0.815 &        0.585 &      0.830 &        0.745 &     0.710 &  0.694444 \\
-\textbf{16} &        0.625 &       0.515 &       0.720 &          0.720 &          0.800 &        0.700 &      0.755 &        0.810 &     0.725 &  0.707778 \\
-\textbf{32} &        0.680 &       0.500 &       0.665 &          0.775 &          0.830 &        0.670 &      0.800 &        0.805 &     0.705 &  0.714444 \\
-\textbf{64} &        0.455 &       0.720 &       0.805 &          0.690 &          0.825 &        0.780 &      0.800 &        0.825 &     0.780 &  0.742222 \\
-\textbf{128}&        0.430 &       0.795 &       0.805 &          0.725 &          0.830 &        0.780 &      0.785 &        0.810 &     0.765 &  0.747222 \\
-\textbf{256}&        0.380 &       0.715 &       0.825 &          0.730 &          0.800 &        0.800 &      0.780 &        0.735 &     0.790 &  0.728333 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &    0.800 &    1.000 &    1.000 &     0.000 &     0.000 &    0.600 &   0.000 &    0.000 &   0.000 & 0.377778 \\
+\textbf{4} &    0.670 &    0.000 &    0.115 &     0.575 &     0.645 &    0.410 &   0.575 &    0.555 &   0.505 & 0.450000 \\
+\textbf{8} &    0.790 &    0.395 &    0.615 &     0.765 &     0.815 &    0.585 &   0.830 &    0.745 &   0.710 & 0.694444 \\
+\textbf{16} &    0.625 &    0.515 &    0.720 &     0.720 &     0.800 &    0.700 &   0.755 &    0.810 &   0.725 & 0.707778 \\
+\textbf{32} &    0.680 &    0.500 &    0.665 &     0.775 &     0.830 &    0.670 &   0.800 &    0.805 &   0.705 & 0.714444 \\
+\textbf{64} &    0.455 &    0.720 &    0.805 &     0.690 &     0.825 &    0.780 &   0.800 &    0.825 &   0.780 & 0.742222 \\
+\textbf{128}&    0.430 &    0.795 &    0.805 &     0.725 &     0.830 &    0.780 &   0.785 &    0.810 &   0.765 & 0.747222 \\
+\textbf{256}&    0.380 &    0.715 &    0.825 &     0.730 &     0.800 &    0.800 &   0.780 &    0.735 &   0.790 & 0.728333 \\ \hline
 \end{tabular}
 }
 \caption{Sensitivity values obtained by the same methodology - Second Dataset with MAAE.}
@@ -741,15 +741,15 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.747682 &    0.750000 &    0.750000 &       0.768802 &       0.741828 &     0.750000 &   0.761796 &     0.538058 &  0.770530 &  0.730966 \\
-\textbf{4}  &     0.721623 &    0.750000 &    0.750000 &       0.748852 &       0.721429 &     0.750000 &   0.797900 &     0.536233 &  0.772368 &  0.727600 \\
-\textbf{8}  &     0.300000 &    0.750000 &    0.750000 &       0.750000 &       0.750000 &     0.750000 &   0.750000 &     0.000000 &  0.750000 &  0.616667 \\
-\textbf{16} &     0.823806 &    0.750000 &    0.750000 &       0.797643 &       0.837828 &     0.735524 &   0.818306 &     0.563238 &  0.840096 &  0.768493 \\
-\textbf{32} &     0.815433 &    0.750000 &    0.739445 &       0.773996 &       0.850141 &     0.705493 &   0.819139 &     0.568770 &  0.827045 &  0.761051 \\
-\textbf{64} &     0.802133 &    0.711397 &    0.753345 &       0.686008 &       0.815012 &     0.807617 &   0.839822 &     0.539611 &  0.788601 &  0.749283 \\
-\textbf{128}&     0.821429 &    0.700987 &    0.726700 &       0.781170 &       0.800827 &     0.775028 &   0.815637 &     0.518483 &  0.775147 &  0.746156 \\
-\textbf{256}&     0.778737 &    0.808020 &    0.817393 &       0.723714 &       0.788024 &     0.854977 &   0.836741 &     0.547427 &  0.837520 &  0.776950 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.747682 &  0.750000 &  0.750000 &    0.768802 &    0.741828 &   0.750000 &  0.761796 &   0.538058 & 0.770530 & 0.730966 \\
+\textbf{4} &   0.721623 &  0.750000 &  0.750000 &    0.748852 &    0.721429 &   0.750000 &  0.797900 &   0.536233 & 0.772368 & 0.727600 \\
+\textbf{8} &   0.300000 &  0.750000 &  0.750000 &    0.750000 &    0.750000 &   0.750000 &  0.750000 &   0.000000 & 0.750000 & 0.616667 \\
+\textbf{16} &   0.823806 &  0.750000 &  0.750000 &    0.797643 &    0.837828 &   0.735524 &  0.818306 &   0.563238 & 0.840096 & 0.768493 \\
+\textbf{32} &   0.815433 &  0.750000 &  0.739445 &    0.773996 &    0.850141 &   0.705493 &  0.819139 &   0.568770 & 0.827045 & 0.761051 \\
+\textbf{64} &   0.802133 &  0.711397 &  0.753345 &    0.686008 &    0.815012 &   0.807617 &  0.839822 &   0.539611 & 0.788601 & 0.749283 \\
+\textbf{128}&   0.821429 &  0.700987 &  0.726700 &    0.781170 &    0.800827 &   0.775028 &  0.815637 &   0.518483 & 0.775147 & 0.746156 \\
+\textbf{256}&   0.778737 &  0.808020 &  0.817393 &    0.723714 &    0.788024 &   0.854977 &  0.836741 &   0.547427 & 0.837520 & 0.776950 \\ \hline
 \end{tabular}}
 \caption{F-measure values obtained by the same methodology - First Dataset with MAE.}
 \label{table:f_measure_mae_boon-reproduction}
@@ -759,15 +759,15 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.766331 &    0.750000 &    0.750000 &       0.773725 &       0.737374 &     0.750000 &   0.780378 &     0.533160 &  0.775831 &  0.735200 \\
-\textbf{4}  &     0.300000 &    0.750000 &    0.750000 &       0.750000 &       0.750000 &     0.750000 &   0.750000 &     0.000000 &  0.750000 &  0.616667 \\
-\textbf{8}  &     0.796843 &    0.750000 &    0.750000 &       0.787354 &       0.810166 &     0.750000 &   0.784228 &     0.444679 &  0.829237 &  0.744723 \\
-\textbf{16} &     0.827147 &    0.750000 &    0.750000 &       0.695623 &       0.818202 &     0.746855 &   0.798862 &     0.532933 &  0.831395 &  0.750113 \\
-\textbf{32} &     0.777647 &    0.750000 &    0.750000 &       0.782385 &       0.778931 &     0.750000 &   0.795370 &     0.469463 &  0.831627 &  0.742825 \\
-\textbf{64} &     0.822004 &    0.750000 &    0.750000 &       0.788701 &       0.844298 &     0.732084 &   0.800982 &     0.623790 &  0.864900 &  0.775195 \\
-\textbf{128}&     0.807123 &    0.750000 &    0.695139 &       0.766585 &       0.836497 &     0.731669 &   0.841509 &     0.580532 &  0.805112 &  0.757130 \\
-\textbf{256}&     0.764444 &    0.732545 &    0.748939 &       0.673721 &       0.770672 &     0.776770 &   0.808763 &     0.554930 &  0.775912 &  0.734077 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.766331 &  0.750000 &  0.750000 &    0.773725 &    0.737374 &   0.750000 &  0.780378 &   0.533160 & 0.775831 & 0.735200 \\
+\textbf{4} &   0.300000 &  0.750000 &  0.750000 &    0.750000 &    0.750000 &   0.750000 &  0.750000 &   0.000000 & 0.750000 & 0.616667 \\
+\textbf{8} &   0.796843 &  0.750000 &  0.750000 &    0.787354 &    0.810166 &   0.750000 &  0.784228 &   0.444679 & 0.829237 & 0.744723 \\
+\textbf{16} &   0.827147 &  0.750000 &  0.750000 &    0.695623 &    0.818202 &   0.746855 &  0.798862 &   0.532933 & 0.831395 & 0.750113 \\
+\textbf{32} &   0.777647 &  0.750000 &  0.750000 &    0.782385 &    0.778931 &   0.750000 &  0.795370 &   0.469463 & 0.831627 & 0.742825 \\
+\textbf{64} &   0.822004 &  0.750000 &  0.750000 &    0.788701 &    0.844298 &   0.732084 &  0.800982 &   0.623790 & 0.864900 & 0.775195 \\
+\textbf{128}&   0.807123 &  0.750000 &  0.695139 &    0.766585 &    0.836497 &   0.731669 &  0.841509 &   0.580532 & 0.805112 & 0.757130 \\
+\textbf{256}&   0.764444 &  0.732545 &  0.748939 &    0.673721 &    0.770672 &   0.776770 &  0.808763 &   0.554930 & 0.775912 & 0.734077 \\ \hline
 \end{tabular}}
 \caption{F-measure values obtained by the same methodology - First Dataset with MAAE.}
 \label{table:f_measure_maae_boon-reproduction}
@@ -776,15 +776,15 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.533333 &    0.666667 &    0.666667 &       0.000000 &       0.000000 &     0.266667 &   0.000000 &     0.000000 &  0.000000 &  0.237037 \\
-\textbf{4}  &     0.696765 &    0.000000 &    0.161705 &       0.697813 &       0.637313 &     0.444939 &   0.675181 &     0.693245 &  0.677200 &  0.520462 \\
-\textbf{8}  &     0.800147 &    0.117744 &    0.420953 &       0.804906 &       0.788029 &     0.581803 &   0.791370 &     0.578139 &  0.633477 &  0.612952 \\
-\textbf{16} &     0.804844 &    0.451311 &    0.681251 &       0.815904 &       0.832099 &     0.710299 &   0.812074 &     0.724108 &  0.753642 &  0.731726 \\
-\textbf{32} &     0.649174 &    0.838128 &    0.841866 &       0.803400 &       0.851227 &     0.863427 &   0.846449 &     0.855327 &  0.867388 &  0.824043 \\
-\textbf{64} &     0.615672 &    0.815687 &    0.824372 &       0.749573 &       0.828401 &     0.842246 &   0.803179 &     0.845814 &  0.824344 &  0.794365 \\
-\textbf{128}&     0.549423 &    0.810495 &    0.818283 &       0.740639 &       0.798078 &     0.830497 &   0.779144 &     0.782451 &  0.808318 &  0.768592 \\
-\textbf{256}&     0.453491 &    0.813083 &    0.839093 &       0.709581 &       0.769872 &     0.824317 &   0.753225 &     0.685260 &  0.777671 &  0.736177 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.533333 &  0.666667 &  0.666667 &    0.000000 &    0.000000 &   0.266667 &  0.000000 &   0.000000 & 0.000000 & 0.237037 \\
+\textbf{4} &   0.696765 &  0.000000 &  0.161705 &    0.697813 &    0.637313 &   0.444939 &  0.675181 &   0.693245 & 0.677200 & 0.520462 \\
+\textbf{8} &   0.800147 &  0.117744 &  0.420953 &    0.804906 &    0.788029 &   0.581803 &  0.791370 &   0.578139 & 0.633477 & 0.612952 \\
+\textbf{16} &   0.804844 &  0.451311 &  0.681251 &    0.815904 &    0.832099 &   0.710299 &  0.812074 &   0.724108 & 0.753642 & 0.731726 \\
+\textbf{32} &   0.649174 &  0.838128 &  0.841866 &    0.803400 &    0.851227 &   0.863427 &  0.846449 &   0.855327 & 0.867388 & 0.824043 \\
+\textbf{64} &   0.615672 &  0.815687 &  0.824372 &    0.749573 &    0.828401 &   0.842246 &  0.803179 &   0.845814 & 0.824344 & 0.794365 \\
+\textbf{128}&   0.549423 &  0.810495 &  0.818283 &    0.740639 &    0.798078 &   0.830497 &  0.779144 &   0.782451 & 0.808318 & 0.768592 \\
+\textbf{256}&   0.453491 &  0.813083 &  0.839093 &    0.709581 &    0.769872 &   0.824317 &  0.753225 &   0.685260 & 0.777671 & 0.736177 \\ \hline
 \end{tabular}}
 \caption{F-measure values obtained by the same methodology - Second Dataset with MAE.}
 \label{table:f_measure_mae_chbmit-reproduction}
@@ -794,15 +794,15 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2}  &     0.533333 &    0.666667 &    0.666667 &       0.000000 &       0.000000 &     0.400000 &   0.000000 &     0.000000 &  0.000000 &  0.251852 \\
-\textbf{4}  &     0.699432 &    0.000000 &    0.180753 &       0.638923 &       0.660138 &     0.343339 &   0.651213 &     0.684111 &  0.636920 &  0.499425 \\
-\textbf{8}  &     0.831471 &    0.561523 &    0.751577 &       0.804433 &       0.841596 &     0.720080 &   0.849399 &     0.819612 &  0.800937 &  0.775625 \\
-\textbf{16} &     0.735340 &    0.664176 &    0.790507 &       0.761272 &       0.817885 &     0.787931 &   0.781050 &     0.842615 &  0.803114 &  0.775988 \\
-\textbf{32} &     0.774302 &    0.655077 &    0.763870 &       0.806769 &       0.856804 &     0.770129 &   0.815032 &     0.854661 &  0.794993 &  0.787960 \\
-\textbf{64} &     0.591225 &    0.793741 &    0.830226 &       0.729029 &       0.820458 &     0.818502 &   0.814115 &     0.842316 &  0.827723 &  0.785260 \\
-\textbf{128}&     0.553342 &    0.828892 &    0.825684 &       0.765760 &       0.827287 &     0.818231 &   0.794853 &     0.838655 &  0.808024 &  0.784525 \\
-\textbf{256}&     0.516029 &    0.774741 &    0.832942 &       0.734553 &       0.792478 &     0.814926 &   0.788030 &     0.802740 &  0.825151 &  0.764621 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.533333 &  0.666667 &  0.666667 &    0.000000 &    0.000000 &   0.400000 &  0.000000 &   0.000000 & 0.000000 & 0.251852 \\
+\textbf{4} &   0.699432 &  0.000000 &  0.180753 &    0.638923 &    0.660138 &   0.343339 &  0.651213 &   0.684111 & 0.636920 & 0.499425 \\
+\textbf{8} &   0.831471 &  0.561523 &  0.751577 &    0.804433 &    0.841596 &   0.720080 &  0.849399 &   0.819612 & 0.800937 & 0.775625 \\
+\textbf{16} &   0.735340 &  0.664176 &  0.790507 &    0.761272 &    0.817885 &   0.787931 &  0.781050 &   0.842615 & 0.803114 & 0.775988 \\
+\textbf{32} &   0.774302 &  0.655077 &  0.763870 &    0.806769 &    0.856804 &   0.770129 &  0.815032 &   0.854661 & 0.794993 & 0.787960 \\
+\textbf{64} &   0.591225 &  0.793741 &  0.830226 &    0.729029 &    0.820458 &   0.818502 &  0.814115 &   0.842316 & 0.827723 & 0.785260 \\
+\textbf{128}&   0.553342 &  0.828892 &  0.825684 &    0.765760 &    0.827287 &   0.818231 &  0.794853 &   0.838655 & 0.808024 & 0.784525 \\
+\textbf{256}&   0.516029 &  0.774741 &  0.832942 &    0.734553 &    0.792478 &   0.814926 &  0.788030 &   0.802740 & 0.825151 & 0.764621 \\ \hline
 \end{tabular}}
 \caption{F-measure values obtained by the same methodology - Second Dataset with MAAE.}
 \label{table:f_measure_maae_chbmit-reproduction}
@@ -814,15 +814,15 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2} &     0.692500 &    0.500000 &    0.500000 &       0.690000 &       0.693333 &     0.500000 &   0.693333 &     0.595833 &  0.672500 &  0.615278 \\
-\textbf{4} &     0.665000 &    0.500000 &    0.500000 &       0.689167 &       0.672500 &     0.500000 &   0.748333 &     0.596667 &  0.686667 &  0.617593 \\
-\textbf{8} &     0.500000 &    0.500000 &    0.500000 &       0.500000 &       0.500000 &     0.500000 &   0.500000 &     0.500000 &  0.500000 &  0.500000 \\
-\textbf{16} &     0.810000 &    0.500000 &    0.500000 &       0.776667 &       0.812500 &     0.592500 &   0.777500 &     0.695833 &  0.805000 &  0.696667 \\
-\textbf{32} &     0.802500 &    0.500000 &    0.523333 &       0.778333 &       0.835833 &     0.647500 &   0.789167 &     0.696667 &  0.821667 &  0.710556 \\
-\textbf{64} &     0.771667 &    0.739167 &    0.783333 &       0.699167 &       0.785833 &     0.790000 &   0.800000 &     0.678333 &  0.813333 &  0.762315 \\
-\textbf{128} &     0.807500 &    0.657500 &    0.754167 &       0.770833 &       0.780833 &     0.752500 &   0.770833 &     0.670833 &  0.794167 &  0.751019 \\
-\textbf{256} &     0.715000 &    0.769167 &    0.791667 &       0.690000 &       0.739167 &     0.818333 &   0.795833 &     0.687500 &  0.835833 &  0.760278 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.692500 &  0.500000 &  0.500000 &    0.690000 &    0.693333 &   0.500000 &  0.693333 &   0.595833 & 0.672500 & 0.615278 \\
+\textbf{4} &   0.665000 &  0.500000 &  0.500000 &    0.689167 &    0.672500 &   0.500000 &  0.748333 &   0.596667 & 0.686667 & 0.617593 \\
+\textbf{8} &   0.500000 &  0.500000 &  0.500000 &    0.500000 &    0.500000 &   0.500000 &  0.500000 &   0.500000 & 0.500000 & 0.500000 \\
+\textbf{16} &   0.810000 &  0.500000 &  0.500000 &    0.776667 &    0.812500 &   0.592500 &  0.777500 &   0.695833 & 0.805000 & 0.696667 \\
+\textbf{32} &   0.802500 &  0.500000 &  0.523333 &    0.778333 &    0.835833 &   0.647500 &  0.789167 &   0.696667 & 0.821667 & 0.710556 \\
+\textbf{64} &   0.771667 &  0.739167 &  0.783333 &    0.699167 &    0.785833 &   0.790000 &  0.800000 &   0.678333 & 0.813333 & 0.762315 \\
+\textbf{128} &   0.807500 &  0.657500 &  0.754167 &    0.770833 &    0.780833 &   0.752500 &  0.770833 &   0.670833 & 0.794167 & 0.751019 \\
+\textbf{256} &   0.715000 &  0.769167 &  0.791667 &    0.690000 &    0.739167 &   0.818333 &  0.795833 &   0.687500 & 0.835833 & 0.760278 \\ \hline
 \end{tabular}
 }
 \caption{ROC-AUC values obtained by the same methodology - Boon Dataset with MAE.}
@@ -834,15 +834,15 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2} &     0.711667 &      0.5000 &    0.500000 &       0.696667 &       0.680000 &     0.500000 &   0.751667 &     0.595000 &  0.698333 &  0.625926 \\
-\textbf{4} &     0.500000 &      0.5000 &    0.500000 &       0.500000 &       0.500000 &     0.500000 &   0.500000 &     0.500000 &  0.500000 &  0.500000 \\
-\textbf{8} &     0.785833 &      0.5000 &    0.500000 &       0.675833 &       0.786667 &     0.500000 &   0.734167 &     0.645000 &  0.760833 &  0.654259 \\
-\textbf{16} &     0.810000 &      0.5000 &    0.500000 &       0.690833 &       0.786667 &     0.496667 &   0.752500 &     0.669167 &  0.777500 &  0.664815 \\
-\textbf{32} &     0.735833 &      0.5000 &    0.500000 &       0.715000 &       0.741667 &     0.500000 &   0.742500 &     0.655000 &  0.766667 &  0.650741 \\
-\textbf{64} &     0.807500 &      0.5000 &    0.500000 &       0.790833 &       0.821667 &     0.607500 &   0.773333 &     0.722500 &  0.851667 &  0.708333 \\
-\textbf{128} &     0.791667 &      0.5000 &    0.590000 &       0.750833 &       0.824167 &     0.713333 &   0.805833 &     0.695000 &  0.810000 &  0.720093 \\
-\textbf{256} &     0.721667 &      0.7075 &    0.761667 &       0.673333 &       0.726667 &     0.736667 &   0.764167 &     0.666667 &  0.794167 &  0.728056 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &   0.711667 &   0.5000 &  0.500000 &    0.696667 &    0.680000 &   0.500000 &  0.751667 &   0.595000 & 0.698333 & 0.625926 \\
+\textbf{4} &   0.500000 &   0.5000 &  0.500000 &    0.500000 &    0.500000 &   0.500000 &  0.500000 &   0.500000 & 0.500000 & 0.500000 \\
+\textbf{8} &   0.785833 &   0.5000 &  0.500000 &    0.675833 &    0.786667 &   0.500000 &  0.734167 &   0.645000 & 0.760833 & 0.654259 \\
+\textbf{16} &   0.810000 &   0.5000 &  0.500000 &    0.690833 &    0.786667 &   0.496667 &  0.752500 &   0.669167 & 0.777500 & 0.664815 \\
+\textbf{32} &   0.735833 &   0.5000 &  0.500000 &    0.715000 &    0.741667 &   0.500000 &  0.742500 &   0.655000 & 0.766667 & 0.650741 \\
+\textbf{64} &   0.807500 &   0.5000 &  0.500000 &    0.790833 &    0.821667 &   0.607500 &  0.773333 &   0.722500 & 0.851667 & 0.708333 \\
+\textbf{128} &   0.791667 &   0.5000 &  0.590000 &    0.750833 &    0.824167 &   0.713333 &  0.805833 &   0.695000 & 0.810000 & 0.720093 \\
+\textbf{256} &   0.721667 &   0.7075 &  0.761667 &    0.673333 &    0.726667 &   0.736667 &  0.764167 &   0.666667 & 0.794167 & 0.728056 \\ \hline
 \end{tabular}
 }
 \caption{ROC-AUC values obtained by the same methodology - Boon Dataset with MAAE.}
@@ -853,15 +853,15 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} &  \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2} &       0.5000 &      0.5000 &      0.5000 &         0.5000 &         0.5000 &       0.5000 &     0.5000 &       0.5000 &    0.5000 &  0.500000 \\
-\textbf{4} &       0.7125 &      0.5000 &      0.5525 &         0.7300 &         0.6575 &       0.4750 &     0.7075 &       0.7525 &    0.7350 &  0.646944 \\
-\textbf{8} &       0.8025 &      0.5325 &      0.6325 &         0.8125 &         0.7925 &       0.7050 &     0.8000 &       0.7025 &    0.7325 &  0.723611 \\
-\textbf{16} &       0.8150 &      0.6500 &      0.7575 &         0.8225 &         0.8350 &       0.7725 &     0.8175 &       0.7800 &    0.8000 &  0.783333 \\
-\textbf{32} &       0.7400 &      0.8575 &      0.8625 &         0.8150 &         0.8550 &       0.8725 &     0.8475 &       0.8675 &    0.8800 &  0.844167 \\
-\textbf{64} &       0.7200 &      0.8325 &      0.8450 &         0.7675 &         0.8350 &       0.8525 &     0.8150 &       0.8650 &    0.8450 &  0.819722 \\
-\textbf{128} &       0.6925 &      0.8300 &      0.8300 &         0.7475 &         0.8025 &       0.8375 &     0.7850 &       0.8225 &    0.8325 &  0.797778 \\
-\textbf{256} &       0.6450 &      0.8250 &      0.8500 &         0.7325 &         0.7825 &       0.8275 &     0.7750 &       0.7700 &    0.8075 &  0.779444 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &    0.5000 &   0.5000 &   0.5000 &     0.5000 &     0.5000 &    0.5000 &   0.5000 &    0.5000 &  0.5000 & 0.500000 \\
+\textbf{4} &    0.7125 &   0.5000 &   0.5525 &     0.7300 &     0.6575 &    0.4750 &   0.7075 &    0.7525 &  0.7350 & 0.646944 \\
+\textbf{8} &    0.8025 &   0.5325 &   0.6325 &     0.8125 &     0.7925 &    0.7050 &   0.8000 &    0.7025 &  0.7325 & 0.723611 \\
+\textbf{16} &    0.8150 &   0.6500 &   0.7575 &     0.8225 &     0.8350 &    0.7725 &   0.8175 &    0.7800 &  0.8000 & 0.783333 \\
+\textbf{32} &    0.7400 &   0.8575 &   0.8625 &     0.8150 &     0.8550 &    0.8725 &   0.8475 &    0.8675 &  0.8800 & 0.844167 \\
+\textbf{64} &    0.7200 &   0.8325 &   0.8450 &     0.7675 &     0.8350 &    0.8525 &   0.8150 &    0.8650 &  0.8450 & 0.819722 \\
+\textbf{128} &    0.6925 &   0.8300 &   0.8300 &     0.7475 &     0.8025 &    0.8375 &   0.7850 &    0.8225 &  0.8325 & 0.797778 \\
+\textbf{256} &    0.6450 &   0.8250 &   0.8500 &     0.7325 &     0.7825 &    0.8275 &   0.7750 &    0.7700 &  0.8075 & 0.779444 \\ \hline
 \end{tabular}
 }
 \caption{ROC-AUC values obtained by the same methodology - CHBMIT Dataset with MAE.}
@@ -872,15 +872,15 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{c|cccccccccc}
-\textbf{Dimension} &  \textbf{k\_neighbors} &  \textbf{svm\_linear} &  \textbf{svm\_radial} &  \textbf{decision\_tree} & \textbf{random\_forest} &  \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2} &       0.5000 &      0.5000 &      0.5000 &         0.5000 &         0.5000 &       0.5000 &     0.5000 &       0.5000 &    0.5000 &  0.500000 \\
-\textbf{4} &       0.7200 &      0.5000 &      0.5575 &         0.6825 &         0.6725 &       0.5050 &     0.7000 &       0.7525 &    0.7175 &  0.645278 \\
-\textbf{8} &       0.8400 &      0.6975 &      0.8025 &         0.8150 &         0.8450 &       0.7775 &     0.8550 &       0.8375 &    0.8275 &  0.810833 \\
-\textbf{16} &       0.7900 &      0.7475 &      0.8250 &         0.7750 &         0.8250 &       0.8125 &     0.7950 &       0.8525 &    0.8300 &  0.805833 \\
-\textbf{32} &       0.8125 &      0.7450 &      0.8125 &         0.8150 &         0.8625 &       0.8025 &     0.8225 &       0.8675 &    0.8300 &  0.818889 \\
-\textbf{64} &       0.7125 &      0.8150 &      0.8475 &         0.7500 &         0.8225 &       0.8300 &     0.8250 &       0.8525 &    0.8450 &  0.811111 \\
-\textbf{128} &       0.6950 &      0.8400 &      0.8375 &         0.7800 &         0.8325 &       0.8300 &     0.8100 &       0.8500 &    0.8275 &  0.811389 \\
-\textbf{256} &       0.6725 &      0.7950 &      0.8400 &         0.7400 &         0.7950 &       0.8200 &     0.7925 &       0.8375 &    0.8350 &  0.791944 \\ \hline
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &    0.5000 &   0.5000 &   0.5000 &     0.5000 &     0.5000 &    0.5000 &   0.5000 &    0.5000 &  0.5000 & 0.500000 \\
+\textbf{4} &    0.7200 &   0.5000 &   0.5575 &     0.6825 &     0.6725 &    0.5050 &   0.7000 &    0.7525 &  0.7175 & 0.645278 \\
+\textbf{8} &    0.8400 &   0.6975 &   0.8025 &     0.8150 &     0.8450 &    0.7775 &   0.8550 &    0.8375 &  0.8275 & 0.810833 \\
+\textbf{16} &    0.7900 &   0.7475 &   0.8250 &     0.7750 &     0.8250 &    0.8125 &   0.7950 &    0.8525 &  0.8300 & 0.805833 \\
+\textbf{32} &    0.8125 &   0.7450 &   0.8125 &     0.8150 &     0.8625 &    0.8025 &   0.8225 &    0.8675 &  0.8300 & 0.818889 \\
+\textbf{64} &    0.7125 &   0.8150 &   0.8475 &     0.7500 &     0.8225 &    0.8300 &   0.8250 &    0.8525 &  0.8450 & 0.811111 \\
+\textbf{128} &    0.6950 &   0.8400 &   0.8375 &     0.7800 &     0.8325 &    0.8300 &   0.8100 &    0.8500 &  0.8275 & 0.811389 \\
+\textbf{256} &    0.6725 &   0.7950 &   0.8400 &     0.7400 &     0.7950 &    0.8200 &   0.7925 &    0.8375 &  0.8350 & 0.791944 \\ \hline
 \end{tabular}
 }
 \caption{ROC-AUC values obtained by the same methodology - CHBMIT Dataset with MAAE.}
@@ -891,10 +891,11 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \newpage
 
 \section{Conclusion}\label{sec:concl}
-In this article, we re-implemented the approach proposed by \cite{WenZha:2018}, an investigation of the accurately tested feature sizes and proposed a new classifier. This classification approach, based on deep learning for detecting epileptic seizures using EGG had not been explored previously. We adopted a self-concealment that allows us to construct a smaller representation space. Among the variety of metrics, our method stands out according to the ROC curve. The proposed approach still needs further.
+In this article, we re-implemented the approach proposed in \cite{WenZha:2018} and propose the use of a different classifier. This classification approach, based on deep learning for detecting epileptic seizures using EGG had not been explored previously. We adopted a Auto-Enconder that allowed us to construct a smaller representation space. Among the variety of metrics, using the ensemble method results in better ROC-AUC results.
 
-The original authors leave gaps that make it impossible to fully reproduce the results obtained. For example, the lack of information about the neural classifier used in the last sub-section. As well as the lack of information about the sampling process of the first and second data sets. In addition to providing an example, exact information about the number of times or batch size, the results obtained can be considered at most a replication.
+The original authors left some gaps that made it impossible to fully reproduce their obtained results. For example, the lack of information about the neural classifier used in the last sub-section, about the sampling process of the first and second data sets, and the number of times or batch size. Consequently, the results obtained can be considered at most a replication.
+
+As a second contribution, the developed codes can be easily ported to other tasks. Moreover, it could be used to evaluate other variants of the neural network architecture, techniques for classifying the signals, data augmentation, among other possibilities.  
 
 
-The method is easily portable to other tasks and codes are a byproduct of this work. As future work, we can employ data augmentation that would allow the method to better learn the parameters adopted.
 
