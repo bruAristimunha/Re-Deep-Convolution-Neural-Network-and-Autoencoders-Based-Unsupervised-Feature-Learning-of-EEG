@@ -364,7 +364,7 @@ def load_dataset_chbmit(path_save: str, n_samples=200,
     name_dataset_non = join(path_dataset, "data_frame_non.parquet")
     name_dataset_seiz = join(path_dataset, "data_frame_seiz.parquet")
     
-    if not check_exist(path_save, "as_dataset"):
+    if not check_exist(path_save, "as_dataset") and not pre_load:
 
         print("Loading the files to create dataset")
 
