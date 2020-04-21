@@ -337,7 +337,8 @@ def check_exist(path_save: str, name_folder: str):
     return True
 
 
-def load_dataset_chbmit(path_save: str, n_samples=200, random_state=42) -> [array]:
+def load_dataset_chbmit(path_save: str, n_samples=200, 
+                        random_state=42, pre_load=False) -> [array]:
     """Read the chbmit database, and return data and class.
 
     Split the dataset to the appropriate size.
@@ -362,7 +363,7 @@ def load_dataset_chbmit(path_save: str, n_samples=200, random_state=42) -> [arra
     path_dataset = join(path_save, "as_dataset")
     name_dataset_non = join(path_dataset, "data_frame_non.parquet")
     name_dataset_seiz = join(path_dataset, "data_frame_seiz.parquet")
-
+    
     if not check_exist(path_save, "as_dataset"):
 
         print("Loading the files to create dataset")
@@ -393,15 +394,26 @@ def load_dataset_chbmit(path_save: str, n_samples=200, random_state=42) -> [arra
         data_frame_seiz.to_parquet(name_dataset_seiz, engine="pyarrow")
 
     else:
-        print("Reading as dataframe")
-        data_frame_non = read_parquet(name_dataset_non, engine="pyarrow")
-        data_frame_seiz = read_parquet(name_dataset_seiz, engine="pyarrow")
+        if not pre_load:
+            print("Reading as dataframe")
+            data_frame_non = read_parquet(name_dataset_non, engine="pyarrow")
+            data_frame_seiz = read_parquet(name_dataset_seiz, engine="pyarrow")
+        else:
 
+            data_frame = read_parquet(path_save + "sampled_dataset.parquet", 
+                                      engine="pyarrow")
+            
+            return data_frame.drop("class", 1).to_numpy(), data_frame["class"].values
+            
     sample_non = data_frame_non.sample(n=n_samples, random_state=random_state)
     sample_seiz = data_frame_seiz.sample(n=n_samples, random_state=random_state)
 
     data_frame = sample_non.append(sample_seiz)
 
+    data_frame.columns = data_frame.columns.astype(str)
+    data_frame.to_parquet(path_save + "sampled_dataset.parquet", 
+                          engine="pyarrow")
+    
     return data_frame.drop("class", 1).to_numpy(), data_frame["class"].values
 
 
