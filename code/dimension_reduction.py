@@ -12,13 +12,9 @@ Dimension Reduction process.
 from sklearn.decomposition import PCA
 from sklearn.random_projection import SparseRandomProjection
 
-from numpy import (
-    concatenate,
-)
+from numpy import concatenate
 
-from pandas import (
-    DataFrame,
-)
+from pandas import DataFrame
 
 from auto_enconder import AutoEnconder
 
@@ -29,10 +25,7 @@ from data_management import (
 )
 
 
-def reduce_dimension(data, class_,
-                     path_dataset,
-                     name_type,
-                     n_components):
+def reduce_dimension(data, class_, path_dataset, name_type, n_components):
     """Perform dimension reduction and save.
 
     Parameters
@@ -53,12 +46,10 @@ def reduce_dimension(data, class_,
         Path where was saved the reduced dataset.
     """
     if name_type == "pca":
-        method = PCA(n_components=n_components,
-                     random_state=42)
+        method = PCA(n_components=n_components, random_state=42)
     else:
         if name_type == "srp":
-            method = SparseRandomProjection(n_components=n_components,
-                                            random_state=42)
+            method = SparseRandomProjection(n_components=n_components, random_state=42)
         else:
             raise ValueError("Invalid method option.")
 
@@ -72,23 +63,27 @@ def reduce_dimension(data, class_,
     # Join with class label
     data_reduced["class"] = class_
 
-    path_reduced = save_reduce(data_reduced=data_reduced,
-                               value_encoding_dim=n_components,
-                               path_dataset=path_dataset,
-                               name_type=name_type)
+    path_reduced = save_reduce(
+        data_reduced=data_reduced,
+        value_encoding_dim=n_components,
+        path_dataset=path_dataset,
+        name_type=name_type,
+    )
 
     return path_reduced
 
 
-def build_feature(data_train,
-                  data_valid,
-                  class_train,
-                  class_valid,
-                  path_dataset,
-                  epochs,
-                  batch_size,
-                  type_loss,
-                  value_encoding_dim):
+def build_feature(
+    data_train,
+    data_valid,
+    class_train,
+    class_valid,
+    path_dataset,
+    epochs,
+    batch_size,
+    type_loss,
+    value_encoding_dim,
+):
     """Control function to use the AutoEnconder class as a dimension reducer.
 
     This function also saves the values obtained
@@ -117,14 +112,20 @@ def build_feature(data_train,
     path_reduce : str
         Path where the reduced set was saved.reduced
     """
-    print("Convert and save with value enconding dimension: {} - {}".format(
-        type_loss, value_encoding_dim))
+    print(
+        "Convert and save with value enconding dimension: {} - {}".format(
+            type_loss, value_encoding_dim
+        )
+    )
 
     # Initializing the Auto-Encoder model
-    auto_encoder = AutoEnconder(epochs=epochs, batch_size=batch_size,
-                                value_encoding_dim=value_encoding_dim,
-                                type_loss=type_loss,
-                                name_dataset=path_dataset)
+    auto_encoder = AutoEnconder(
+        epochs=epochs,
+        batch_size=batch_size,
+        value_encoding_dim=value_encoding_dim,
+        type_loss=type_loss,
+        name_dataset=path_dataset,
+    )
     # For validreducedation, as described in the text, we use the test dataset.
     auto_encoder.fit(data_train, data_valid)
 
@@ -133,23 +134,22 @@ def build_feature(data_train,
     data_valid_encoded = auto_encoder.transform(data_valid)
 
     # Conversion of numpy.array to a DataFrame
-    data_reduced = DataFrame(concatenate([data_train_encoded,
-                                          data_valid_encoded]))
+    data_reduced = DataFrame(concatenate([data_train_encoded, data_valid_encoded]))
     # On the DataFrame each column has a numeric value,
     # which is converted to a string
     data_reduced.columns = data_reduced.columns.astype(str)
     # Join with class label
     data_reduced["class"] = concatenate([class_train, class_valid])
 
-    path_reduced = save_reduce(data_reduced=data_reduced,
-                               value_encoding_dim=value_encoding_dim,
-                               path_dataset=path_dataset,
-                               name_type=type_loss)
+    path_reduced = save_reduce(
+        data_reduced=data_reduced,
+        value_encoding_dim=value_encoding_dim,
+        path_dataset=path_dataset,
+        name_type=type_loss,
+    )
 
-    save_feature_model(auto_encoder, path_dataset,
-                       type_loss, value_encoding_dim)
+    save_feature_model(auto_encoder, path_dataset, type_loss, value_encoding_dim)
 
-    save_history_model(auto_encoder, path_dataset,
-                       type_loss, value_encoding_dim)
+    save_history_model(auto_encoder, path_dataset, type_loss, value_encoding_dim)
 
     return auto_encoder, path_reduced

@@ -54,9 +54,8 @@ def mean_absolute_average_error(y_true, y_pred):
     """
     y_pred = ops.convert_to_tensor(y_pred)
     y_true = math_ops.cast(y_true, y_pred.dtype)
-    diff = math_ops.abs((y_true - y_pred) / K.maximum(K.mean(y_true),
-                                                      K.epsilon()))
-    return 100. * K.mean(diff, axis=-1)
+    diff = math_ops.abs((y_true - y_pred) / K.maximum(K.mean(y_true), K.epsilon()))
+    return 100.0 * K.mean(diff, axis=-1)
 
 
 class AutoEnconder(BaseEstimator):
@@ -110,12 +109,14 @@ class AutoEnconder(BaseEstimator):
     # pylint: disable=too-many-arguments
     # pylint: disable=no-member
 
-    def __init__(self,
-                 epochs=10,
-                 batch_size=32,
-                 value_encoding_dim=2,
-                 type_loss="mae",
-                 name_dataset=None):
+    def __init__(
+        self,
+        epochs=10,
+        batch_size=32,
+        value_encoding_dim=2,
+        type_loss="mae",
+        name_dataset=None,
+    ):
         """Construct objects intended to AutoEnconder."""
         # auto-enconder parameters
         self.value_encoding_dim = value_encoding_dim
@@ -192,44 +193,40 @@ class AutoEnconder(BaseEstimator):
 
         original_signal = Input(shape=(4096, 1))
 
-        layer = Conv1D(16, kernel_size=3, padding="same",
-                       activation="relu")(original_signal)
+        layer = Conv1D(16, kernel_size=3, padding="same", activation="relu")(
+            original_signal
+        )
         layer = MaxPooling1D(pool_size=2)(layer)
-        layer = Conv1D(32, kernel_size=3, padding="same",
-                       activation="relu")(layer)
+        layer = Conv1D(32, kernel_size=3, padding="same", activation="relu")(layer)
         layer = MaxPooling1D(pool_size=2)(layer)
-        layer = Conv1D(64, kernel_size=3, padding="same",
-                       activation="relu")(layer)
+        layer = Conv1D(64, kernel_size=3, padding="same", activation="relu")(layer)
         layer = MaxPooling1D(pool_size=2)(layer)
         layer = Flatten()(layer)
         enconded = Dense(self.value_encoding_dim, activation="relu")(layer)
 
         layer = Dense(512 * 64, activation="relu", use_bias=False)(enconded)
         layer = Reshape((512, 64))(layer)
-        layer = Conv1D(64, kernel_size=3, padding="same",
-                       activation="relu")(layer)
+        layer = Conv1D(64, kernel_size=3, padding="same", activation="relu")(layer)
         layer = UpSampling1D()(layer)
-        layer = Conv1D(32, kernel_size=3, padding="same",
-                       activation="relu")(layer)
+        layer = Conv1D(32, kernel_size=3, padding="same", activation="relu")(layer)
         layer = UpSampling1D()(layer)
-        layer = Conv1D(16, kernel_size=3, padding="same",
-                       activation="relu")(layer)
+        layer = Conv1D(16, kernel_size=3, padding="same", activation="relu")(layer)
         layer = UpSampling1D()(layer)
-        decoded = Conv1D(1, kernel_size=3, padding="same",
-                         activation="sigmoid")(layer)
+        decoded = Conv1D(1, kernel_size=3, padding="same", activation="sigmoid")(layer)
 
         self.method_enconder = Model(original_signal, enconded, name="encoder")
 
         auto_enconder_name = "autoenconder_m_{}_loss_{}".format(
-                                             self.value_encoding_dim,
-                                             self.type_loss)
+            self.value_encoding_dim, self.type_loss
+        )
 
-        self.method_autoenconder = Model(original_signal, decoded,
-                                         name=auto_enconder_name)
+        self.method_autoenconder = Model(
+            original_signal, decoded, name=auto_enconder_name
+        )
 
-        self.method_autoenconder.compile(optimizer="adam",
-                                         loss=fun_loss,
-                                         metrics=["accuracy"])
+        self.method_autoenconder.compile(
+            optimizer="adam", loss=fun_loss, metrics=["accuracy"]
+        )
 
     def fit(self, data_train, data_valid):
         """Fit the model to learn.
@@ -250,14 +247,15 @@ class AutoEnconder(BaseEstimator):
         """
         self.build_auto_enconder()
         # Training auto-enconder
-        history = self.method_autoenconder.fit(data_train,
-                                               data_train,
-                                               epochs=self.epochs,
-                                               batch_size=self.batch_size,
-                                               shuffle=True,
-                                               validation_data=(data_valid,
-                                                                data_valid),
-                                               verbose=0)
+        history = self.method_autoenconder.fit(
+            data_train,
+            data_train,
+            epochs=self.epochs,
+            batch_size=self.batch_size,
+            shuffle=True,
+            validation_data=(data_valid, data_valid),
+            verbose=0,
+        )
         self.learn_history = history
         return self
 

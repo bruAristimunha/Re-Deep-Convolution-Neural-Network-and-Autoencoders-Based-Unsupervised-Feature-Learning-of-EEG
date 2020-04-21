@@ -19,6 +19,7 @@ from re import findall
 from zipfile import ZipFile
 
 from bs4 import BeautifulSoup
+
 # Import used for array manipulation.
 from numpy import (
     zeros,
@@ -39,12 +40,14 @@ from pandas import (
 # Imports for array manipulation to prepare for dimension reduction.
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
+
 # Import used to download the data.
 from wget import download
 
 path.append("chb-mit/")
 # Import of the class used to read the CHBMIT dataset.
 from patient import Patient
+
 
 def zip_with_unique(base, list_suffix):
     """Auxiliary function to generate a paired list with a unique element.
@@ -103,8 +106,7 @@ def download_bonn(path_data="data/boon/") -> [str]:
 
     if fold.exists():
         print("Folder already exists")
-        check_child_folders = [Path(child).exists()
-                               for child in path_child_fold]
+        check_child_folders = [Path(child).exists() for child in path_child_fold]
 
         if all(check_child_folders):
             print("Subfolders already exist")
@@ -157,8 +159,9 @@ def download_item(url_base, name_base, page=True, range_=(11, 50)):
     if page:
         base = open(name_base, "r").read()
         soup = BeautifulSoup(base, "html.parser")
-        return filter_list([link.get("href")
-                            for link in soup.find_all("a")], range_=range_)
+        return filter_list(
+            [link.get("href") for link in soup.find_all("a")], range_=range_
+        )
 
     return None
 
@@ -211,7 +214,8 @@ def download_chbmit(url_base, path_save):
         fold_save.mkdir(parents=True, exist_ok=True)
 
         folders_description = download_item(
-            url_base, "{}base.html".format(path_save), page=True)
+            url_base, "{}base.html".format(path_save), page=True
+        )
 
         folders = get_folders(folders_description)
         description = get_files(folders_description)
@@ -230,13 +234,15 @@ def download_chbmit(url_base, path_save):
 
         print("Folder already exists\nUse load_dataset_chbmit")
 
-        onlyfolder = [folder
-                      for folder in listdir(path_save)
-                      if not isfile(join(url_base, folder))]
+        onlyfolder = [
+            folder
+            for folder in listdir(path_save)
+            if not isfile(join(url_base, folder))
+        ]
 
-        patient_item = [folder
-                        for folder in onlyfolder
-                        if findall("chb([0-9])*", folder) != []]
+        patient_item = [
+            folder for folder in onlyfolder if findall("chb([0-9])*", folder) != []
+        ]
     return patient_item
 
 
@@ -273,8 +279,7 @@ def load_dataset_boon(path_data: str) -> [array]:
 
     for path_ in path_child_fold:
 
-        f_names = [s for s in Path(path_).iterdir() if str(
-            s).lower().endswith(".txt")]
+        f_names = [s for s in Path(path_).iterdir() if str(s).lower().endswith(".txt")]
 
         for f_name in f_names:
             _data = read_csv(f_name, sep="\n", header=None)
@@ -322,9 +327,9 @@ def split_4096(n_array):
     return []
 
 
-def check_exist_chbmit(path_save: str):
+def check_exist(path_save: str, name_folder: str):
     """Check if the fold dataset exists."""
-    fold = Path(path_save) / "as_dataset"
+    fold = Path(path_save) / name_folder
 
     if not fold.exists():
         fold.mkdir(parents=True, exist_ok=True)
@@ -332,9 +337,7 @@ def check_exist_chbmit(path_save: str):
     return True
 
 
-def load_dataset_chbmit(path_save: str,
-                        n_samples=200,
-                        random_state=42) -> [array]:
+def load_dataset_chbmit(path_save: str, n_samples=200, random_state=42) -> [array]:
     """Read the chbmit database, and return data and class.
 
     Split the dataset to the appropriate size.
@@ -360,14 +363,14 @@ def load_dataset_chbmit(path_save: str,
     name_dataset_non = join(path_dataset, "data_frame_non.parquet")
     name_dataset_seiz = join(path_dataset, "data_frame_seiz.parquet")
 
-    if not check_exist_chbmit(path_save):
+    if not check_exist(path_save, "as_dataset"):
 
         print("Loading the files to create dataset")
 
         for person_id in range(1, 11):
             print("Loading Patients nº {}".format(person_id))
             pat = Patient(person_id, path_save)
-            
+
             non_epoch_array = list(map(split_4096, pat.get_non_seizures()))
 
             data_frame_non.append(concatenate(non_epoch_array))
@@ -380,12 +383,12 @@ def load_dataset_chbmit(path_save: str,
                 data_frame_seiz.append(concatenate(seiz_epoch))
 
         data_frame_non = DataFrame(concatenate(data_frame_non))
-        data_frame_non['class'] = [0] * len(data_frame_non)
+        data_frame_non["class"] = [0] * len(data_frame_non)
         data_frame_non.columns = data_frame_non.columns.astype(str)
         data_frame_non.to_parquet(name_dataset_non, engine="pyarrow")
 
         data_frame_seiz = DataFrame(concatenate(data_frame_seiz))
-        data_frame_seiz['class'] = [1] * len(data_frame_seiz)
+        data_frame_seiz["class"] = [1] * len(data_frame_seiz)
         data_frame_seiz.columns = data_frame_seiz.columns.astype(str)
         data_frame_seiz.to_parquet(name_dataset_seiz, engine="pyarrow")
 
@@ -395,16 +398,14 @@ def load_dataset_chbmit(path_save: str,
         data_frame_seiz = read_parquet(name_dataset_seiz, engine="pyarrow")
 
     sample_non = data_frame_non.sample(n=n_samples, random_state=random_state)
-    sample_seiz = data_frame_seiz.sample(
-        n=n_samples, random_state=random_state)
+    sample_seiz = data_frame_seiz.sample(n=n_samples, random_state=random_state)
 
     data_frame = sample_non.append(sample_seiz)
 
-    return data_frame.drop('class', 1).to_numpy(), data_frame['class'].values
+    return data_frame.drop("class", 1).to_numpy(), data_frame["class"].values
 
 
-def preprocessing_split(data, class_,
-                        test_size=.20, random_state=42) -> [array]:
+def preprocessing_split(data, class_, test_size=0.20, random_state=42) -> [array]:
     """Split the train and test split.
 
     Also normalize the data set with Min-Max.
@@ -430,7 +431,8 @@ def preprocessing_split(data, class_,
     """
     # Separation of the data set in training and testing.
     data_train, data_test, class_train, class_test = train_test_split(
-        data, class_, test_size=test_size, random_state=random_state)
+        data, class_, test_size=test_size, random_state=random_state
+    )
 
     # Min max scaler method.
     min_max = MinMaxScaler().fit(data_train)
@@ -445,10 +447,8 @@ def preprocessing_split(data, class_,
     data_test = data_test[:, :4096]
 
     # Applying to reshape to match the input as tensor.
-    data_train = reshape(data_train,
-                         (data_train.shape[0], data_train.shape[1], 1))
-    data_test = reshape(data_test,
-                        (data_test.shape[0], data_test.shape[1], 1))
+    data_train = reshape(data_train, (data_train.shape[0], data_train.shape[1], 1))
+    data_test = reshape(data_test, (data_test.shape[0], data_test.shape[1], 1))
 
     return data_train, data_test, class_train, class_test
 
@@ -481,10 +481,7 @@ def read_feature_data(base_fold, dim):
     return data, class_
 
 
-def save_reduce(data_reduced,
-                value_encoding_dim,
-                path_dataset,
-                name_type) -> [str]:
+def save_reduce(data_reduced, value_encoding_dim, path_dataset, name_type) -> [str]:
     """Save reduce dataset.
 
     Parameters
@@ -549,10 +546,7 @@ def save_reduce(data_reduced,
     return save_reduced_name
 
 
-def save_feature_model(auto_encoder,
-                       path_dataset,
-                       type_loss,
-                       value_encoding_dim):
+def save_feature_model(auto_encoder, path_dataset, type_loss, value_encoding_dim):
     """Save feature model.
 
     Parameters
@@ -589,24 +583,19 @@ def save_feature_model(auto_encoder,
         fold_save.mkdir(parents=True, exist_ok=True)
 
     # Saving the enconder model
-    enconder_name = "enconder_{}_{}.h5".format(type_loss,
-                                               value_encoding_dim)
+    enconder_name = "enconder_{}_{}.h5".format(type_loss, value_encoding_dim)
     enconder_name = join(path_save, enconder_name)
 
     auto_encoder.method_enconder.save(enconder_name)
 
     # Saving the auto enconder model
-    auto_enconder_name = "auto_enconder_{}_{}.h5".format(
-        type_loss, value_encoding_dim)
+    auto_enconder_name = "auto_enconder_{}_{}.h5".format(type_loss, value_encoding_dim)
     auto_enconder_name = join(path_save, auto_enconder_name)
 
     auto_encoder.method_enconder.save(auto_enconder_name)
 
 
-def save_history_model(auto_encoder,
-                       path_dataset,
-                       type_loss,
-                       value_encoding_dim):
+def save_history_model(auto_encoder, path_dataset, type_loss, value_encoding_dim):
     """Save history model.
 
     Parameters
@@ -640,12 +629,11 @@ def save_history_model(auto_encoder,
 
     history = DataFrame(auto_encoder.method_autoenconder.history.history)
     history = history.reset_index()
-    history['index'] = history['index']+1
-    history = history.rename(columns={'index': 'epoch'})
+    history["index"] = history["index"] + 1
+    history = history.rename(columns={"index": "epoch"})
 
     # Saving the auto enconder model
-    history_name = "loss_history_{}_{}.parquet".format(
-        type_loss, value_encoding_dim)
+    history_name = "loss_history_{}_{}.parquet".format(type_loss, value_encoding_dim)
     history_name = join(path_save, history_name)
 
     history.to_parquet(history_name, engine="pyarrow")
@@ -673,18 +661,14 @@ def read_history_model(path_dataset, type_loss, value_encoding_dim):
     path_save = join(path_dataset, "save_model")
 
     # Saving the auto enconder model
-    history_name = "loss_history_{}_{}.parquet".format(
-        type_loss, value_encoding_dim)
+    history_name = "loss_history_{}_{}.parquet".format(type_loss, value_encoding_dim)
     history_name = join(path_save, history_name)
 
     history = read_parquet(history_name, engine="pyarrow")
     return history
 
 
-def save_classification(scores,
-                        base_fold,
-                        name_type,
-                        cross_val):
+def save_classification(scores, base_fold, name_type, cross_val):
     """Save classification results.
 
     Parameters
@@ -704,8 +688,7 @@ def save_classification(scores,
         fold.mkdir(parents=True, exist_ok=True)
 
     # Formatted string to save size dimensions in name
-    name_classification = "classification_{}_cv{}.parquet".format(name_type,
-                                                                  cross_val)
+    name_classification = "classification_{}_cv{}.parquet".format(name_type, cross_val)
     # Join to take the path that we will save the train and test
     save_classification_name = join(fold, name_classification)
 
