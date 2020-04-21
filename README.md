@@ -1,91 +1,61 @@
+# [Re] [Deep Convolution Neural Network and Autoencoders-Based Unsupervised Feature Learning of EEG Signals](https://doi.org/10.1109/ACCESS.2018.2833746)
 
-### ReScience submission repository
+<p align="center">
+<a href="https://colab.research.google.com/gist/bruAristimunha/351cf17d387f03078981f8b45e720872/jupyter_paper_re-deep-convolution-neural-network-and-autoencoders-based-unsupervised-feature-learning-of-eeg-signals.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
+</p>
+## Reproduction authors.
 
-This **was** the submission repository for the [Re**Science** journal](https://rescience.github.io).
-The new ReScience workflow uses [ReSciebce/submissions](https://github.com/ReScience/submissions).
+We have no affiliation with the original authors and our attempts to contact them have failed.
 
-### How to submit an article ?
+[Bruno Aristimunha](https://github.com/bruAristimunha)*<sup>1</sup>, [Diogo Eduardo Lima Alves](https://github.com/DiogoEduardo)*<sup>1</sup>, [Walter Hugo Lopez Pinaya](https://github.com/warvito) <sup>1,2</sup>, [Raphael Y. de Camargo](https://rycamargo.wixsite.com) <sup>1</sup>
 
-1. Create a [github](https://github.com) account
+> <sup>1</sup> Center for Mathematics, Computation and Cognition (CMCC), Federal Univesity of ABC (UFABC), Rua Arcturus, 03. Jardim Antares, São Bernardo do Campo, CEP 09606-070, SP, Brazil.
 
-2. [Fork](https://help.github.com/articles/fork-a-repo/) the [ReScience submission](https://github.com/ReScience/ReScience-submission) repository
+> <sup>2</sup> Department of Psychosis Studies, Institute of Psychiatry, Psychology & Neuroscience, King’s College London, London, UK.
 
-3. Clone this new repository into your desktop environment
+>*b.aristimunha@gmail.com, digmogle96@gmail.com
 
-   ```
-   $ git clone https://github.com/YOUR-USERNAME/ReScience-submission
-   ```
+---
 
-4. Create a branch (the branch name should be author names separated with dashes)
+## Original paper authors.
 
-   ```
-   $ git checkout -b AUTHOR1-AUTHOR2
-   ```
+Tingxi Wen <sup>2</sup>, Zhongnan Zhang* <sup>2</sup>
 
+> <sup>2</sup> Software School, Xiamen University, Xiamen, China.
 
-5. Add your code & article (see [author guidelines](https://rescience.github.io/write)) and commit your changes:
-
-   ```
-   $ git commit -a -m "Some comment"
-   ```
+*zhongnan_zhang@xmu.edu.cn
 
 
-6. [Push](https://help.github.com/articles/pushing-to-a-remote/) to github
+### Abstract
 
-   ```
-   $ git push origin AUTHOR1-AUTHOR2
-   ```
 
-7. Issue a [pull request](https://help.github.com/articles/using-pull-requests/) (PR) to Re**Science** with title containing author(s) name and follow the template that will appear once you opened the pull request:
+This paper presents our efforts to reproduce and improve the results achieved by the authors of the original article. We follow the steps and models described in their article and the same public data sets of EEG Signals. Epilepsy affects more than 65 million people globally, and EEG Signals are critical to analyze and recognize epilepsy. Although the efforts in the last years, it is still challenging to extract useful information from these signals and select useful features in a diagnostic application. We construct a deep convolution network and autoencoders-based model (AE-CDNN) in order to perform unsupervised feature learning. We use the AE-CDNN to extract the features of the available data sets, and then we use some common classifiers to classify the features. The results obtained demonstrate that the proposed AE-CDNN outperforms the traditional feature extraction based classification techniques by achieving better accuracy of classification.
 
-  ```
-  **AUTHOR**
 
-  Dear @ReScience/editors,
+## Prerequisites for Reprodubility
 
-  I request a review for the following replication:
+Clone the repository and the branch:
 
-  ### Original article
+```shell
+!git clone --recurse-submodules -j8 -b Aristimunha-Alves-Pinaya-Camargo --single-branch https://github.com/bruAristimunha/ReScience-submission.git 
+```
 
-  **Title:**  
-  **Author(s):**  
-  **Journal (or Conference):**  
-  **Year:**  
-  **DOI:**  
-  **PDF:**   
+Install Conda, we recommend the [tutorial](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
-  ### Replication
+Create a conda enviromnment as follows:
 
-  **Author(s)**:   
-  **Repository**:  
-  **PDF**:  
-  **Keywords**:  
-  **Language**:  
-  **Domain**:  
+```shell
+conda create --name eeg python=3.7 pip --yes
+conda activate eeg
+```
+We recommend using a GPU, if you have it available. But if not, just ignore the first line below:
 
-  ### Results
+```shell
+conda install -c anaconda tensorflow-gpu 
+pip install -r ReScience-submission/requirements.txt
+```
 
-  * [ ] Article has been fully replicated
-  * [ ] Article has been partially replicated
-  * [ ] Article has not been replicated
+### Execute
 
-  ### Potential reviewers
-  <!-- If you know potential reviewers, you can tell us here -->
-  <!-- You can look at http://rescience.github.io/board for the -->
-  <!-- list of registered reviewers (but you can propose others) -->
-
-  ---
-
-  **EDITOR**
-
-  * [ ] Editor acknowledgment
-  * [ ] Reviewer 1 
-  * [ ] Reviewer 2
-  * [ ] Review 1 decision [accept/reject]
-  * [ ] Review 2 decision [accept/reject]
-  * [ ] Editor decision [accept/reject]
-  ```
-
-8. You can suggest reviewers from [editorial board](https://rescience.github.io/board).
-
-9. Answer questions and requests made in the PR conversation page.
+We recommend using the [notebook](https://github.com/bruAristimunha/ReScience-submission/blob/Aristimunha-Alves-Pinaya-Camargo/notebook/Jupyter_Paper_Re_Deep_Convolution_Neural_Network_and_Autoencoders_Based_Unsupervised_Feature_Learning_of_EEG_Signals.ipynb) or the colab to reproduce the results.
