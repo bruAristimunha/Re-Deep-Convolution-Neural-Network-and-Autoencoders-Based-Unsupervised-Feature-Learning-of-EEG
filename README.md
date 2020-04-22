@@ -1,7 +1,7 @@
 # [Re] [Deep Convolution Neural Network and Autoencoders-Based Unsupervised Feature Learning of EEG Signals](https://doi.org/10.1109/ACCESS.2018.2833746)
 
 <p align="center">
-<a href="https://colab.research.google.com/gist/bruAristimunha/351cf17d387f03078981f8b45e720872/jupyter_paper_re-deep-convolution-neural-network-and-autoencoders-based-unsupervised-feature-learning-of-eeg-signals.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/bruAristimunha/ReScience-submission/blob/Aristimunha-Alves-Pinaya-Camargo/notebook/Jupyter_Paper_Re_Deep_Convolution_Neural_Network_and_Autoencoders_Based_Unsupervised_Feature_Learning_of_EEG_Signals.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
