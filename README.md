@@ -39,7 +39,7 @@ This paper presents our efforts to reproduce and improve the results achieved by
 Clone the repository and the branch:
 
 ```shell
-!git clone --recurse-submodules -j8 -b Aristimunha-Alves-Pinaya-Camargo --single-branch https://github.com/bruAristimunha/ReScience-submission.git 
+!git clone --recurse-submodules -j8 https://github.com/bruAristimunha/-Re-Deep-Convolution-Neural-Network-and-Autoencoders-Based-Unsupervised-Feature-Learning-of-EEG.git
 ```
 
 Install Conda, we recommend the [tutorial](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
@@ -59,4 +59,4 @@ pip install -r ReScience-submission/requirements.txt
 
 ### Execute
 
-We recommend using the [notebook](https://github.com/bruAristimunha/ReScience-submission/blob/Aristimunha-Alves-Pinaya-Camargo/notebook/Jupyter_Paper_Re_Deep_Convolution_Neural_Network_and_Autoencoders_Based_Unsupervised_Feature_Learning_of_EEG_Signals.ipynb) or the colab to reproduce the results.
+We recommend using the [notebook](https://github.com/bruAristimunha/Re-Deep-Convolution-Neural-Network-and-Autoencoders-Based-Unsupervised-Feature-Learning-of-EEG/blob/master/notebook/Jupyter_Paper_Re_Deep_Convolution_Neural_Network_and_Autoencoders_Based_Unsupervised_Feature_Learning_of_EEG_Signals.ipynb) or the colab to reproduce the results.
