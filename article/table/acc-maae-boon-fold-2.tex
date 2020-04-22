@@ -1,0 +1,15 @@
+\begin{table}[!ht]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{c|cccccccc}
+\textbf{5-fold} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} \\ \hline 
+1      &         0.71 &         0.6 &         0.6 &           0.67 &           0.64 &          0.6 &       0.69 &         0.43 \\
+2      &         0.71 &         0.6 &         0.6 &           0.70 &           0.68 &          0.6 &       0.74 &         0.41 \\
+3      &         0.81 &         0.6 &         0.6 &           0.70 &           0.77 &          0.6 &       0.75 &         0.43 \\
+4      &         0.75 &         0.6 &         0.6 &           0.72 &           0.65 &          0.6 &       0.73 &         0.44 \\
+5      &         0.71 &         0.6 &         0.6 &           0.68 &           0.73 &          0.6 &       0.74 &         0.54 \\ \hline
+\end{tabular}
+}
+\caption{Accuracy in Classification, with loss MAAE, on each fold cross-validation, for Dataset 1.}
+\label{table:acc-maae-boon-fold-2}
+\end{table}
