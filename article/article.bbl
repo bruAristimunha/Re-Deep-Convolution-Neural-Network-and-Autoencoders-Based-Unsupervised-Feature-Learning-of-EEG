@@ -19,6 +19,376 @@
 
 \refsection{0}
   \datalist[entry]{none/global//global/global}
+    \entry{most_commum:2002}{article}{}
+      \name{author}{1}{}{%
+        {{hash=06fc5f05ca4e18f49705fae8bb0ab2df}{%
+           family={Reynolds},
+           familyi={R\bibinitperiod},
+           given={E.\bibnamedelimi H.},
+           giveni={E\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+      }
+      \strng{namehash}{06fc5f05ca4e18f49705fae8bb0ab2df}
+      \strng{fullhash}{06fc5f05ca4e18f49705fae8bb0ab2df}
+      \strng{bibnamehash}{06fc5f05ca4e18f49705fae8bb0ab2df}
+      \strng{authorbibnamehash}{06fc5f05ca4e18f49705fae8bb0ab2df}
+      \strng{authornamehash}{06fc5f05ca4e18f49705fae8bb0ab2df}
+      \strng{authorfullhash}{06fc5f05ca4e18f49705fae8bb0ab2df}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Epilepsia}
+      \field{number}{s6}
+      \field{title}{The ILAE/IBE/WHO Epilepsy Global Campaign History}
+      \field{volume}{43}
+      \field{year}{2002}
+      \field{pages}{9\bibrangedash 11}
+      \range{pages}{3}
+      \verb{doi}
+      \verb 10.1046/j.1528-1157.43.s.6.5.x
+      \endverb
+      \verb{eprint}
+      \verb https://onlinelibrary.wiley.com/doi/pdf/10.1046/j.1528-1157.43.s.6.5.x
+      \endverb
+      \verb{urlraw}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1046/j.1528-1157.43.s.6.5.x
+      \endverb
+      \verb{url}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1046/j.1528-1157.43.s.6.5.x
+      \endverb
+    \endentry
+    \entry{global-epilepsy:2019}{article}{}
+      \name{author}{1}{}{%
+        {{hash=eba0fcf96b93f1a9a3ce50058983a4b4}{%
+           family={al},
+           familyi={a\bibinitperiod},
+           given={Ettore\bibnamedelima Beghi},
+           giveni={E\bibinitperiod\bibinitdelim B\bibinitperiod},
+           prefix={et.},
+           prefixi={e\bibinitperiod}}}%
+      }
+      \strng{namehash}{eba0fcf96b93f1a9a3ce50058983a4b4}
+      \strng{fullhash}{eba0fcf96b93f1a9a3ce50058983a4b4}
+      \strng{bibnamehash}{eba0fcf96b93f1a9a3ce50058983a4b4}
+      \strng{authorbibnamehash}{eba0fcf96b93f1a9a3ce50058983a4b4}
+      \strng{authornamehash}{eba0fcf96b93f1a9a3ce50058983a4b4}
+      \strng{authorfullhash}{eba0fcf96b93f1a9a3ce50058983a4b4}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{issn}{1474-4422}
+      \field{journaltitle}{The Lancet Neurology}
+      \field{number}{4}
+      \field{title}{Global, regional, and national burden of epilepsy, 1990–2016: a systematic analysis for the Global Burden of Disease Study 2016}
+      \field{volume}{18}
+      \field{year}{2019}
+      \field{pages}{357\bibrangedash 375}
+      \range{pages}{19}
+      \verb{doi}
+      \verb https://doi.org/10.1016/S1474-4422(18)30454-X
+      \endverb
+      \verb{urlraw}
+      \verb http://www.sciencedirect.com/science/article/pii/S147444221830454X
+      \endverb
+      \verb{url}
+      \verb http://www.sciencedirect.com/science/article/pii/S147444221830454X
+      \endverb
+    \endentry
+    \entry{Epilepsia:2010}{article}{}
+      \name{author}{5}{}{%
+        {{hash=034d3fd5426ba78f6efc6e2230b4bee9}{%
+           family={Ngugi},
+           familyi={N\bibinitperiod},
+           given={Anthony\bibnamedelima K.},
+           giveni={A\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=8ef5d23ddcb8cd7fa5eac06f1ab91a79}{%
+           family={Bottomley},
+           familyi={B\bibinitperiod},
+           given={Christian},
+           giveni={C\bibinitperiod}}}%
+        {{hash=4a744b33c6c1a502d584d6e78c01c324}{%
+           family={Kleinschmidt},
+           familyi={K\bibinitperiod},
+           given={Immo},
+           giveni={I\bibinitperiod}}}%
+        {{hash=0c116aa7932cc1873bb8ccb7f3dfabfd}{%
+           family={Sander},
+           familyi={S\bibinitperiod},
+           given={Josemir\bibnamedelima W.},
+           giveni={J\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+        {{hash=7875b5003cfcedf7a272f4aa6ab4487f}{%
+           family={Newton},
+           familyi={N\bibinitperiod},
+           given={Charles\bibnamedelima R.},
+           giveni={C\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \strng{namehash}{512d9a5ad84bf6a4fa1db9dbec1ae8a9}
+      \strng{fullhash}{4044cfab4b415428c8183d7765b3ae0b}
+      \strng{bibnamehash}{4044cfab4b415428c8183d7765b3ae0b}
+      \strng{authorbibnamehash}{4044cfab4b415428c8183d7765b3ae0b}
+      \strng{authornamehash}{512d9a5ad84bf6a4fa1db9dbec1ae8a9}
+      \strng{authorfullhash}{4044cfab4b415428c8183d7765b3ae0b}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Epilepsia}
+      \field{number}{5}
+      \field{title}{Estimation of the burden of active and life-time epilepsy: A meta-analytic approach}
+      \field{volume}{51}
+      \field{year}{2010}
+      \field{pages}{883\bibrangedash 890}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1111/j.1528-1167.2009.02481.x
+      \endverb
+      \verb{eprint}
+      \verb https://onlinelibrary.wiley.com/doi/pdf/10.1111/j.1528-1167.2009.02481.x
+      \endverb
+      \verb{urlraw}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1528-1167.2009.02481.x
+      \endverb
+      \verb{url}
+      \verb https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1528-1167.2009.02481.x
+      \endverb
+      \keyw{Epilepsy,Prevalence,Burden,Meta-analysis}
+    \endentry
+    \entry{stafstrom2015seizures}{article}{}
+      \name{author}{2}{}{%
+        {{hash=4c4e96f5e9ac8186efc4218b1e147436}{%
+           family={Stafstrom},
+           familyi={S\bibinitperiod},
+           given={Carl\bibnamedelima E},
+           giveni={C\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+        {{hash=57c87fab61bf7c35f4172703f6a65d59}{%
+           family={Carmant},
+           familyi={C\bibinitperiod},
+           given={Lionel},
+           giveni={L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cold Spring Harbor Laboratory Press}%
+      }
+      \strng{namehash}{b97dda632ff85ba20e8bd107f828920d}
+      \strng{fullhash}{b97dda632ff85ba20e8bd107f828920d}
+      \strng{bibnamehash}{b97dda632ff85ba20e8bd107f828920d}
+      \strng{authorbibnamehash}{b97dda632ff85ba20e8bd107f828920d}
+      \strng{authornamehash}{b97dda632ff85ba20e8bd107f828920d}
+      \strng{authorfullhash}{b97dda632ff85ba20e8bd107f828920d}
+      \field{sortinit}{3}
+      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Cold Spring Harbor perspectives in medicine}
+      \field{number}{6}
+      \field{title}{Seizures and epilepsy: an overview for neuroscientists}
+      \field{volume}{5}
+      \field{year}{2015}
+      \field{pages}{a022426}
+      \range{pages}{-1}
+    \endentry
+    \entry{thomas2011confronting}{article}{}
+      \name{author}{2}{}{%
+        {{hash=af7f31f5f607f8bef047fe158c495687}{%
+           family={Thomas},
+           familyi={T\bibinitperiod},
+           given={Sanjeev\bibnamedelima V},
+           giveni={S\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+        {{hash=e5435bd44885422d89b5e8fe34d7fe7f}{%
+           family={Nair},
+           familyi={N\bibinitperiod},
+           given={Aparna},
+           giveni={A\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Wolters Kluwer--Medknow Publications}%
+      }
+      \strng{namehash}{d168cab51e9e88682cd342b55ede2e05}
+      \strng{fullhash}{d168cab51e9e88682cd342b55ede2e05}
+      \strng{bibnamehash}{d168cab51e9e88682cd342b55ede2e05}
+      \strng{authorbibnamehash}{d168cab51e9e88682cd342b55ede2e05}
+      \strng{authornamehash}{d168cab51e9e88682cd342b55ede2e05}
+      \strng{authorfullhash}{d168cab51e9e88682cd342b55ede2e05}
+      \field{sortinit}{4}
+      \field{sortinithash}{11cdaee3b18e01d77f3f428b13c1fc76}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Annals of Indian Academy of Neurology}
+      \field{number}{3}
+      \field{title}{Confronting the stigma of epilepsy}
+      \field{volume}{14}
+      \field{year}{2011}
+      \field{pages}{158}
+      \range{pages}{1}
+    \endentry
+    \entry{mollaouglu2013injuries}{article}{}
+      \name{author}{2}{}{%
+        {{hash=cfd2a4a3c1d39c784ba6e511dab3440e}{%
+           family={MOLLAO{Ğ}LU},
+           familyi={M\bibinitperiod},
+           given={Mukadder},
+           giveni={M\bibinitperiod}}}%
+        {{hash=841a89f0333894a378b55f6c4c20b82b}{%
+           family={BOLAYIR},
+           familyi={B\bibinitperiod},
+           given={Ertu{ğ}rul},
+           giveni={E\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Turkish Neuropsychiatric Society}%
+      }
+      \strng{namehash}{57198a0c3dc88f8a81c6ea1a88cf9405}
+      \strng{fullhash}{57198a0c3dc88f8a81c6ea1a88cf9405}
+      \strng{bibnamehash}{57198a0c3dc88f8a81c6ea1a88cf9405}
+      \strng{authorbibnamehash}{57198a0c3dc88f8a81c6ea1a88cf9405}
+      \strng{authornamehash}{57198a0c3dc88f8a81c6ea1a88cf9405}
+      \strng{authorfullhash}{57198a0c3dc88f8a81c6ea1a88cf9405}
+      \field{sortinit}{5}
+      \field{sortinithash}{3c19c3776b658b3558e9e2e4840c01e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{N{ö}ro Psikiyatri Ar{ş}ivi}
+      \field{number}{3}
+      \field{title}{Injuries in patients with epilepsy and some factors associated with injury}
+      \field{volume}{50}
+      \field{year}{2013}
+      \field{pages}{269}
+      \range{pages}{1}
+    \endentry
+    \entry{schauwecker2012effects}{article}{}
+      \name{author}{1}{}{%
+        {{hash=ab6fd68d293411ac6b07a92790c4dd83}{%
+           family={Schauwecker},
+           familyi={S\bibinitperiod},
+           given={Paula\bibnamedelima Elyse},
+           giveni={P\bibinitperiod\bibinitdelim E\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {BioMed Central}%
+      }
+      \strng{namehash}{ab6fd68d293411ac6b07a92790c4dd83}
+      \strng{fullhash}{ab6fd68d293411ac6b07a92790c4dd83}
+      \strng{bibnamehash}{ab6fd68d293411ac6b07a92790c4dd83}
+      \strng{authorbibnamehash}{ab6fd68d293411ac6b07a92790c4dd83}
+      \strng{authornamehash}{ab6fd68d293411ac6b07a92790c4dd83}
+      \strng{authorfullhash}{ab6fd68d293411ac6b07a92790c4dd83}
+      \field{sortinit}{7}
+      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{BMC neuroscience}
+      \field{number}{1}
+      \field{title}{The effects of glycemic control on seizures and seizure-induced excitotoxic cell death}
+      \field{volume}{13}
+      \field{year}{2012}
+      \field{pages}{94}
+      \range{pages}{1}
+    \endentry
+    \entry{niedermeyer2005electroencephalography}{book}{}
+      \name{author}{2}{}{%
+        {{hash=1718e970f6b53c591401adcc385f57c2}{%
+           family={Niedermeyer},
+           familyi={N\bibinitperiod},
+           given={Ernst},
+           giveni={E\bibinitperiod}}}%
+        {{hash=801f2efe6340a975e5ddeb5fd24a933c}{%
+           family={Silva},
+           familyi={S\bibinitperiod},
+           given={FH\bibnamedelima Lopes},
+           giveni={F\bibinitperiod\bibinitdelim L\bibinitperiod},
+           prefix={da},
+           prefixi={d\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Lippincott Williams \& Wilkins}%
+      }
+      \strng{namehash}{0727e57edf7311e710574e6282554c90}
+      \strng{fullhash}{0727e57edf7311e710574e6282554c90}
+      \strng{bibnamehash}{0727e57edf7311e710574e6282554c90}
+      \strng{authorbibnamehash}{0727e57edf7311e710574e6282554c90}
+      \strng{authornamehash}{0727e57edf7311e710574e6282554c90}
+      \strng{authorfullhash}{0727e57edf7311e710574e6282554c90}
+      \field{sortinit}{9}
+      \field{sortinithash}{1dd72ab054147731c9d824b49aba0534}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Electroencephalography: basic principles, clinical applications, and related fields}
+      \field{year}{2005}
+    \endentry
+    \entry{puce2017review}{article}{}
+      \name{author}{2}{}{%
+        {{hash=f03f826d4eace568f0b2b86453469fce}{%
+           family={Puce},
+           familyi={P\bibinitperiod},
+           given={Aina},
+           giveni={A\bibinitperiod}}}%
+        {{hash=415389179906fed7c0ecf10bab6d2476}{%
+           family={H{ä}m{ä}l{ä}inen},
+           familyi={H\bibinitperiod},
+           given={Matti\bibnamedelima S},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Multidisciplinary Digital Publishing Institute}%
+      }
+      \strng{namehash}{08cd2b77e61c0e65b2209d27bceaba48}
+      \strng{fullhash}{08cd2b77e61c0e65b2209d27bceaba48}
+      \strng{bibnamehash}{08cd2b77e61c0e65b2209d27bceaba48}
+      \strng{authorbibnamehash}{08cd2b77e61c0e65b2209d27bceaba48}
+      \strng{authornamehash}{08cd2b77e61c0e65b2209d27bceaba48}
+      \strng{authorfullhash}{08cd2b77e61c0e65b2209d27bceaba48}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Brain sciences}
+      \field{number}{6}
+      \field{title}{A review of issues related to data acquisition and analysis in EEG/MEG studies}
+      \field{volume}{7}
+      \field{year}{2017}
+      \field{pages}{58}
+      \range{pages}{1}
+    \endentry
+    \entry{craik2019deep}{article}{}
+      \name{author}{3}{}{%
+        {{hash=8afd772e726e6dde771ad45623c1465c}{%
+           family={Craik},
+           familyi={C\bibinitperiod},
+           given={Alexander},
+           giveni={A\bibinitperiod}}}%
+        {{hash=31fca699639dbfd258e5cf2934859439}{%
+           family={He},
+           familyi={H\bibinitperiod},
+           given={Yongtian},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=a0891b6741fda3c4e36ecbcf6ecc5fa7}{%
+           family={Contreras-Vidal},
+           familyi={C\bibinithyphendelim V\bibinitperiod},
+           given={Jose\bibnamedelima L},
+           giveni={J\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IOP Publishing}%
+      }
+      \strng{namehash}{b1673c907b6ab3991c88ff64048fe1c5}
+      \strng{fullhash}{b1673c907b6ab3991c88ff64048fe1c5}
+      \strng{bibnamehash}{b1673c907b6ab3991c88ff64048fe1c5}
+      \strng{authorbibnamehash}{b1673c907b6ab3991c88ff64048fe1c5}
+      \strng{authornamehash}{b1673c907b6ab3991c88ff64048fe1c5}
+      \strng{authorfullhash}{b1673c907b6ab3991c88ff64048fe1c5}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of neural engineering}
+      \field{number}{3}
+      \field{title}{Deep learning for electroencephalogram (EEG) classification tasks: a review}
+      \field{volume}{16}
+      \field{year}{2019}
+      \field{pages}{031001}
+      \range{pages}{1}
+    \endentry
     \entry{WenZha:2018}{article}{}
       \name{author}{2}{}{%
         {{hash=8829a8c680e17358bda9022c9b21af5c}{%
@@ -75,8 +445,8 @@
       \strng{authorbibnamehash}{73926ee26a70ad32413c82e07d3cacee}
       \strng{authornamehash}{73926ee26a70ad32413c82e07d3cacee}
       \strng{authorfullhash}{73926ee26a70ad32413c82e07d3cacee}
-      \field{sortinit}{3}
-      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Clinical Neurophysiology}
@@ -134,8 +504,8 @@
       \strng{authorbibnamehash}{722f560a2f6dcb04c4b5bdedc1c1425f}
       \strng{authornamehash}{9d748f6fdd95b7258118d7e45ea03434}
       \strng{authorfullhash}{722f560a2f6dcb04c4b5bdedc1c1425f}
-      \field{sortinit}{3}
-      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Annals of biomedical engineering}
@@ -188,8 +558,8 @@
       \strng{authorbibnamehash}{2a9f3a72878b189f1d2326873a649418}
       \strng{authornamehash}{6896ca1edd214ff84f334b2f7baa1fb5}
       \strng{authorfullhash}{2a9f3a72878b189f1d2326873a649418}
-      \field{sortinit}{3}
-      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Epilepsy \& Behavior}
@@ -237,8 +607,8 @@
       \strng{authorbibnamehash}{32124bce7b8bdb3389c83029d19af393}
       \strng{authornamehash}{6896ca1edd214ff84f334b2f7baa1fb5}
       \strng{authorfullhash}{32124bce7b8bdb3389c83029d19af393}
-      \field{sortinit}{3}
-      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Epilepsy \& Behavior}
@@ -277,8 +647,8 @@
       \strng{authorbibnamehash}{71fefe8df9400a1edc3b47bdf5da451c}
       \strng{authornamehash}{71fefe8df9400a1edc3b47bdf5da451c}
       \strng{authorfullhash}{71fefe8df9400a1edc3b47bdf5da451c}
-      \field{sortinit}{4}
-      \field{sortinithash}{11cdaee3b18e01d77f3f428b13c1fc76}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Expert Systems with Applications}
@@ -320,8 +690,8 @@
       \strng{authorbibnamehash}{4608c63fbde73b16c7cd3514e0920ba2}
       \strng{authornamehash}{ee3e30a736d8f0ac72fd6311eba72310}
       \strng{authorfullhash}{4608c63fbde73b16c7cd3514e0920ba2}
-      \field{sortinit}{5}
-      \field{sortinithash}{3c19c3776b658b3558e9e2e4840c01e2}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of medical systems}
@@ -354,8 +724,8 @@
       \strng{authorbibnamehash}{56e8a3673b9ffd5cb43d7a73c676d05c}
       \strng{authornamehash}{56e8a3673b9ffd5cb43d7a73c676d05c}
       \strng{authorfullhash}{56e8a3673b9ffd5cb43d7a73c676d05c}
-      \field{sortinit}{6}
-      \field{sortinithash}{57e57fb8451e7fcfa45d1e069f6d3136}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Expert Systems with Applications}
@@ -403,8 +773,8 @@
       \strng{authorbibnamehash}{8d96be9e215154d71834338d664f6d98}
       \strng{authornamehash}{bd640d6e87c0afd255d0071edec5e2a7}
       \strng{authorfullhash}{8d96be9e215154d71834338d664f6d98}
-      \field{sortinit}{7}
-      \field{sortinithash}{c818dd9105a2852444fc9f5e145c294e}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Computers in biology and medicine}
@@ -443,8 +813,8 @@
       \strng{authorbibnamehash}{39e0ea1b5d2c5c3fc80cca15ef41adcf}
       \strng{authornamehash}{5cbdd1786f58cbf1d13848e5acd3c692}
       \strng{authorfullhash}{39e0ea1b5d2c5c3fc80cca15ef41adcf}
-      \field{sortinit}{8}
-      \field{sortinithash}{07edf88d4ea82509b9c4b4d13f41c452}
+      \field{sortinit}{1}
+      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{arXiv preprint arXiv:1803.09848}
@@ -478,8 +848,8 @@
       \strng{authorbibnamehash}{cc3318ee7683667b4dc7eaa18c94ab90}
       \strng{authornamehash}{cc3318ee7683667b4dc7eaa18c94ab90}
       \strng{authorfullhash}{cc3318ee7683667b4dc7eaa18c94ab90}
-      \field{sortinit}{9}
-      \field{sortinithash}{1dd72ab054147731c9d824b49aba0534}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{BMC medical informatics and decision making}
@@ -532,8 +902,8 @@
       \strng{authorbibnamehash}{d8724caf10646718fe3d432b6e5b2743}
       \strng{authornamehash}{b1de9e5edf64f4fd5ffcb69e82394ea2}
       \strng{authorfullhash}{d8724caf10646718fe3d432b6e5b2743}
-      \field{sortinit}{1}
-      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Computers in biology and medicine}
@@ -556,8 +926,8 @@
       \strng{authorbibnamehash}{c5dabc5056442e155f009b940edfb658}
       \strng{authornamehash}{c5dabc5056442e155f009b940edfb658}
       \strng{authorfullhash}{c5dabc5056442e155f009b940edfb658}
-      \field{sortinit}{1}
-      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Astrophysics Source Code Library}
@@ -625,8 +995,8 @@
       \strng{authorbibnamehash}{9db6c23346f1033fd71fe622f38727e1}
       \strng{authornamehash}{a6cc280389a0ac6ef5ff4987e28e4089}
       \strng{authorfullhash}{9db6c23346f1033fd71fe622f38727e1}
-      \field{sortinit}{1}
-      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{12th $\{$USENIX$\}$ Symposium on Operating Systems Design and Implementation ($\{$OSDI$\}$ 16)}
@@ -659,8 +1029,8 @@
       \strng{authorbibnamehash}{a5972ee3a37ec413d62df46e8b0ac251}
       \strng{authornamehash}{a5972ee3a37ec413d62df46e8b0ac251}
       \strng{authorfullhash}{a5972ee3a37ec413d62df46e8b0ac251}
-      \field{sortinit}{1}
-      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{ReScience C}
@@ -708,8 +1078,8 @@
       \strng{authorbibnamehash}{f25cf16db11bcae548ea652c1ec09f83}
       \strng{authornamehash}{f25cf16db11bcae548ea652c1ec09f83}
       \strng{authorfullhash}{f25cf16db11bcae548ea652c1ec09f83}
-      \field{sortinit}{1}
-      \field{sortinithash}{2174f786c6195e7fe2ee1c229b416e29}
+      \field{sortinit}{2}
+      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proceedings of the 27th International Conference on International Conference on Machine Learning}
@@ -765,8 +1135,8 @@
       \strng{authorbibnamehash}{f3ba145335a3c376743a48f4fd64b588}
       \strng{authornamehash}{54e18ec94e926fdf690b8a4d2fe0f180}
       \strng{authorfullhash}{f3ba145335a3c376743a48f4fd64b588}
-      \field{sortinit}{2}
-      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{sortinit}{3}
+      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Physical review. E, Statistical, nonlinear, and soft matter physics}
@@ -797,8 +1167,8 @@
       \strng{authorbibnamehash}{7e90993459df4f82efcadae6bbe61e9f}
       \strng{authornamehash}{7e90993459df4f82efcadae6bbe61e9f}
       \strng{authorfullhash}{7e90993459df4f82efcadae6bbe61e9f}
-      \field{sortinit}{2}
-      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{sortinit}{3}
+      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Open Access Library Journal}
@@ -826,8 +1196,8 @@
       \strng{authorbibnamehash}{9d99119462dc8a944e0ddd06eea385c6}
       \strng{authornamehash}{9d99119462dc8a944e0ddd06eea385c6}
       \strng{authorfullhash}{9d99119462dc8a944e0ddd06eea385c6}
-      \field{sortinit}{2}
-      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{sortinit}{3}
+      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Application of machine learning to epileptic seizure onset detection and treatment}
@@ -876,8 +1246,8 @@
       \strng{authorbibnamehash}{7c2b3775a6f35def27f8b03a646bfece}
       \strng{authornamehash}{8dfe380eff3bbd40845a8d77fe6f1b2f}
       \strng{authorfullhash}{7c2b3775a6f35def27f8b03a646bfece}
-      \field{sortinit}{2}
-      \field{sortinithash}{cbff857e587bcb4635511624d773949e}
+      \field{sortinit}{3}
+      \field{sortinithash}{a4b52e5432884761f50fb9571273b93e}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{journaltitle}{Journal of neural engineering}
