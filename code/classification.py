@@ -85,13 +85,17 @@ def methods_classification(
     classifiers : list
     """
     k_neighbors = KNeighborsClassifier(n_neighbors=n_neighbors)  # 1
-    svm_linear = svm.SVC(kernel=kernel_a)  # 2
-    svm_radial = svm.SVC(kernel=kernel_b)  # 3
-    decision_tree = DecisionTreeClassifier(max_depth=max_depth)  # 4
-    random_forest = RandomForestClassifier(
-        n_estimators=n_estimators, random_state=random_state, max_features=max_features
-    )  # 5
-    multi_layer = MLPClassifier()  # 6
+    svm_linear = svm.SVC(kernel=kernel_a, 
+                         random_state=random_state)  # 2
+    svm_radial = svm.SVC(kernel=kernel_b, 
+                         random_state=random_state)  # 3
+    decision_tree = DecisionTreeClassifier(max_depth=max_depth,
+                                           random_state=random_state)  # 4
+    random_forest = RandomForestClassifier(n_estimators=n_estimators, 
+                                           random_state=random_state,  
+                                           max_features=max_features
+                                        )  # 5
+    multi_layer = MLPClassifier(random_state=random_state)  # 6
     ada_boost = AdaBoostClassifier(random_state=random_state)  # 7
     gaussian_nb = GaussianNB()
 
