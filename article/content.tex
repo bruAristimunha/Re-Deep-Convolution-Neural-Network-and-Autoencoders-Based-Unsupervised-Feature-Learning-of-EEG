@@ -1,7 +1,6 @@
 
 This paper presents our efforts to reproduce and improve the results achieved by the authors of the original article. We follow the steps and models described in their article and the same public data sets of EEG Signals. Epilepsy affects more than 65 million people globally, and EEG Signals are critical to analyze and recognize epilepsy. Although the efforts in the last years, it is still challenging to extract useful information from these signals and select useful features in a diagnostic application. We construct a deep convolution network and autoencoders-based model (AE-CDNN) in order to perform unsupervised feature learning. We use the AE-CDNN to extract the features of the available data sets, and then we use some common classifiers to classify the features. The results obtained demonstrate that the proposed AE-CDNN outperforms the traditional feature extraction based classification techniques by achieving better accuracy of classification.
 
-
 \section{Introduction}
 
 Epilepsy is a chronic neurological disorder, and it is becoming one of the most common neurological diseases in the world \cite{most_commum:2002}. Approximately $1\%$ of the world's population is affected by epilepsy representing more than 65 million people affected \cite{global-epilepsy:2019,Epilepsia:2010}. This disorder is characterized by the occurrence of spontaneous convulsions due to the abnormal synchronous firing of the cortical neurons \cite{stafstrom2015seizures}. This physical reaction can generate many problems for patients, including physical harm caused by the loss of consciousness, shame and discrimination \cite{thomas2011confronting}.
@@ -382,6 +381,11 @@ The performance of the Gaussian classifier may be related to the fact that the i
 \input{table/specificity_boon_mae-reproduction.tex}
 
 \input{table/specificity_boon_maae-reproduction.tex}
+
+
+\input{table/specificity_chbmit_mae-reproduction.tex}
+
+\input{table/specificity_chbmit_maae-reproduction.tex}
 
 
 
