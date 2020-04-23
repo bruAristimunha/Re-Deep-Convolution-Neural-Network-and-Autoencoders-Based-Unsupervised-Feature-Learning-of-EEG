@@ -39,7 +39,7 @@ This paper presents our efforts to reproduce and improve the results achieved by
 Clone the repository and the branch:
 
 ```shell
-!git clone --recurse-submodules -j8 https://github.com/bruAristimunha/-Re-Deep-Convolution-Neural-Network-and-Autoencoders-Based-Unsupervised-Feature-Learning-of-EEG.git
+!git clone --recurse-submodules -j8 https://github.com/bruAristimunha/Re-Deep-Convolution-Neural-Network-and-Autoencoders-Based-Unsupervised-Feature-Learning-of-EEG.git ReScience-submission
 ```
 
 Install Conda, we recommend the [tutorial](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
