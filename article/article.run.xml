@@ -55,12 +55,12 @@
       <file>blx-compat.def</file>
       <file>biblatex.def</file>
       <file>blx-natbib.def</file>
-      <file>numeric.bbx</file>
       <file>standard.bbx</file>
+      <file>numeric.bbx</file>
       <file>numeric.cbx</file>
       <file>biblatex.cfg</file>
-      <file>american.lbx</file>
       <file>english.lbx</file>
+      <file>american.lbx</file>
     </requires>
   </internal>
   <external package="biblatex" priority="5" active="0">

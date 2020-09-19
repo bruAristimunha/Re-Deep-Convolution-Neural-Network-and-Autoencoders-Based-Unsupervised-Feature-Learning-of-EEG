@@ -1,5 +1,5 @@
 
-This paper presents our efforts to reproduce and improve the results achieved by the authors of the original article. We follow the steps and models described in their article and the same public data sets of EEG Signals. Epilepsy affects more than 65 million people globally, and EEG Signals are critical to analyze and recognize epilepsy. Although the efforts in the last years, it is still challenging to extract useful information from these signals and select useful features in a diagnostic application. We construct a deep convolution network and autoencoders-based model (AE-CDNN) in order to perform unsupervised feature learning. We use the AE-CDNN to extract the features of the available data sets, and then we use some common classifiers to classify the features. The results obtained demonstrate that the proposed AE-CDNN outperforms the traditional feature extraction based classification techniques by achieving better accuracy of classification.
+This paper presents our efforts to reproduce the results achieved by the authors of the original article. We follow the steps and models described in their article and the same public data sets of EEG Signals. Epilepsy affects more than 65 million people globally, and EEG Signals are critical to analyze and recognize epilepsy. Although the efforts in the last years, it is still challenging to extract useful information from these signals and select useful features in a diagnostic application. We construct a deep convolution network and autoencoders-based model (AE-CDNN) in order to perform unsupervised feature learning. We use the AE-CDNN to extract the features of the available data sets, and then we use some common classifiers to classify the features. The results obtained demonstrate that the proposed AE-CDNN outperforms the traditional feature extraction based classification techniques by achieving better accuracy of classification.
 
 \section{Introduction}
 
@@ -17,30 +17,18 @@ However, this costly task still presents several challenges for automatic crisis
 
 With this problem in hand, this paper reproduces the results obtained in \cite{WenZha:2018}, with public data labeled and preprocessed. In addition, we get new results by combining the proposal classifiers into a classifier by set voting, and we add new metrics.
 
-The remainder of this paper is organized as follows: Section \ref{sec:related} presents a few works related to the classification of epileptic seizures in EGG. Section \ref{sec:propose} introduce the methodological proposal employed, and their differences with the work of \cite{WenZha:2018}. Section \ref{sec:metho} lists the experimental validation process using epilepsy datasets. Section \ref{sec:resu} presents the corresponding results and analyzes our approach. Finally, conclusions were summarized in Section \ref{sec:concl}.
+The remainder of this paper is organized as follows: Section \ref{sec:propose} introduces the methodological proposal employed, and their differences with the work of \cite{WenZha:2018}. Section \ref{sec:metho} lists the experimental validation process using epilepsy datasets. Section \ref{sec:resu} presents the corresponding results and analyzes our approach. Finally, conclusions were summarized in Section \ref{sec:concl}.
 
 
-\section{Related Work}
-\label{sec:related}
 
-Several papers use automated methods for detecting seizures. We can extract several discriminative characteristics of the signals, among them, we mention the autocorrelation, probability of synchronization, functional connectivity network properties, EEG morphology and the reconstructed powers of the time series. 
 
-The oscillatory characteristics present in the time series of patients with epilepsy were extensively studied by temporal frequency analysis for classification \cite{saab2005system,kuhlmann2009seizure,shoeb2004patient,shoeb2011machine}. Using this technique, we mention the Discrete Wavelet Transform (DWT), which, despite requiring hand-designed parameters, it is the most used \cite{ullah2018automated}.
 
-There is no standard rule for manually label seizures in databases, which makes it difficult to compare the results of these methods. Besides the few papers that use the same sets, few are looking for the same task.
 
-In \cite{chua2011application}, it is used High Order Spectra (HOS) and spectrum-based energy resources for the automated detection of epilepsy. The proposed method yields good results when using Gaussian Mixture (GMM) for classification ($93.11\%$ and $88.78\%$). In \cite{nicolaou2012detection}, we have that the authors extracted the entropy of the permutation of the signals, and employed these in an SVM for classification. The result of this methodology, acquired $93.55\%$ for our first database, in task A vs E.
-
-Some researchers have applied Deep Belief Networks (DBNs) to the detection of seizures \cite{acharya2018deep}. In the line of deep learning algorithms, Convolutional Neural Networks (CNNs) attract growing interest in the literature. In \cite{hussein2018epileptic}, they propose a CNN that learns based on the spectral information of each channel and a LSTM network with a single layer to classify the channels of the objects. 
-
-\cite{xun2016detecting} propose an approach unusual when decoding each window of possible interval as an {\it EEG word} from the {\it EEG} dictionary. They explore temporal knowledge by learning context information from EEG fragments (Context-EEG). The authors obtained a $22.93\%$ error rate in the control classification vs epileptic crisis using the second dataset present in \cite{WenZha:2018}. 
-
-\cite{emami2019autoencoding} obtained $100\%$ sensitivity with a simpler methodology than our. For each channel, it builds a autoencoder and through the error of reconstruction is classified. The dataset was self and with no access available. \cite{ullah2018automated} propose a pyramidal model of one dimension for convolution (P-1D-CNN). The method obtains $99.1$ $\pm$ $0.9$ in our first dataset.
 
 \section{Methodology Proposal}
 \label{sec:propose}
 
-In this section, we describe implementation details, as the core is the reproducible aspect of our reference article. We introduce the idea and implementation of autoencoder/feature learning and our version of the model in \cite{WenZha:2018}, explaining the differences we have made to the original model.
+In this section, we describe implementation details, as the core is the reproducible aspect of our reference article. We introduce the idea and implementation of autoencoder/feature learning and our version of the model in \cite{WenZha:2018}, explaining the differences we have made in the original model.
 
 In our study, we keep the autoencoder and feature learning as proposed. However, in the classification, in addition to the individual classifiers, we also employ a large ensemble learning classifier, which decides by majority vote the object class.
 
@@ -53,9 +41,9 @@ Given the lack of information about implementation in the original paper, some a
 \begin{itemize}
 \item The number of epoch in the AutoEnconder is assumed to be $5000$; 
 \item The number of samples per batch size is assumed to be $256$; 
-\item A column of the first database is removed, there is disagreement in the literature on the total instances, $4097$ or $4096$. In the specific database we use there is $4097$. The removed attribute is at the endpoint of each object; 
-\item In the second dataset, we use the channel reported by the author to train the AutoEncoder;
-\item The loss function presented in equation $12$ of the \cite{WenZha:2018} was implemented and we also compared the result obtained with \textit{MAPE}; 
+\item A column of the Bonn University EEG dataset was removed since the authors of \cite{WenZha:2018} used $4096$ instances and in this database there is $4097$ instances. The removed attribute is at the endpoint of each object; 
+\item In the Children's Hospital of Boston EEG database we use the channel reported by the author to train the AutoEncoder;
+\item The loss function presented in equation $12$ in \cite{WenZha:2018} was implemented and we also compared the result obtained with \textit{MAPE}; 
 \item The value of the seeds selected in all classifiers, data splitting and elsewhere was $42$; 
 \item The train-validation ratio was $80\%-20\%$ to AutoEnconder, in classifiers we use cross-validation with 5 or 10-fold; 
 \item Given a sizing problem, we resized the values using the MinMax method, before the classification process.
@@ -66,27 +54,7 @@ The experiments were performed using a CPU with Intel Core i7-5930K with 3.50 GH
 
 \subsection{AutoEncoders}
 
-The autoencoder implemented is a specific case of neural network structure. It is formed by three layers, an input layer, an output layer and a hidden layer. The training is done to set the weights of the hidden layer to force the input layer and output layer to be as close to each other as possible. Our features are extracted from the hidden layer, which reduces the dimension of data. 
-
-Therefore we have a encoding process and a decoding process, and we obtain the hidden layer $h$ by applying the encoding function:
-
-\begin{equation}
-h = encoder(x) = g(W*x+b),
-\end{equation}
-
-where $W$ is the weight matrix between the input layer and hidden layer. In the decoding function the hidden layer $h$ is the input and $y = decoder(h)$ as output, the function is defined as follows:
-
-\begin{equation}
-y = decoder(x) = g(W'*x + b'),
-\end{equation}
-
-where $W'$ is the weight matrix between the hidden layer and output layer. Since we want the input and output to be as close as possible, we have the object function for the model training process:
-
-\begin{equation}
-\min \sum |y^{(i)} - x^{(i)}|,
-\end{equation}
-
-where $y^{(i)}$ is the output signal and $x^{(i)}$ is the input signal.
+The autoencoder implemented is a specific case of neural network structure. It is formed by three layers, an input layer, an output layer and a hidden layer. The training is done to set the weights of the hidden layer to force the input layer and output layer to be as close to each other as possible. Our features are extracted from the hidden layer, which reduces the dimension of data. For more details about the encoding and decoding functions see the Section 2 in the original article \cite{WenZha:2018}.
 
 \subsection{Feature Learning Model}
 
@@ -117,6 +85,7 @@ The difference between the loss functions is only in the fact that one takes in 
 
 $$\text{Loss MAAE}= \frac{1}{N} \sum_{i=1}^N \frac{|x^{(i)} - y^{(i)}|}{{\bar x^{(i)}}} .$$
 
+Note that we refer to \cite{WenZha:2018}'s AE-CDNN-L1 as {\it Loss-MAE} and to \cite{WenZha:2018}'s AE-CDNN-L2 as {\it Loss-MAAE}
 
 \subsection{Classification}
 
@@ -125,9 +94,25 @@ Since we have extracted the features with reduced dimension, we use supervised l
 The proposed modification combines these classifiers and creates a single classifier that decides by voting. In short, the classifiers were combined by ensemble learning, and the result of the classification became the classification most voted by the classifiers.
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Experimental Methodology}
 \label{sec:metho}
-In this paper, as in our reference paper \cite{WenZha:2018}, we use unsupervised learning method in EEG signals in order to obtain useful features. This process is needed because the original data is high-dimensional. By using the auto-encoder, we can extract features with reduced dimension.
+In this paper, as in our reference paper \cite{WenZha:2018}, we use unsupervised learning method in EEG signals in order to obtain useful features. This process is needed because the original data is high-dimensional. By using the auto-encoder, we can extract features with reduced dimension. As the original authors we may refer to Bonn University EEG database simply as dataset 1 and to Children's Hospital of Boston EEG database simply as dataset 2.
 
 \subsection{Bonn University EEG database}
 
@@ -164,6 +149,23 @@ According to \cite{roy2019deep}, most of the state-of-the-art systems for epilep
 
 In addition, there was also the AUC-ROC (Area Under The Curve - Receiver Operating Characteristic) defined as the cumulative distribution function of the true positive rate vs the false-negative rate denoted by a threshold.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Results and Discussion}
 \label{sec:resu}
 
@@ -171,9 +173,11 @@ In this section, we analyze three analytical approaches. In the first subsection
 
 \subsection{Checking the Variance} 
 
-According to the original authors, the choice of the channel in the second dataset observed the variance present in the channels. For that, they followed the methodology: ``1) calculate the variance of each channel in each sample, and select the channel with the maximum variance for each sample; 2) count these channels.\,''
+According to the original authors, the choice of the channel in the Children's Hospital of Boston EEG database observed the variance present in the channels. For that, they followed the methodology: 1) calculate the variance of each channel in each sample, and select the channel with the maximum variance for each sample; 2) count these channels; 3) Select the most often channel considering the first $10$ patients.
 
-Thereby, we model the three interpretations of what is the sample defined by the author. In the first, we analyzed each recording file of the dataset as a sample, having an average length of $921600$ referring to the recorded $3600s$. In these files, we compute and list the electrode with more variance and discard the rest. We accumulate and count for all files. The results obtained can be seen in the Figure below:
+Following the methodology presented above we found a different channel from the one found in \cite{WenZha:2018}. So we decided to explore other scenarios. Note that the variance can be calculated based on each sample, per person or the full database. Despite the fact the authors in \cite{WenZha:2018} mentioned explicitly they used the variance of each sample, since we found a different result we explored the other possibilities (per person and the full database).
+
+Thereby, we model the three scenarios. In the first, we analyzed each recording file of the dataset as a sample, having an average length of $921600$ referring to the recorded $3600s$. In these files, we compute and list the electrode with more variance and discard the rest. We accumulate and count for all files. The results obtained can be seen in the Figure below:
 
 \begin{figure}[!ht]
   \centering
@@ -182,7 +186,7 @@ Thereby, we model the three interpretations of what is the sample defined by the
   \label{fig:variance_per_file}
 \end{figure}
 
-In the second interpretation, we understand that each sample is accumulated per person with all his recordings. So the variance was calculated in parallel in the files and combined for each person. For each person, we count the occurrence of the channel with more variance. As shown in Figure \ref{fig:variance_per_person}.
+In the second scenario, we understand that each sample is accumulated per person with all his recordings. So the variance was calculated in parallel in the files and combined for each person. For each person, we count the occurrence of the channel with more variance. As shown in Figure \ref{fig:variance_per_person}.
 
 
 \begin{figure}[!ht]
@@ -194,7 +198,7 @@ In the second interpretation, we understand that each sample is accumulated per 
 
 
 
-Finally, as a final interpretation, we calculate the cumulative variance across all people and all records, thus, we did not perform a sampling process. In other words, we put all the files together and calculate the variance as if it were a single record. For this, we compute the variance, number of points and average per channel in each file and accumulate through the cumulative variance calculation algorithm. The result of this analysis approach can be seen in Figure \ref{fig:variance_all_files}.
+Finally, as a final scenario, we calculate the cumulative variance across all people and all records, thus, we did not perform a sampling process. In other words, we put all the files together and calculate the variance as if it were a single record. For this, we compute the variance, number of points and average per channel in each file and accumulate through the cumulative variance calculation algorithm. The result of this analysis approach can be seen in Figure \ref{fig:variance_all_files}.
 
 
 \begin{figure}[!ht]
@@ -205,9 +209,9 @@ Finally, as a final interpretation, we calculate the cumulative variance across 
 \end{figure}
 
 
-The results obtained in the first, second and third interpretations were not consistent with those reported by the author. There is still another possible scenario, however, not reproducible, where the authors randomly sampled the dataset and evaluated the variance.
+The results obtained in the first, second and third scenarios were not consistent with those reported by the author, in any of them we found the channel FT9-FT10 as the one appearing most for the first $10$ patients. There is also another possible scenario, however, it is not reproducible, where the authors randomly sampled the dataset and evaluated the variance.
 
-However, given the associated uncertainty, we decided to repeat the choice of the channel $FT9-FT10$, although this is not the one with the most variance in the modeled scenarios.
+Given the associated uncertainty, we decided to repeat the choice of the channel $FT9-FT10$, although this is not the one with the most variance in the modeled scenarios.
 
 
 \subsection{Reproduction of the values reported by the original author}
@@ -433,7 +437,7 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \newpage
 
 \section{Conclusion}\label{sec:concl}
-In this article, we re-implemented the approach proposed in \cite{WenZha:2018} and propose the use of a different classifier. This classification approach, based on deep learning for detecting epileptic seizures using EGG had not been explored previously. We adopted a Auto-Enconder that allowed us to construct a smaller representation space. Among the variety of metrics, using the ensemble method results in better ROC-AUC results.
+In this article, we re-implemented the approach proposed in \cite{WenZha:2018} and propose the use of a different classifier. This classification approach, based on deep learning for detecting epileptic seizures using EGG had not been explored previously. We adopted a Auto-Encoder that allowed us to construct a smaller representation space. Among the variety of metrics, using the ensemble method results in better ROC-AUC results.
 
 The original authors left some gaps that made it impossible to fully reproduce their obtained results. For example, the lack of information about the neural classifier used in the last sub-section, about the sampling process of the first and second data sets, and the number of times or batch size. Consequently, the results obtained can be considered at most a replication.
 
