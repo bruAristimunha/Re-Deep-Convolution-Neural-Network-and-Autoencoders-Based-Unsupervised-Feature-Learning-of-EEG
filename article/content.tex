@@ -119,7 +119,7 @@ This database, built in partnership with the Massachusetts Institute of Technolo
 
 In the data of the first ten patients, 200 windows of the same size of the control set were chosen from the epileptic patients we choose $200$, with size of $4096$, in the same way of the control group.
 
-
+\begin{comment}
 \subsection{Performance Measures}
 
 According to \cite{roy2019deep}, most of the state-of-the-art systems for epilepsy use the metrics defined below. The adaptation of these metrics for evaluating our system contributes to fair comparison with state-of-the-art systems. The definitions of these metrics are given in Table \ref{table:metrics}.
@@ -138,11 +138,7 @@ According to \cite{roy2019deep}, most of the state-of-the-art systems for epilep
 \noindent where False Negatives - FN is the number of epileptic cases, which are predicted as control, True Positives - TP is the number of epileptic cases, which are predicted as epileptic, True Negative - TN is the number of control case that is predicted as control and False Positives - FP is the number of control cases that are identified as epileptic by the system. 
 
 In addition, there was also the AUC-ROC (Area Under The Curve - Receiver Operating Characteristic) defined as the cumulative distribution function of the true positive rate vs the false-negative rate denoted by a threshold.
-
-
-
-
-
+\end{comment}
 
 
 
@@ -301,7 +297,7 @@ When analyzing the reduced values by class, specifically with $m = 4$ we have $3
 \label{fig:feature_distribution_4}
 \end{figure}
 
-\newpage
+
 
 When we analyze the behavior of the loss functions at the epoch, in Figure \ref{fig:change_loss_mae_maae}, in the first dataset, we have that these do not have a parallel with those reported by the original author. In addition, numerically in the second function MAAE the values also do not present an adequate dimension with that originally reported. Consequently, we also have an indication that in the MAAE function there was not an adequate generalization in the validation.
 
