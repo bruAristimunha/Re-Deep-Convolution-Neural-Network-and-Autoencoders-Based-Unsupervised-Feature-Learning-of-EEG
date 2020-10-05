@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2019/dev/Debian) (preloaded format=xelatex 2020.4.28)  5 OCT 2020 23:51
+This is XeTeX, Version 3.14159265-2.6-0.99999 (TeX Live 2019/dev/Debian) (preloaded format=xelatex 2020.4.28)  5 OCT 2020 23:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1695,14 +1695,13 @@ File: figure/average-MAAE-MAPE.pdf Graphic file (type pdf)
 [10]
 File: figure/feature_distribution_4.pdf Graphic file (type pdf)
 <use figure/feature_distribution_4.pdf>
- [11]
 File: figure/change_loss_mae_maae.pdf Graphic file (type pdf)
 <use figure/change_loss_mae_maae.pdf>
 File: figure/change_loss_mae_mape.pdf Graphic file (type pdf)
 <use figure/change_loss_mae_mape.pdf>
 File: figure/baseline_methods.pdf Graphic file (type pdf)
 <use figure/baseline_methods.pdf>
- (./table/metrics_boon_cv_10.tex) [12]) [13] [14]
+ (./table/metrics_boon_cv_10.tex) [11] [12]) [13] [14]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 14.
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 14.
  (./article.aux)
@@ -1717,10 +1716,10 @@ Package logreq Info: Writing requests to 'article.run.xml'.
 Here is how much of TeX's memory you used:
  47495 strings out of 492912
  954400 string characters out of 6134893
- 1587653 words of memory out of 5000000
+ 1588653 words of memory out of 5000000
  50913 multiletter control sequences out of 15000+600000
  536954 words of font info for 88 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 65i,17n,96p,1152b,4947s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 65i,17n,96p,1152b,4943s stack positions out of 5000i,500n,10000p,200000b,80000s
 
 Output written on article.pdf (14 pages).
