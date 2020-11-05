@@ -16,6 +16,7 @@ from os import listdir
 from os.path import join, isfile
 from pathlib import Path
 from re import findall
+from time import sleep
 from zipfile import ZipFile
 
 from bs4 import BeautifulSoup
@@ -226,10 +227,16 @@ def download_chbmit(url_base, path_save):
 
         print("Downloading the folder files: {}".format(path_save))
         for item, name in zip(description_base, description):
-            download_item(item, "{}{}".format(path_save, name), page=False)
-
+            try:
+                download_item(item, "{}{}".format(path_save, name), page=False)
+            except:
+                print("Erro in file {}".format(name))
+                sleep(5)
+                continue
+            
         for item, name in zip(patient_url, patient_item):
             download_chbmit(item, name)
+        
     else:
 
         print("Folder already exists\nUse load_dataset_chbmit")
