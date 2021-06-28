@@ -1,17 +1,5 @@
-[0] Config.pm:304> INFO - This is Biber 2.14 (beta)
-[0] Config.pm:307> INFO - Logfile is 'article.blg'
-[43] biber:322> INFO - === qua nov  4, 2020, 15:35:01
-[51] Biber.pm:415> INFO - Reading 'article.bcf'
-[90] Biber.pm:943> INFO - Found 9 citekeys in bib section 0
-[98] Biber.pm:4256> INFO - Processing section 0
-[98] Utils.pm:75> INFO - Globbing data source 'bibliography.bib'
-[98] Utils.pm:91> INFO - Globbed data source 'bibliography.bib' to bibliography.bib
-[104] Biber.pm:4455> INFO - Looking for bibtex format file 'bibliography.bib' for section 0
-[105] bibtex.pm:1653> INFO - LaTeX decoding ...
-[131] bibtex.pm:1471> INFO - Found BibTeX data source 'bibliography.bib'
-[193] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
-[193] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[193] Biber.pm:4084> INFO - Sorting list 'none/global//global/global' of type 'entry' with template 'none' and locale 'en-US'
-[193] Biber.pm:4090> INFO - No sort tailoring available for locale 'en-US'
-[199] bbl.pm:652> INFO - Writing 'article.bbl' with encoding 'UTF-8'
-[203] bbl.pm:755> INFO - Output to article.bbl
+[0] Config.pm:311> INFO - This is Biber 2.16
+[0] Config.pm:314> INFO - Logfile is 'article.blg'
+[136] biber-MSWIN64:340> INFO - === 
+[173] Utils.pm:411> ERROR - article.bcf is malformed, last biblatex run probably failed. Deleted article.bbl
+[173] Biber.pm:132> INFO - ERRORS: 1

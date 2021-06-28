@@ -72,7 +72,6 @@ def reduce_dimension(data, class_, path_dataset, name_type, n_components):
 
     return path_reduced
 
-
 def build_feature(
     data_train,
     data_valid,
@@ -112,12 +111,15 @@ def build_feature(
     path_reduce : str
         Path where the reduced set was saved.reduced
     """
+    
+    
+
     print(
         "Convert and save with value enconding dimension: {} - {}".format(
             type_loss, value_encoding_dim
         )
     )
-
+        
     # Initializing the Auto-Encoder model
     auto_encoder = AutoEnconder(
         epochs=epochs,

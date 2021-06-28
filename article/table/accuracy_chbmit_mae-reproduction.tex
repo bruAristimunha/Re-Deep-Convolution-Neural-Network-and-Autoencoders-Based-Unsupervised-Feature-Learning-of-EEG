@@ -1,17 +1,19 @@
-\begin{table}[!ht]
+\begin{table}
 \centering
-\resizebox{\textwidth}{!}{
-\begin{tabular}{c|ccccccccc}
-\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} & \textbf{average} \\ \hline
-\textbf{2} &       0.7175 &      0.5025 &      0.5575 &         0.7400 &         0.6725 &       0.4525 &     0.7525 &       0.7700 &  0.645625 \\
-\textbf{4} &       0.7700 &      0.5675 &      0.6875 &         0.7950 &         0.7525 &       0.7150 &     0.7925 &       0.6975 &  0.722187 \\
-\textbf{8} &       0.8050 &      0.6050 &      0.7575 &         0.8100 &         0.8300 &       0.7650 &     0.8200 &       0.7800 &  0.771563 \\
-\textbf{16} &       0.7950 &      0.7725 &      0.8600 &         0.7900 &         0.8450 &       0.8250 &     0.8200 &       0.8625 &  0.821250 \\
-\textbf{32} &       0.7425 &      0.8300 &      0.8550 &         0.8325 &         0.8325 &       0.8500 &     0.8375 &       0.8625 &  0.830313 \\
-\textbf{64} &       0.7650 &      0.8200 &      0.8400 &         0.7900 &         0.8375 &       0.8450 &     0.8375 &       0.8700 &  0.825625 \\
-\textbf{128} &       0.6475 &      0.8200 &      0.8425 &         0.7275 &         0.8000 &       0.8275 &     0.7950 &       0.7975 &  0.782187 \\ \hline
+\caption{Accuracy values obtained by the same methodology - chbmit Dataset with mae.}
+\label{accuracy_chbmit_mae-reproduction}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+\textbf{name\_classifier} &  k\_neighbors &  svm\_linear &  svm\_radial &  decision\_tree &  random\_forest &  multi\_layer &  ada\_boost &  gaussian\_nb &   average \\
+\textbf{Dimension} &              &             &             &                &                &              &            &              &           \\
+\midrule
+\textbf{2        } &       0.5000 &      0.5000 &      0.5000 &         0.5000 &         0.5000 &       0.5000 &     0.5000 &       0.5000 &  0.500000 \\
+\textbf{4        } &       0.7375 &      0.5200 &      0.5900 &         0.7400 &         0.7200 &       0.6425 &     0.7525 &       0.6875 &  0.673750 \\
+\textbf{8        } &       0.7100 &      0.5025 &      0.5575 &         0.7300 &         0.6575 &       0.6000 &     0.7450 &       0.5975 &  0.637500 \\
+\textbf{16       } &       0.7675 &      0.7550 &      0.8450 &         0.7650 &         0.8100 &       0.8225 &     0.7925 &       0.8425 &  0.800000 \\
+\textbf{32       } &       0.7150 &      0.7975 &      0.8375 &         0.7700 &         0.8375 &       0.8150 &     0.7900 &       0.8350 &  0.799687 \\
+\textbf{64       } &       0.7125 &      0.8275 &      0.8350 &         0.7175 &         0.8100 &       0.8425 &     0.8150 &       0.8400 &  0.800000 \\
+\textbf{128      } &       0.6500 &      0.7900 &      0.8175 &         0.7625 &         0.8050 &       0.8300 &     0.7825 &       0.7600 &  0.774687 \\
+\bottomrule
 \end{tabular}
-}
-\caption{Classification results of MAE for dataset 2 - Table 4 in [11].}
-\label{table:accuracy_chbmit_mae-reproduction}
 \end{table}

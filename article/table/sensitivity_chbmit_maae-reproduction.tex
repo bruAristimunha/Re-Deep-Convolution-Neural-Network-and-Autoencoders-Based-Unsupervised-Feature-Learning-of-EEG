@@ -1,18 +1,20 @@
-\begin{table}[!ht]
+\begin{table}
 \centering
-\resizebox{\textwidth}{!}{
-\begin{tabular}{c|cccccccccc}
-\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2} &        0.675 &       0.005 &       0.160 &          0.570 &          0.660 &        0.500 &      0.555 &        0.595 &     0.500 &  0.468889 \\
-\textbf{4} &        0.790 &       0.195 &       0.530 &          0.765 &          0.780 &        0.515 &      0.770 &        0.650 &     0.630 &  0.625000 \\
-\textbf{8} &        0.800 &       0.195 &       0.420 &          0.720 &          0.750 &        0.485 &      0.770 &        0.595 &     0.560 &  0.588333 \\
-\textbf{16} &        0.760 &       0.510 &       0.695 &          0.775 &          0.830 &        0.685 &      0.805 &        0.795 &     0.730 &  0.731667 \\
-\textbf{32} &        0.640 &       0.565 &       0.705 &          0.690 &          0.805 &        0.710 &      0.780 &        0.785 &     0.700 &  0.708889 \\
-\textbf{64} &        0.600 &       0.570 &       0.755 &          0.725 &          0.825 &        0.725 &      0.790 &        0.825 &     0.745 &  0.728889 \\
-\textbf{128} &        0.330 &       0.735 &       0.795 &          0.720 &          0.795 &        0.785 &      0.740 &        0.720 &     0.760 &  0.708889 \\
-\textbf{256} &        0.360 &       0.755 &       0.805 &          0.710 &          0.785 &        0.825 &      0.820 &        0.740 &     0.780 &  0.731111 \\ \hline
+\caption{Sensitivity values obtained by the same methodology - chbmit Dataset with maae.}
+\label{sensitivity_chbmit_maae-reproduction}
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+\textbf{name\_classifier} &  k\_neighbors &  svm\_linear &  svm\_radial &  decision\_tree &  random\_forest &  multi\_layer &  ada\_boost &  gaussian\_nb &  ensemble &   average \\
+\textbf{Dimension} &              &             &             &                &                &              &            &              &           &           \\
+\midrule
+\textbf{2        } &        0.655 &       0.030 &       0.315 &          0.680 &          0.640 &        0.775 &      0.620 &        0.560 &     0.560 &  0.537222 \\
+\textbf{4        } &        0.705 &       0.005 &       0.130 &          0.640 &          0.640 &        0.450 &      0.625 &        0.555 &     0.510 &  0.473333 \\
+\textbf{8        } &        0.695 &       0.120 &       0.435 &          0.685 &          0.715 &        0.515 &      0.660 &        0.530 &     0.540 &  0.543889 \\
+\textbf{16       } &        0.670 &       0.530 &       0.755 &          0.685 &          0.820 &        0.710 &      0.760 &        0.780 &     0.735 &  0.716111 \\
+\textbf{32       } &        0.710 &       0.635 &       0.740 &          0.720 &          0.800 &        0.730 &      0.765 &        0.790 &     0.720 &  0.734444 \\
+\textbf{64       } &        0.520 &       0.785 &       0.810 &          0.745 &          0.810 &        0.790 &      0.810 &        0.825 &     0.795 &  0.765556 \\
+\textbf{128      } &        0.500 &       0.765 &       0.800 &          0.715 &          0.815 &        0.800 &      0.780 &        0.795 &     0.770 &  0.748889 \\
+\textbf{256      } &        0.335 &       0.790 &       0.855 &          0.765 &          0.800 &        0.790 &      0.770 &        0.750 &     0.765 &  0.735556 \\
+\bottomrule
 \end{tabular}
-}
-\caption{Sensitivity values obtained by the same methodology - CHBMIT Dataset with MAAE.}
-\label{table:sensitivity_chbmit_maae-reproduction}
 \end{table}

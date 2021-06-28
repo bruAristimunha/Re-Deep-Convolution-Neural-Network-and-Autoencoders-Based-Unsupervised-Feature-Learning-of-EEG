@@ -1,18 +1,20 @@
-\begin{table}[!ht]
+\begin{table}
 \centering
-\resizebox{\textwidth}{!}{
-\begin{tabular}{c|cccccccccc}
-\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
-\textbf{2        } &        0.600 &       0.000 &       0.000 &          0.000 &          0.000 &        0.000 &      0.000 &        1.000 &     0.000 &  0.177778 \\
-\textbf{4        } &        0.645 &       0.000 &       0.000 &          0.540 &          0.660 &        0.000 &      0.695 &        0.770 &     0.545 &  0.428333 \\
-\textbf{8        } &        0.810 &       0.000 &       0.000 &          0.710 &          0.745 &        0.000 &      0.685 &        0.915 &     0.620 &  0.498333 \\
-\textbf{16       } &        0.820 &       0.000 &       0.000 &          0.665 &          0.775 &        0.000 &      0.705 &        0.995 &     0.695 &  0.517222 \\
-\textbf{32       } &        0.820 &       0.000 &       0.080 &          0.835 &          0.820 &        0.505 &      0.795 &        0.985 &     0.855 &  0.632778 \\
-\textbf{64       } &        0.830 &       0.005 &       0.915 &          0.745 &          0.800 &        0.785 &      0.765 &        0.955 &     0.890 &  0.743333 \\
-\textbf{128      } &        0.800 &       0.805 &       0.890 &          0.730 &          0.770 &        0.795 &      0.735 &        0.960 &     0.920 &  0.822778 \\
-\textbf{256      } &        0.670 &       0.700 &       0.730 &          0.685 &          0.680 &        0.785 &      0.720 &        0.960 &     0.875 &  0.756111 \\ \hline
-\end{tabular}
-}
 \caption{Specificity values obtained by the same methodology - boon Dataset with mae.}
-\label{table:specificity_boon_mae-reproduction}
+\label{specificity_boon_mae-reproduction}
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+\textbf{name\_classifier} &  k\_neighbors &  svm\_linear &  svm\_radial &  decision\_tree &  random\_forest &  multi\_layer &  ada\_boost &  gaussian\_nb &  ensemble &   average \\
+\textbf{Dimension} &              &             &             &                &                &              &            &              &           &           \\
+\midrule
+\textbf{2        } &        0.600 &       0.000 &       0.000 &          0.000 &           0.00 &        0.000 &      0.000 &        1.000 &     0.000 &  0.177778 \\
+\textbf{4        } &        0.725 &       0.000 &       0.000 &          0.585 &           0.77 &        0.000 &      0.685 &        0.950 &     0.635 &  0.483333 \\
+\textbf{8        } &        0.810 &       0.000 &       0.000 &          0.700 &           0.79 &        0.000 &      0.745 &        0.985 &     0.715 &  0.527222 \\
+\textbf{16       } &        0.855 &       0.000 &       0.000 &          0.835 &           0.82 &        0.275 &      0.715 &        0.995 &     0.810 &  0.589444 \\
+\textbf{32       } &        0.830 &       0.000 &       0.105 &          0.880 &           0.82 &        0.590 &      0.775 &        0.995 &     0.860 &  0.650556 \\
+\textbf{64       } &        0.815 &       0.720 &       0.890 &          0.755 &           0.78 &        0.785 &      0.750 &        0.965 &     0.920 &  0.820000 \\
+\textbf{128      } &        0.830 &       0.760 &       0.880 &          0.690 &           0.77 &        0.780 &      0.695 &        0.955 &     0.920 &  0.808889 \\
+\textbf{256      } &        0.680 &       0.705 &       0.800 &          0.680 &           0.72 &        0.740 &      0.725 &        0.940 &     0.910 &  0.766667 \\
+\bottomrule
+\end{tabular}
 \end{table}
