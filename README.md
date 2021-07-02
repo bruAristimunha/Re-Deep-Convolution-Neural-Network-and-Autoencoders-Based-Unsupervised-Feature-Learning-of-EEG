@@ -1,7 +1,7 @@
 # [Re] [Deep Convolution Neural Network and Autoencoders-Based Unsupervised Feature Learning of EEG Signals](https://doi.org/10.1109/ACCESS.2018.2833746)
 
 <p align="center">
-<a href="https://colab.research.google.com/github/bruAristimunha/ReScience-submission/blob/Aristimunha-Alves-Pinaya-Camargo/notebook/Jupyter_Paper_Re_Deep_Convolution_Neural_Network_and_Autoencoders_Based_Unsupervised_Feature_Learning_of_EEG_Signals.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/bruAristimunha/Re-Deep-Convolution-Neural-Network-and-Autoencoders-Based-Unsupervised-Feature-Learning-of-EEG/blob/master/notebook/Jupyter_Paper_Re_Deep_Convolution_Neural_Network_and_Autoencoders_Based_Unsupervised_Feature_Learning_of_EEG_Signals.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 <a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
 </p>
 
@@ -13,7 +13,7 @@ We have no affiliation with the original authors and our attempts to contact the
 
 > <sup>1</sup> Center for Mathematics, Computation and Cognition (CMCC), Federal Univesity of ABC (UFABC), Rua Arcturus, 03. Jardim Antares, São Bernardo do Campo, CEP 09606-070, SP, Brazil.
 
-> <sup>2</sup> Department of Psychosis Studies, Institute of Psychiatry, Psychology & Neuroscience, King’s College London, London, UK.
+> <sup>2</sup> King’s College London, London, UK.
 
 >*b.aristimunha@gmail.com, digmogle96@gmail.com
 
