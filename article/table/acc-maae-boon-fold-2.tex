@@ -1,17 +1,15 @@
-\begin{table}
+\begin{table}[!ht]
 \centering
-\caption{Accuracy in Classification, with loss MAAE, on each fold cross-validation, for Dataset 1.}
-\label{table:acc-maae-boon-fold-2}
-\begin{tabular}{lrrrrrrrr}
-\toprule
-name\_classifier &  k\_neighbors &  svm\_linear &  svm\_radial &  decision\_tree &  random\_forest &  multi\_layer &  ada\_boost &  gaussian\_nb \\
-5-fold &              &             &             &                &                &              &            &              \\
-\midrule
-1      &         0.69 &         0.6 &         0.6 &           0.71 &           0.70 &          0.6 &       0.78 &         0.53 \\
-2      &         0.71 &         0.6 &         0.6 &           0.74 &           0.69 &          0.6 &       0.77 &         0.53 \\
-3      &         0.76 &         0.6 &         0.6 &           0.80 &           0.73 &          0.6 &       0.83 &         0.58 \\
-4      &         0.72 &         0.6 &         0.6 &           0.74 &           0.69 &          0.6 &       0.76 &         0.62 \\
-5      &         0.75 &         0.6 &         0.6 &           0.73 &           0.70 &          0.6 &       0.76 &         0.50 \\
-\bottomrule
+\resizebox{\textwidth}{!}{
+\begin{tabular}{c|cccccccc}
+\textbf{5-fold} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} \\ \hline 
+1      &         0.71 &         0.6 &         0.6 &           0.67 &           0.64 &          0.6 &       0.69 &         0.43 \\
+2      &         0.71 &         0.6 &         0.6 &           0.70 &           0.68 &          0.6 &       0.74 &         0.41 \\
+3      &         0.81 &         0.6 &         0.6 &           0.70 &           0.77 &          0.6 &       0.75 &         0.43 \\
+4      &         0.75 &         0.6 &         0.6 &           0.72 &           0.65 &          0.6 &       0.73 &         0.44 \\
+5      &         0.71 &         0.6 &         0.6 &           0.68 &           0.73 &          0.6 &       0.74 &         0.54 \\ \hline
 \end{tabular}
+}
+\caption{Classification results of MAAE for dataset 1 - Table 7 in [11].}
+\label{table:acc-maae-boon-fold-2}
 \end{table}

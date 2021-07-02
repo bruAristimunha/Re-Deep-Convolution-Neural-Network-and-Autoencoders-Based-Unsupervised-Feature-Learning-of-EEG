@@ -1,20 +1,18 @@
-\begin{table}
+\begin{table}[!ht]
 \centering
-\caption{Sensitivity values obtained by the same methodology - boon Dataset with maae.}
-\label{sensitivity_boon_maae-reproduction}
-\begin{tabular}{lrrrrrrrrrr}
-\toprule
-\textbf{name\_classifier} &  k\_neighbors &  svm\_linear &  svm\_radial &  decision\_tree &  random\_forest &  multi\_layer &  ada\_boost &  gaussian\_nb &  ensemble &   average \\
-\textbf{Dimension} &              &             &             &                &                &              &            &              &           &           \\
-\midrule
-\textbf{2        } &     0.760000 &        1.00 &    1.000000 &       0.806667 &       0.703333 &     1.000000 &   0.770000 &     0.400000 &  0.813333 &  0.805926 \\
-\textbf{4        } &     0.746667 &        1.00 &    1.000000 &       0.773333 &       0.733333 &     1.000000 &   0.763333 &     0.290000 &  0.810000 &  0.790741 \\
-\textbf{8        } &     0.786667 &        1.00 &    1.000000 &       0.716667 &       0.810000 &     0.996667 &   0.830000 &     0.366667 &  0.870000 &  0.819630 \\
-\textbf{16       } &     0.773333 &        1.00 &    1.000000 &       0.706667 &       0.786667 &     0.973333 &   0.790000 &     0.366667 &  0.836667 &  0.803704 \\
-\textbf{32       } &     0.766667 &        1.00 &    0.736667 &       0.753333 &       0.783333 &     0.706667 &   0.820000 &     0.490000 &  0.763333 &  0.757778 \\
-\textbf{64       } &     0.740000 &        1.00 &    0.756667 &       0.630000 &       0.760000 &     0.653333 &   0.796667 &     0.396667 &  0.686667 &  0.713333 \\
-\textbf{128      } &     0.790000 &        1.00 &    0.583333 &       0.573333 &       0.750000 &     0.693333 &   0.820000 &     0.406667 &  0.666667 &  0.698148 \\
-\textbf{256      } &     0.770000 &        0.89 &    0.573333 &       0.636667 &       0.736667 &     0.743333 &   0.820000 &     0.376667 &  0.670000 &  0.690741 \\
-\bottomrule
+\resizebox{\textwidth}{!}{
+\begin{tabular}{c|cccccccccc}
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &     0.770000 &    1.000000 &    1.000000 &       0.753333 &       0.720000 &     1.000000 &   0.756667 &     0.123333 &  0.806667 &  0.770000 \\
+\textbf{4} &     0.770000 &    1.000000 &    1.000000 &       0.790000 &       0.740000 &     1.000000 &   0.783333 &     0.266667 &  0.863333 &  0.801481 \\
+\textbf{8} &     0.753333 &    1.000000 &    1.000000 &       0.753333 &       0.690000 &     1.000000 &   0.773333 &     0.426667 &  0.806667 &  0.800370 \\
+\textbf{16} &     0.810000 &    1.000000 &    1.000000 &       0.760000 &       0.786667 &     0.903333 &   0.803333 &     0.433333 &  0.850000 &  0.816296 \\
+\textbf{32} &     0.763333 &    1.000000 &    1.000000 &       0.683333 &       0.780000 &     0.976667 &   0.806667 &     0.420000 &  0.830000 &  0.806667 \\
+\textbf{64} &     0.773333 &    1.000000 &    1.000000 &       0.660000 &       0.783333 &     0.756667 &   0.810000 &     0.453333 &  0.773333 &  0.778889 \\
+\textbf{128} &     0.753333 &    0.900000 &    0.596667 &       0.673333 &       0.760000 &     0.740000 &   0.800000 &     0.403333 &  0.716667 &  0.704815 \\
+\textbf{256} &     0.820000 &    0.743333 &    0.580000 &       0.596667 &       0.800000 &     0.766667 &   0.806667 &     0.413333 &  0.676667 &  0.689259 \\ \hline
 \end{tabular}
+}
+\caption{Sensitivity values obtained by the same methodology - Boon Dataset with MAAE.}
+\label{table:sensitivity_boon_maae-reproduction}
 \end{table}

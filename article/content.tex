@@ -18,7 +18,7 @@ In this section, we describe implementation details, as the core is the reproduc
 
 \subsection{Implementation Details}\label{subsec:implementation}
 
-We decided to reproduce the implementation described in the article using Keras \cite{chollet2018keras} with TensorFlow  \cite{tensorflow} as backend. Our repository includes a list of all the required libraries employed in acquiring the datasets and running the model (the original and the proposed one). Using to the methodology proposed in \cite{Fuente:2019}, we store all the checkpoints for the trained models for reproduction purposes. Besides that, the training logs can be visualized using the TensorBoard tool.
+We decided to reproduce the implementation described in the article using Keras \cite{chollet2018keras} with TensorFlow  \cite{tensorflow} as backend. Our repository includes a list of all the required libraries employed in acquiring the datasets and running the model (the original and the proposed one). Using to the methodology proposed in \cite{Fuente:2019}, we store all the checkpoints for the trained models for reproduction purposes. Besides that, the training logs can be visualized using the ensorBoard tool.
 
 Given the lack of information about some implementation details in the original paper, some assumptions or cuts are made: 
 
@@ -29,7 +29,7 @@ Given the lack of information about some implementation details in the original 
 \item In the Children's Hospital of Boston EEG database we use the channel reported by the author to train the AutoEncoder;
 \item The loss function presented in equation $12$ in \cite{WenZha:2018} was implemented; 
 \item The value of the seeds used in all classifiers, data splitting and elsewhere was $42$; 
-\item The train-validation ratio was $80\%-20\%$ for the AutoEnconder. For the classifiers we used 5 or 10-fold cross-validation 
+\item The train-validation ratio was $80\%-20\%$ for the to AutoEnconder. For the classifiers we used 5 or 10-fold cross-validation 
 \item We resized the values using the MinMax method, before the classification process.
 \item The classifier presented in the final subsection (NN2) was not reproduced for lack of information; 
 \end{itemize}
@@ -43,15 +43,15 @@ The autoencoder implemented is a specific case of neural network structure. It i
 
 \subsection{Feature Learning Model}
 
-In this subsection, we will omit equations and minor details (for complete information, see \cite{Shoeb,emami2019autoencoding}). Since we have the dimension reduced by autoencoder we focus on the next challenge: how to obtain effective features from the EEG signals. The AE-CDNN implemented follows the steps:
+In this subsection, we will omit equations and minor details (for complete information, see \cite{Shoeb,emami2019autoencoding}. Since we have the dimension reduced by autoencoder we focus on the next challenge: how to obtain effective features from the EG signals. The AE-CDNN implemented follows the steps:
 
 \begin{itemize}
-\item Encoder: sample input, convolution layer, down-sampling layer, reshape operation, full connection layer, and feature coding.
+\item Encoder: sample input, convolution layer, down-sampling layer, reshape operation, full connection layer, and eature coding.
 \item Decoder: feature coding as input, full 
 connection layer, reshape operation, deconvolution layer, up-sampling layer and sample reconstruction
 \end{itemize}
 
-Basically, the convolution layer acts as our feature extractor. It performs many successive convolution calculations over the input data allowing the extraction of useful features from the data. The pooling layer is a down-sampling method which reduces data dimension. In the convolution and pooling layer are used windows to slide and extract the feature maps. These intervals do not overlap each other, and with then we obtain the pooled feature maps. The feature sizes tested were $m \in \{2, 4, 8, 16, 32, 64, 128, \}$.
+Basically, the convolution layer acts as our feature extractor. It performs many successive convolution calculations overthe input data and allowing the extraction of useful features from the data. The pooling layer is a down-sampling method which reduces data dimension. In the convolution and pooling layer are uses windows to slide and extract the feature maps. These intervals do not overlap each other, and with then we obtain the pooled feature maps. The feature sizes tested were $m \in \{2, 4, 8, 16, 32, 64, 128, \}$.
 
 
 The convolution and pooling operations can be iterated multiple times. Reshape operation uses the pooled feature maps to construct an one-dimension vector and a full-connection layer to transform this one-dimension vector. 
@@ -61,7 +61,7 @@ Considering $x$ as the input and $y$ as the output, now we need to re-transform 
 $$\text{Loss MAE}= \frac{1}{N} \sum_{i=1}^N |x^{(i)} - y^{(i)}| .$$
 
 
-In addition, we have also used/implemented one more loss function, Mean Absolute Average Error - MAAE. The formula presented in the original article by \cite{WenZha:2018} differs from the Mean Absolute Percentage Error - MAPE formula, despite having similar intuitions. Thus, we chose to implement this loss function, and we have not found its use elsewhere, the difference between the loss functions is only in the fact that one takes in the denominator the value per $x^{(i)}$ and the other takes the average ${\bar x^{(i)}}$, that are contained below:
+In addition, we have also used/implemented one more loss function, namely Mean Absolute Average Error - MAAE. The formula presented in the original article by \cite{WenZha:2018} differs from the recognized Mean Absolute Percentage Error - MAPE formula, despite having similar intuitions. Thus, we chose to implement this loss equation, and we have not found its use elsewhere, the difference between the loss functions is only in the fact that one takes in the denominator the value per $x^{(i)}$ and the other takes the average ${\bar x^{(i)}}$, that are contained below:
 
 $$\text{Loss MAAE}= \frac{1}{N} \sum_{i=1}^N \frac{|x^{(i)} - y^{(i)}|}{{\bar x^{(i)}}} .$$
 
@@ -79,14 +79,14 @@ In this paper, as in our reference paper \cite{WenZha:2018}, we use unsupervised
 
 We can use different approaches to detect epileptic crisis. Then, to obtain a comparative measure, we verify our outputs using the method described in \ref{sec:propose} and the original one showed in Section \cite{WenZha:2018}. This database is public and was published by \cite{andrzejak}. The study groups were the control, inter-ictal and ictal distributed into five sets (denotated A-E). Each containing $100$ records of $23.6$ seconds duration and frequency of $173.6$ Hz on a single channel, with $12$-bit resolution. Each data segment has 4097 samples. These recordings underwent a pre-processing in which the signals had a band filter between $0.53$ to $40$ Hz. There was also the removal of artifacts such as muscle movements or flicker movements.
 
-We used labels A, B, C, D and E for the subsets. Set A corresponds to open-eye activity and subset B to closed-eye activity of 5 healthy volunteers. The subsets C and D have interictal epileptiform activity from 5 epileptic patients. And E contains signals during epileptic patients' seizure (ictal intervals). According to \cite{kamath2015analysis}, this dataset is a compilation of recordings under different conditions.
+We used labels A, B, C, D and E for the subsets. Set A corresponds to open-eye activity and subset B to closed-eye activity of 5 healthy volunteers The subsets C and D have interictal epileptiform activity from 5 epileptic patients. And E contains signals during epileptic patients' seizure (ictal intervals). According to \cite{kamath2015analysis}, this dataset is a compilation of recordings under different conditions.
 
 \subsection{Children's Hospital of Boston EEG database}
 
 The second database, also public, contains the EEG signals from a Children's Hospital of Boston
 \cite{Shoeb}. It was recorded by measuring the brain's electrical activity to obtain EEG signals by connecting multiple electrodes to the patients’ scalp. The data incorporates the EEG signals of 23 children with refractory epilepsy.
 
-This database, built in partnership with the Massachusetts Institute of Technology (MIT), has $5$ men and $18$ women between $3$ and $22$ years. The frequency range is $256$ Hz with $16$ resolution bits. Most patients contain $ 23 $ channels and some with $24$ channels. In contrast to the first set of data, we have multiple channels here, then we need to select channels. The selection followed the methodology used in \cite{shoeb2009application}, which analyzes the variance of each patient, and after that, chooses the channel of greater variance to represent that individual. The channel reported by the authors was $\text{FT9-FT10}$.
+This database, built in partnership with the Massachusetts Institute of Technology (MIT), has $5$ men and $18$ women between $3$ and $22$ years. The frequency range was $256$ Hz with $16$ resolution bits. Most patients contain $ 23 $ channels and some with $24$ channels. In contrast to the first set of data, we have multiple channels here, then we need to select channels. The selection followed the methodology used in \cite{shoeb2009application}, which analyzes the variance of each patient, and after that, chooses the channel of greater variance to represent that individual. The channel reported by the authors was $\text{FT9-FT10}$.
 
 In the data of the first ten patients, we chose two hundred $200$ windows with a size of $4096$ from the epileptic seizures and and another two hundred $200$ when there are no epileptic seizures.
 
@@ -124,7 +124,7 @@ According to the original authors, the choice of the channel in the Children's H
 
 Following the methodology presented above we found a different channel from the one found in \cite{WenZha:2018}. So we decided to explore other scenarios. Note that the variance can be calculated based on each sample, each person or the full database. Despite the fact the authors in \cite{WenZha:2018} mentioned explicitly they used the variance of each sample, since we found a different result we explored the other possibilities (per person and the full database).
 
-Thereby, we modeled the three scenarios. In the first, we analyzed each recording file of the dataset as a sample, having an average length of $921600$ points referring to the recorded $3600s$. For each file we computed and selected the electrode with most variance. We counted the number of times each electrode was selected. The results obtained can be seen in the Figure below:
+Thereby, we modeled the three scenarios. In the first, we analyzed each recording file of the dataset as a sample, having an average length of $921600$ points referring to the recorded $3600s$. For each file we computed and selectedthe electrode with more variance. We counted the number of times each electrode was selected.The results obtained can be seen in the Figure below:
 
 In the second scenario, we understand that each sample is accumulated per person with all his recordings. So the variance was calculated in parallel in the files and combined for each person. For each person, we count the occurrence of the channel with more variance. As shown in Figure \ref{fig:variance_per_person}.
 
@@ -178,6 +178,7 @@ In the first column, we have the encoded hidden layer size\footnote{Denoted here
 \label{fig:acc-AE-CDNN-MAE-d1}
 \end{figure}
 
+%Aqui está confuso, pois fica parecendo que os resultados representam o MAE, e não o erro de classificação. O melhor é deixar o caption parecido com o do trabalho original. Por que você resolveu utilizar os termos MAE, MAAE, etc? Não seria melhor usar L1 e L2, como os autores?
 
 \begin{figure}[!ht]
   \centering
@@ -209,9 +210,8 @@ We can perceive some differences when compared to the original results. In Table
 \label{fig:acc-AE-CDNN-MAAE-d2}
 \end{figure}
 
-Note that Tables $3$ and $4$ in \cite{WenZha:2018} have the exact same results, considering they contain results for different datasets and loss functions it seems to be a error in which the original authors used the same image in both cases by mistake. As our attempts to contact the original authors failed, we present our own results and comparisons. Therefore, the comparison of these two tables may be affected by this issue.
-
 Considering Dataset 2 and Tables \ref{table:accuracy_chbmit_mae-reproduction}, \ref{table:accuracy_chbmit_maae-reproduction} we obtained similar results when compared with the results obtained by the original authors \cite{WenZha:2018}. In general, the original paper obtained a maximum accuracy greater than those obtained by our reproduction implementation, but the average and unique values per dimension are close in most cases considering both functions AE-CDNN-MAE and AE-CDNN-MAAE. However, for Dataset 1 the accuracy values obtained in this paper are significantly lower than the ones obtained by the original paper considering both AE-CDNN-MAE and AE-CDNN-MAAE, as shown in Figure \ref{fig:average}. 
+
 
 
 \begin{figure}[!ht]
@@ -221,7 +221,8 @@ Considering Dataset 2 and Tables \ref{table:accuracy_chbmit_mae-reproduction}, \
 \label{fig:average}
 \end{figure}
 
-As already shown in the Tables, the results obtained in the reproduction were similar. Analyzing the behavior of the different loss functions, we see that the MAAE function does not always obtain superior results than the MAE function. The same is observed in the original article, but their average accuracy obtained are higher than those obtained by our reproduction. 
+%As already shown in the Tables, the results obtained in the reproduction were similar. 
+When analyzing the behavior of the different loss functions, we see that the MAAE function does not always obtain superior results than the MAE function. The same is observed in the original article, but their average accuracy obtained are higher than those obtained by our reproduction. 
 
 
 \begin{comment}
@@ -244,15 +245,15 @@ For each $k$-fold, we observed the accuracy values are following the class balan
 
 \input{table/acc-maae-boon-fold-2.tex}
 
-In the original paper we observe similar differences between the two functions, the results for AE-CDNN-MAAE are slightly better for most classifiers. But considering \textbf{gaussian\_nb}, for example, the function AE-CDNN-MAAE obtained much better results compared with AE-CDNN-MAE. Although the results in original paper also have few variations for the classifiers \textbf{svm\_linear}, \textbf{svm\_radial} and \textbf{multi\_layer} we had no variations in these classifers for the autoencoder AE-CDNN-MAAE.
+In the original paper we observe similar differences between the two functions, the results for AE-CDNN-MAAE are slightly better for most classifiers. But considering \textbf{gaussian\_nb}, for example, the function AE-CDNN-MAAE obtained much better results compared to with AE-CDNN-MAE. Although the results in original paper also have few variations for the classifiers \textbf{svm\_linear}, \textbf{svm\_radial} and \textbf{multi\_layer} we had no variations in these classifers for the autoencoderAE-CDNN-MAAE.
 
-In the second dataset, in Tables below, when analyzing by fold we had worse results than those reported by the authors. However, the results are consistent with the hypothesis that during the process there was no feature learning. Also given the balance of this second dataset, we have that all methods do not present a better result than random chance. 
+In the second dataset, in Tables below, when analyzing by fold we had worser results than those reported by the authors. However, the results is consistent with the hypothesis that during the process there was no feature learning. Also given the balance of this second dataset, we have that all methods do not present a better result than random chance. 
 
 \input{table/acc-mae-chbmit-fold-2.tex}
 
 \input{table/acc-maae-chbmit-fold-2.tex}
 
-When analyzing the reduced values by class, specifically with $m = 4$, we note that $3$ of the $4$ attributes are $0$, in the best scenario, indicating that there was no learning in Auto Encoder to distinguish the behavior by class. This bad representation of latent space occurs regardless of the loss function.
+When analyzing the reduced values by class, specifically with $m = 4$, we note that$3$ of the $4$ attributes are $0$, in the best scenario, indicating that there was no learning in Auto Encoder to distinguish the behavior by class. This bad representation of latent space occurs regardless of the loss function.
 
 
 \begin{figure}[!ht]
@@ -261,6 +262,7 @@ When analyzing the reduced values by class, specifically with $m = 4$, we note t
   \caption{Feature Distribution of AE-CDNN-MAE and AE-CDNN-MAAE, with $m=4$, in the first dataset. Reproduction of Figure 8 in \cite{WenZha:2018}.  }
 \label{fig:feature_distribution_4}
 \end{figure}
+
 
 
 When we analyze the behavior of the loss functions at the epoch, in Figure \ref{fig:change_loss_mae_maae}, in the first dataset, we note that our loss values are much higher than those obtained by the authors. 
@@ -391,7 +393,7 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \section{Conclusion}\label{sec:concl}
 In this article, we re-implemented the approach proposed in \cite{WenZha:2018} and propose the use of a different classifier. This classification approach, based on deep learning for detecting epileptic seizures using EGG had not been explored previously. We adopted a Auto-Encoder that allowed us to construct a smaller representation space.
 
-The original authors left some gaps that made it impossible to fully reproduce their experiment. For example, the lack of information about the Section IV (C. Comparison of Classification Application) in the original paper, the sampling process of the first and second data sets and the number of times or batch size (see \ref{subsec:implementation} to check the assumptions we made).
+The original authors left some gaps that made it impossible to fully reproduce their experiment. For example, the lack of information about the Section IV. C Comparison of Classification Application in the original paper, the sampling process of the first and second data sets and the number of times or batch size (see \ref{subsec:implementation} to check the assumptions we made).
 
 As contribution, the developed code can be easily ported to other tasks. Moreover, it could be used to evaluate other variants of the neural network architecture, techniques for classifying the signals, data augmentation, among other possibilities.  
 

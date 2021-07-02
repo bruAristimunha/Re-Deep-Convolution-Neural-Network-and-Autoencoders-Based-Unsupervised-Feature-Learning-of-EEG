@@ -1,17 +1,15 @@
-\begin{table}
+\begin{table}[!ht]
 \centering
-\caption{Accuracy in Classification, with loss MAE, on each fold cross-validation, for Dataset 1.}
-\label{table:acc-mae-boon-fold-2}
-\begin{tabular}{lrrrrrrrr}
-\toprule
-name\_classifier &  k\_neighbors &  svm\_linear &  svm\_radial &  decision\_tree &  random\_forest &  multi\_layer &  ada\_boost &  gaussian\_nb \\
-5-fold &              &             &             &                &                &              &            &              \\
-\midrule
+\resizebox{\textwidth}{!}{
+\begin{tabular}{c|cccccccc}
+\textbf{5-fold} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree }& \textbf{random\_forest} & \textbf{multi\_layer} & \textbf{ada\_boost} & \textbf{ gaussian\_nb} \\ \hline 
 1      &          0.6 &         0.6 &         0.6 &            0.6 &            0.6 &          0.6 &        0.6 &          0.4 \\
 2      &          0.6 &         0.6 &         0.6 &            0.6 &            0.6 &          0.6 &        0.6 &          0.4 \\
 3      &          0.4 &         0.6 &         0.6 &            0.6 &            0.6 &          0.6 &        0.6 &          0.4 \\
 4      &          0.4 &         0.6 &         0.6 &            0.6 &            0.6 &          0.6 &        0.6 &          0.4 \\
-5      &          0.4 &         0.6 &         0.6 &            0.6 &            0.6 &          0.6 &        0.6 &          0.4 \\
-\bottomrule
+5      &          0.4 &         0.6 &         0.6 &            0.6 &            0.6 &          0.6 &        0.6 &          0.4 \\ \hline
 \end{tabular}
+}
+\caption{Classification results of MAE for dataset 1 - Table 6 in [11].}
+\label{table:acc-mae-boon-fold-2}
 \end{table}

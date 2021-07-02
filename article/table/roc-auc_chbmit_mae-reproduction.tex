@@ -1,20 +1,18 @@
-\begin{table}
+\begin{table}[!ht]
 \centering
-\caption{Roc-auc values obtained by the same methodology - chbmit Dataset with mae.}
-\label{roc-auc_chbmit_mae-reproduction}
-\begin{tabular}{lrrrrrrrrrr}
-\toprule
-\textbf{name\_classifier} &  k\_neighbors &  svm\_linear &  svm\_radial &  decision\_tree &  random\_forest &  multi\_layer &  ada\_boost &  gaussian\_nb &  ensemble &   average \\
-\textbf{Dimension} &              &             &             &                &                &              &            &              &           &           \\
-\midrule
-\textbf{2        } &       0.5000 &      0.5000 &      0.5000 &         0.5000 &         0.5000 &       0.5000 &     0.5000 &       0.5000 &    0.5000 &  0.500000 \\
-\textbf{4        } &       0.7375 &      0.5200 &      0.5900 &         0.7400 &         0.7200 &       0.6425 &     0.7525 &       0.6875 &    0.6850 &  0.675000 \\
-\textbf{8        } &       0.7100 &      0.5025 &      0.5575 &         0.7300 &         0.6575 &       0.6000 &     0.7450 &       0.5975 &    0.6775 &  0.641944 \\
-\textbf{16       } &       0.7675 &      0.7550 &      0.8450 &         0.7650 &         0.8100 &       0.8225 &     0.7925 &       0.8425 &    0.8350 &  0.803889 \\
-\textbf{32       } &       0.7150 &      0.7975 &      0.8375 &         0.7700 &         0.8375 &       0.8150 &     0.7900 &       0.8350 &    0.8250 &  0.802500 \\
-\textbf{64       } &       0.7125 &      0.8275 &      0.8350 &         0.7175 &         0.8100 &       0.8425 &     0.8150 &       0.8400 &    0.8425 &  0.804722 \\
-\textbf{128      } &       0.6500 &      0.7900 &      0.8175 &         0.7625 &         0.8050 &       0.8300 &     0.7825 &       0.7600 &    0.8100 &  0.778611 \\
-\textbf{256      } &       0.6075 &      0.8225 &      0.8225 &         0.7300 &         0.7700 &       0.8250 &     0.7725 &       0.7150 &    0.8125 &  0.764167 \\
-\bottomrule
+\resizebox{\textwidth}{!}{
+\begin{tabular}{c|cccccccccc}
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &       0.7175 &      0.5025 &      0.5575 &         0.7400 &         0.6725 &       0.4525 &     0.7525 &       0.7700 &    0.7325 &  0.655278 \\
+\textbf{4} &       0.7700 &      0.5675 &      0.6875 &         0.7950 &         0.7525 &       0.7150 &     0.7925 &       0.6975 &    0.7225 &  0.722222 \\
+\textbf{8} &       0.8050 &      0.6050 &      0.7575 &         0.8100 &         0.8300 &       0.7650 &     0.8200 &       0.7800 &    0.7900 &  0.773611 \\
+\textbf{16} &       0.7950 &      0.7725 &      0.8600 &         0.7900 &         0.8450 &       0.8250 &     0.8200 &       0.8625 &    0.8550 &  0.825000 \\
+\textbf{32} &       0.7425 &      0.8300 &      0.8550 &         0.8325 &         0.8325 &       0.8500 &     0.8375 &       0.8625 &    0.8550 &  0.833056 \\
+\textbf{64} &       0.7650 &      0.8200 &      0.8400 &         0.7900 &         0.8375 &       0.8450 &     0.8375 &       0.8700 &    0.8650 &  0.830000 \\
+\textbf{128} &       0.6475 &      0.8200 &      0.8425 &         0.7275 &         0.8000 &       0.8275 &     0.7950 &       0.7975 &    0.8200 &  0.786389 \\
+\textbf{256} &       0.6500 &      0.8025 &      0.8375 &         0.7825 &         0.8100 &       0.8275 &     0.8075 &       0.6825 &    0.8200 &  0.780000 \\ \hline
 \end{tabular}
+}
+\caption{Roc-auc values obtained by the same methodology - CHBMIT Dataset with MAE.}
+\label{table:roc-auc_chbmit_mae-reproduction}
 \end{table}

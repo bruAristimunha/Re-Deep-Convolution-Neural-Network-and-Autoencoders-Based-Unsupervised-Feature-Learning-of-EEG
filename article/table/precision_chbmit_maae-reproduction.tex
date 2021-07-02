@@ -1,20 +1,18 @@
-\begin{table}
+\begin{table}[!ht]
 \centering
-\caption{Precision values obtained by the same methodology - chbmit Dataset with maae.}
-\label{precision_chbmit_maae-reproduction}
-\begin{tabular}{lrrrrrrrrrr}
-\toprule
-\textbf{name\_classifier} &  k\_neighbors &  svm\_linear &  svm\_radial &  decision\_tree &  random\_forest &  multi\_layer &  ada\_boost &  gaussian\_nb &  ensemble &   average \\
-\textbf{Dimension} &              &             &             &                &                &              &            &              &           &           \\
-\midrule
-\textbf{2        } &     0.683058 &    0.200000 &    0.984615 &       0.792308 &       0.666505 &     0.579030 &   0.790171 &     0.888655 &  0.834961 &  0.713256 \\
-\textbf{4        } &     0.715317 &    0.200000 &    1.000000 &       0.793611 &       0.697470 &     0.607998 &   0.791078 &     0.914111 &  0.887000 &  0.734065 \\
-\textbf{8        } &     0.788961 &    1.000000 &    0.982576 &       0.805871 &       0.822178 &     0.984900 &   0.832495 &     0.967857 &  0.972857 &  0.906411 \\
-\textbf{16       } &     0.869720 &    0.960995 &    0.909288 &       0.822921 &       0.823924 &     0.918078 &   0.826970 &     0.914505 &  0.908939 &  0.883927 \\
-\textbf{32       } &     0.883135 &    0.906662 &    0.921364 &       0.821315 &       0.830471 &     0.898121 &   0.820017 &     0.925632 &  0.912333 &  0.879894 \\
-\textbf{64       } &     0.897365 &    0.890841 &    0.878146 &       0.832338 &       0.849175 &     0.877632 &   0.834984 &     0.894591 &  0.887665 &  0.871415 \\
-\textbf{128      } &     0.915469 &    0.884122 &    0.874609 &       0.805630 &       0.847811 &     0.868221 &   0.809133 &     0.910585 &  0.891654 &  0.867470 \\
-\textbf{256      } &     0.907381 &    0.867584 &    0.868985 &       0.809037 &       0.814411 &     0.849344 &   0.811105 &     0.892006 &  0.880767 &  0.855625 \\
-\bottomrule
+\resizebox{\textwidth}{!}{
+\begin{tabular}{c|cccccccccc}
+\textbf{Dimension} & \textbf{k\_neighbors} & \textbf{svm\_linear} & \textbf{svm\_radial} & \textbf{decision\_tree} & \textbf{random\_forest} & \textbf{multi\_layer} &\textbf{ada\_boost} &\textbf{gaussian\_nb} &\textbf{ensemble} & \textbf{average} \\ \hline
+\textbf{2} &     0.735720 &    0.200000 &    1.000000 &       0.800840 &       0.724835 &     0.745189 &   0.788793 &     0.881378 &  0.861187 &  0.748660 \\
+\textbf{4} &     0.836491 &    1.000000 &    0.953905 &       0.856105 &       0.854853 &     0.943686 &   0.837736 &     0.945054 &  0.941781 &  0.907735 \\
+\textbf{8} &     0.858794 &    1.000000 &    0.964706 &       0.782093 &       0.854144 &     0.942510 &   0.826481 &     0.929300 &  0.939031 &  0.899673 \\
+\textbf{16} &     0.890443 &    0.964021 &    0.970243 &       0.842738 &       0.865953 &     0.939027 &   0.824735 &     0.920818 &  0.938834 &  0.906312 \\
+\textbf{32} &     0.867838 &    0.931770 &    0.933396 &       0.818189 &       0.819460 &     0.893602 &   0.839291 &     0.900392 &  0.902032 &  0.878441 \\
+\textbf{64} &     0.968042 &    0.915112 &    0.934774 &       0.833354 &       0.839657 &     0.891356 &   0.858777 &     0.898607 &  0.919075 &  0.895417 \\
+\textbf{128} &     0.933640 &    0.865131 &    0.849652 &       0.780718 &       0.818932 &     0.822684 &   0.806209 &     0.917503 &  0.872201 &  0.851852 \\
+\textbf{256} &     0.919000 &    0.877973 &    0.864954 &       0.778029 &       0.805650 &     0.868525 &   0.790839 &     0.920900 &  0.885787 &  0.856851 \\ \hline
 \end{tabular}
+}
+\caption{Precision values obtained by the same methodology - CHBMIT Dataset with MAAE.}
+\label{table:precision_chbmit_maae-reproduction}
 \end{table}
