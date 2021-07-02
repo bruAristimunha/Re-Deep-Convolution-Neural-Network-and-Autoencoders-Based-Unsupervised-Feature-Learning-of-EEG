@@ -88,7 +88,7 @@ The second database, also public, contains the EEG signals from a Children's Hos
 
 This database, built in partnership with the Massachusetts Institute of Technology (MIT), has $5$ men and $18$ women between $3$ and $22$ years. The frequency range is $256$ Hz with $16$ resolution bits. Most patients contain $ 23 $ channels and some with $24$ channels. In contrast to the first set of data, we have multiple channels here, then we need to select channels. The selection followed the methodology used in \cite{shoeb2009application}, which analyzes the variance of each patient, and after that, chooses the channel of greater variance to represent that individual. The channel reported by the authors was $\text{FT9-FT10}$.
 
-In the data of the first ten patients, we chose two hundred $200$ windows with a size of $4096$ from the epileptic seizures and and another two hundred $200$ when there are no epileptic seizures.
+In the data of the first ten patients, we chose two hundred $200$ windows with a size of $4096$ from the epileptic seizures and another two hundred $200$ when there are no epileptic seizures.
 
 \begin{comment}
 \subsection{Performance Measures}
@@ -209,7 +209,7 @@ We can perceive some differences when compared to the original results. In Table
 \label{fig:acc-AE-CDNN-MAAE-d2}
 \end{figure}
 
-Note that Tables $3$ and $4$ in \cite{WenZha:2018} have the exact same results, considering they contain results for different datasets and loss functions it seems to be a error in which the original authors used the same image in both cases by mistake. As our attempts to contact the original authors failed, we present our own results and comparisons. Therefore, the comparison of these two tables may be affected by this issue.
+Note that Tables $3$ and $4$ in \cite{WenZha:2018} have the exact same results, considering they contain results for different datasets and loss functions it seems to be an error in which the original authors used the same image in both cases by mistake. As our attempts to contact the original authors failed, we present our own results and comparisons. Therefore, the comparison of these two tables may be affected by this issue.
 
 Considering Dataset 2 and Tables \ref{table:accuracy_chbmit_mae-reproduction}, \ref{table:accuracy_chbmit_maae-reproduction} we obtained similar results when compared with the results obtained by the original authors \cite{WenZha:2018}. In general, the original paper obtained a maximum accuracy greater than those obtained by our reproduction implementation, but the average and unique values per dimension are close in most cases considering both functions AE-CDNN-MAE and AE-CDNN-MAAE. However, for Dataset 1 the accuracy values obtained in this paper are significantly lower than the ones obtained by the original paper considering both AE-CDNN-MAE and AE-CDNN-MAAE, as shown in Figure \ref{fig:average}. 
 
@@ -389,7 +389,7 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \newpage
 
 \section{Conclusion}\label{sec:concl}
-In this article, we re-implemented the approach proposed in \cite{WenZha:2018} and propose the use of a different classifier. This classification approach, based on deep learning for detecting epileptic seizures using EGG had not been explored previously. We adopted a Auto-Encoder that allowed us to construct a smaller representation space.
+In this article, we re-implemented the approach proposed in \cite{WenZha:2018} and propose the use of a different classifier. This classification approach, based on deep learning for detecting epileptic seizures using EEG had not been explored previously. We adopted a Auto-Encoder that allowed us to construct a smaller representation space.
 
 The original authors left some gaps that made it impossible to fully reproduce their experiment. For example, the lack of information about the Section IV (C. Comparison of Classification Application) in the original paper, the sampling process of the first and second data sets and the number of times or batch size (see \ref{subsec:implementation} to check the assumptions we made).
 
