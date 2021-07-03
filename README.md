@@ -53,7 +53,8 @@ conda activate eeg
 We recommend using a GPU, if you have it available. But if not, just ignore the first line below:
 
 ```shell
-conda install -c anaconda tensorflow-gpu 
+conda install -c anaconda tensorflow-gpu
+y
 pip install -r ReScience-submission/requirements.txt
 cd ReScience-submission/notebook
 jupyter notebook
