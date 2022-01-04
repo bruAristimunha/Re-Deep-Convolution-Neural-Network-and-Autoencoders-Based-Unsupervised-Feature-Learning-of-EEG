@@ -1,5 +1,5 @@
 
-This paper presents our efforts to reproduce the results achieved by the authors of the original article \cite{WenZha:2018}. We follow the steps and models described in their article and the same public data sets of EEG Signals. Epilepsy affects more than 65 million people globally, and EEG Signals are critical to analyze and recognize epilepsy. Although the efforts in the last years, it is still challenging to extract useful information from these signals and select useful features in a diagnostic application. We construct a deep convolution network and autoencoders-based model (AE-CDNN) in order to perform unsupervised feature learning. We use the AE-CDNN to extract the features of the available data sets, and then we use some common classifiers to classify the features. The results obtained demonstrate that the proposed AE-CDNN outperforms the traditional feature extraction based classification techniques by achieving better accuracy of classification.
+This paper presents our efforts to reproduce the results achieved by the authors of the original article \cite{WenZha:2018}. We follow the steps and models described in their article and the same public data sets of EEG Signals. Epilepsy affects more than 65 million people globally, and EEG Signals are critical to analyze and recognize epilepsy. Despite recent efforts/advances, it is still challenging to extract useful information from these signals and select useful features in a diagnostic application. We construct a deep convolution network and autoencoders-based model (AE-CDNN) in order to perform unsupervised feature learning. We use the AE-CDNN to extract the features of the available data sets, and then we use some common classifiers to classify the features. The results obtained demonstrate that the proposed AE-CDNN outperforms the traditional feature extraction based classification techniques by achieving better accuracy of classification.
 
 \section{Introduction}
 
@@ -51,7 +51,7 @@ In this subsection, we will omit equations and minor details (for complete infor
 connection layer, reshape operation, deconvolution layer, up-sampling layer and sample reconstruction
 \end{itemize}
 
-Basically, the convolution layer acts as our feature extractor. It performs many successive convolution calculations over the input data allowing the extraction of useful features from the data. The pooling layer is a down-sampling method which reduces data dimension. In the convolution and pooling layer are used windows to slide and extract the feature maps. These intervals do not overlap each other, and with then we obtain the pooled feature maps. The feature sizes tested were $m \in \{2, 4, 8, 16, 32, 64, 128, \}$.
+Basically, the convolution layer acts as our feature extractor. It performs many successive convolution calculations over the input data allowing the extraction of useful features from the data. The pooling layer is a down-sampling method which reduces data dimension. In the convolution and pooling layer windows are used to slide and extract the feature maps. These intervals do not overlap each other, and with them we obtain the pooled feature maps. The feature sizes tested were $m \in \{2, 4, 8, 16, 32, 64, 128, \}$.
 
 
 The convolution and pooling operations can be iterated multiple times. Reshape operation uses the pooled feature maps to construct an one-dimension vector and a full-connection layer to transform this one-dimension vector. 
@@ -93,7 +93,7 @@ In the data of the first ten patients, we chose two hundred $200$ windows with a
 \begin{comment}
 \subsection{Performance Measures}
 
-According to \cite{roy2019deep}, most of the state-of-the-art systems for epilepsy use the metrics defined below. The adaptation of these metrics for evaluating our system contributes to fair comparison with state-of-the-art systems. The definitions of these metrics are given in Table \ref{table:metrics}.
+According to \cite{roy2019deep}, most of the state-of-the-art systems for epilepsy use the metrics defined \ref{table:metrics}. The adaptation of these metrics for evaluating our system contributes to fair comparison with state-of-the-art systems. The definitions of these metrics are given in Table \ref{table:metrics}.
 
 \begin{table}[!ht]
 \centering
@@ -124,7 +124,7 @@ According to the original authors, the choice of the channel in the Children's H
 
 Following the methodology presented above we found a different channel from the one found in \cite{WenZha:2018}. So we decided to explore other scenarios. Note that the variance can be calculated based on each sample, each person or the full database. Despite the fact the authors in \cite{WenZha:2018} mentioned explicitly they used the variance of each sample, since we found a different result we explored the other possibilities (per person and the full database).
 
-Thereby, we modeled the three scenarios. In the first, we analyzed each recording file of the dataset as a sample, having an average length of $921600$ points referring to the recorded $3600s$. For each file we computed and selected the electrode with most variance. We counted the number of times each electrode was selected. The results obtained can be seen in the Figure below:
+Thereby, we modeled the three scenarios. In the first, we analyzed each recording file of the dataset as a sample, having an average length of $921600$ points referring to the recorded $3600s$. For each file we computed and selected the electrode with most variance. We counted the number of times each electrode was selected. The results obtained can be seen in the Figure \ref{}:
 
 In the second scenario, we understand that each sample is accumulated per person with all his recordings. So the variance was calculated in parallel in the files and combined for each person. For each person, we count the occurrence of the channel with more variance. As shown in Figure \ref{fig:variance_per_person}.
 
@@ -238,7 +238,7 @@ Similarly, when we analyze the loss function MAAE and MAPE, in Figure \ref{fig:a
 
 \end{comment}
 
-For each $k$-fold, we observed the accuracy values are following the class balance in the test. It's indicating the classification methods there are not better than random classifications that follow the classes' percentage. We observed below the result for the accuracy inspection, for the cross validation, for $m = 2$. Analyzing the accuracy obtained by classifiers in Tables \ref{table:acc-mae-boon-fold-2} and \ref{table:acc-maae-boon-fold-2} we observe the values obtained by AE-CDNN-MAAE and AE-CDNN-MAE are close, however the function AE-CDNN-MAAE obtained smoothly better results and with less variation, in general. 
+For each $k$-fold, we observed the accuracy values are following the class balance in the test. It's indicating the classification methods there are not better than random classifications that follow the classes' percentage. We observed in Tables \ref{table:acc-mae-boon-fold-2, table:acc-maae-boon-fold-2.tex} the result for the accuracy inspection, for the cross validation, for $m = 2$. Analyzing the accuracy obtained by classifiers in Tables \ref{table:acc-mae-boon-fold-2} and \ref{table:acc-maae-boon-fold-2} we observe the values obtained by AE-CDNN-MAAE and AE-CDNN-MAE are close, however the function AE-CDNN-MAAE obtained smoothly better results and with less variation, in general.
 
 \input{table/acc-mae-boon-fold-2.tex}
 
@@ -246,7 +246,7 @@ For each $k$-fold, we observed the accuracy values are following the class balan
 
 In the original paper we observe similar differences between the two functions, the results for AE-CDNN-MAAE are slightly better for most classifiers. But considering \textbf{gaussian\_nb}, for example, the function AE-CDNN-MAAE obtained much better results compared with AE-CDNN-MAE. Although the results in original paper also have few variations for the classifiers \textbf{svm\_linear}, \textbf{svm\_radial} and \textbf{multi\_layer} we had no variations in these classifers for the autoencoder AE-CDNN-MAAE.
 
-In the second dataset, in Tables below, when analyzing by fold we had worse results than those reported by the authors. However, the results are consistent with the hypothesis that during the process there was no feature learning. Also given the balance of this second dataset, we have that all methods do not present a better result than random chance. 
+In the second dataset, in Tables \ref{table:acc-mae-chbmit-fold-2, table:acc-maae-chbmit-fold-2.tex}, when analyzing by fold we had worse results than those reported by the authors. However, the results are consistent with the hypothesis that during the process there was no feature learning. Also given the balance of this second dataset, we have that all methods do not present a better result than random chance.
 
 \input{table/acc-mae-chbmit-fold-2.tex}
 
@@ -389,7 +389,7 @@ We analyze the behavior of the F-measure. The relationship between sensitivity a
 \newpage
 
 \section{Conclusion}\label{sec:concl}
-In this article, we re-implemented the approach proposed in \cite{WenZha:2018} and propose the use of a different classifier. This classification approach, based on deep learning for detecting epileptic seizures using EEG had not been explored previously. We adopted a Auto-Encoder that allowed us to construct a smaller representation space.
+In this article, we re-implemented the approach proposed in \cite{WenZha:2018} and propose the use of a different classifier. This classification approach, based on deep learning for detecting epileptic seizures using EEG had not been explored previously. We used a Auto-Encoder that allowed us to construct a smaller representation space.
 
 The original authors left some gaps that made it impossible to fully reproduce their experiment. For example, the lack of information about the Section IV (C. Comparison of Classification Application) in the original paper, the sampling process of the first and second data sets and the number of times or batch size (see \ref{subsec:implementation} to check the assumptions we made).
 
