@@ -1,7 +1,7 @@
 beautifulsoup4==4.9.0
 matplotlib==3.2.1
 mne==0.20.0
-numpy==1.18.2
+numpy==1.22.0
 pandas==1.0.3
 scikit_learn==0.22.2
 seaborn==0.10.0
